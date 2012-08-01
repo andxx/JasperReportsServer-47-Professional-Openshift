@@ -1,4 +1,4 @@
-Jasper Reports Server on Openshift
+JasperReports Server on Openshift
 ==================================
 Instructions to install
 
