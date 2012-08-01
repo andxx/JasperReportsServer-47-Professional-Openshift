@@ -1,0 +1,55 @@
+.fieldLabel{
+    height:18px;
+    padding-top:3px;
+}
+
+.allSpace {
+    width:100%;
+    height:100%;
+}
+
+.valueComponent{
+    padding:3px;
+}
+
+.spaceBetweenSelectAndInput {
+    padding-top:3px;
+}
+
+.noResize {
+    border:0px;
+}
+
+.font60 {
+    font-size:60% !important;
+}
+
+.optionSelectedOnRule {
+    background-color:#401500;
+    color:#ffffff;
+}
+
+.rule_imagebutton, .rule_imagebuttonhover, .rule_imagebuttondisabled {
+         background-color:#C5D1D9; color: #000033; FONT-FAMILY: Verdana, Arial, Helvetica, sans-serif; FONT-SIZE:8pt;
+         border: solid 1px #FFFFFF;
+         border-bottom:  solid 1px #06508C;
+         border-right:  solid 1px #06508C;
+         _cursor:hand; cursor:pointer;
+}
+
+.rule_imagebuttonhover {
+	background-color:#E5D17B;
+	border: 1px solid #FFFFFF;
+	border-bottom:  solid 1px #687F99;
+        border-right:  solid 1px #687F99;
+}
+.rule_imagebuttondisabled {
+         background-color:#E5DFD1;
+         border:solid 1px #E5DFD1;
+         border-bottom: solid 1px #C5D1D9;
+         border-right: solid 1px #C5D1D9;
+         cursor:default;
+}
+.rule_imagebuttonhidden {
+         display:none; cursor:default;
+}

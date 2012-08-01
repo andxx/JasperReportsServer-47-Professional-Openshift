@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="
+http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd">
+    
+	<!-- action bean for regular reports and report options -->
+	<bean id="reportOptionsViewAction" class="com.jaspersoft.ji.report.options.actions.ReportOptionsViewAction"
+			parent="viewReportAction">	
+		<property name="optionsService" ref="reportOptionsService"/>
+		<property name="reportSaveService" ref="reportUnitSaveService"/>
+		<property name="dataSnapshotService" ref="dataSnapshotService"/>
+		<property name="parameterRunOptionsURI" value="reportOptionsURI"/>
+		<property name="attributeRunOptions" value="reportOptions"/>
+		<property name="attributeRunOptionsURI" value="reportOptionsURI"/><!-- same as reportOptionsSaveAction.attributeCurrentOptionsURI -->
+	</bean>
+	
+	<!-- action bean for ad hoc reports -->
+    <bean id="viewAdhocReportAction" class="com.jaspersoft.ji.adhoc.action.ViewAdhocReportAction" parent="reportOptionsViewAction">
+        <property name="olapReportCheckUtil" ref="${bean.olapReportCheckUtil}"/>
+        <property name="engine" ref="adhocEngineService"/>
+        <property name="adhocEngine" ref="adhocEngineService"/>
+		<property name="repository" ref="easyXMLizedRepository"/>
+        <property name="reportUnitLabelAttrName" value="reportUnitLabel"/>
+        <property name="auditContext" ref="${bean.auditContext}"/>
+        <property name="semanticLayerFactory" ref="semanticLayerFactory"/>
+	</bean>
+
+		<!-- 
+		update the mapped action bean so that ad hoc reports will use the adhoc view report bean
+	  -->
+	<bean class="com.jaspersoft.jasperserver.api.common.util.spring.GenericBeanUpdater">
+        <property name="definition" ref="setViewReportActionMap"/>
+        <property name="valueType" value="idRefMap"/>
+        <property name="value">
+			<util:map map-class="java.util.LinkedHashMap">
+				<entry key="com.jaspersoft.ji.adhoc.AdhocReportUnit"
+					value="viewAdhocReportAction"/>
+				<entry key="com.jaspersoft.jasperserver.api.metadata.jasperreports.domain.ReportUnit"
+					value="reportOptionsViewAction"/>
+			</util:map>
+        </property>
+    </bean>
+
+	<bean id="reportOptionsSaveAction" class="com.jaspersoft.ji.report.options.actions.ReportOptionsSaveAction" parent="baseReportOptionsSaveAction">
+		<property name="inputControlsAction" ref="reportOptionsViewAction"/>
+	</bean>
+	
+</beans>

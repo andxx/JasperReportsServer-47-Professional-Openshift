@@ -1,0 +1,38 @@
+<beans xsi:schemaLocation=" http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd" xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:util="http://www.springframework.org/schema/util">
+  <!--
+  
+  If you need to add additional settings to the JS repository Hibernate settings,
+  edit the props in the GenericBeanUpdater bean below and rename this file to applicationContext-additionalRepositorySettings.xml
+  
+  You can add additional entries into the /WEB-INF/hibernate.properties file and substitute them into the properties as
+  shown below in the sample.
+  
+  -->
+       
+	<bean id="propertyConfigurerHibernateAdditionalSettings" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="searchSystemEnvironment" value="true"/>
+		<property name="systemPropertiesModeName" value="SYSTEM_PROPERTIES_MODE_OVERRIDE"/>
+		<property name="location">
+        		<value>/WEB-INF/hibernate.properties</value>
+		</property>
+	</bean>
+
+	<!--add hibernate properties to session factory -->
+	<bean id="addAdditionalHibernateProperties" class="com.jaspersoft.jasperserver.api.common.util.spring.GenericBeanUpdaterDefinition">
+		<property name="order" value="10"/>
+		<property name="beanName" value="sessionFactory"/>
+		<property name="propertyName" value="hibernateProperties"/>
+		<property name="operation" value="append"/>
+	</bean>
+  
+	<!-- set schema for repository -->
+	<bean class="com.jaspersoft.jasperserver.api.common.util.spring.GenericBeanUpdater">
+	  <property name="definition" ref="addAdditionalHibernateProperties"/>
+	  <property name="value">
+		<props>
+			<prop key="hibernate.default_schema">${metadata.hibernate.default_schema}</prop>
+		</props>
+	  </property>
+	</bean>
+
+</beans>

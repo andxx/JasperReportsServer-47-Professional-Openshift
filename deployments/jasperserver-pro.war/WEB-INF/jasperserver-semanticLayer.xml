@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
+
+    
+<!-- these two are obsolete; used for early primitive SL UI -->
+
+    <bean id="slController" class="com.jaspersoft.commons.semantic.mvc.SemanticLayerController">
+        <property name="methodNameResolver" ref="adhocAjaxParamResolver"/>
+        <property name="repository" ref="${bean.repositoryService}"/>
+        <property name="engine" ref="adhocEngineService"/>
+        <property name="dataSetFactory" ref="jdbcDataSetFactory"/>
+        <property name="semanticLayerFactory" ref="semanticLayerFactory"/>
+    </bean>
+    
+    <bean id="slQueryController" class="com.jaspersoft.commons.semantic.mvc.SemanticLayerQueryController">
+        <property name="methodNameResolver" ref="adhocAjaxParamResolver"/>
+        <property name="repository" ref="${bean.repositoryService}"/>
+        <property name="engine" ref="adhocEngineService"/>
+        <property name="dataSetFactory" ref="jdbcDataSetFactory"/>
+        <property name="semanticLayerFactory" ref="semanticLayerFactory"/>
+    </bean>
+
+    <bean id="slHandlerMapping" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+        <property name="mappings">
+            <props>
+                <prop key="/semanticLayer/generate.html">slController</prop>
+                <prop key="/semanticLayer/query.html">slQueryController</prop>
+			</props>
+		</property>
+	</bean>
+</beans>

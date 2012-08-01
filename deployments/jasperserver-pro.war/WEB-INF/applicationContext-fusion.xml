@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
+
+	<bean name="fusionSWFResponseHeadersFilter" class="com.jaspersoft.ji.war.common.ResponseHeadersFilter">
+		<property name="headerSetter">
+			<ref local="fusionSWFResponseHeaders"/>
+		</property>
+	</bean>
+	
+	<bean id="fusionSWFResponseHeaders" class="com.jaspersoft.jasperserver.war.util.MatcherObjectSelector">
+		<property name="entries">
+			<list>
+				<bean class="com.jaspersoft.jasperserver.war.util.MatcherObjectSelector$Entry">
+					<property name="matcher">
+						<!-- IE HTTPS requests -->
+						<bean class="com.jaspersoft.jasperserver.war.util.StandardRequestMatcher">
+							<property name="scheme" value="https"/>
+							<property name="headers">
+								<map>
+									<entry key="User-Agent" value=".*\bmsie\b.*"/>
+								</map>
+							</property>
+						</bean>
+					</property>
+					<property name="object">
+						<bean class="com.jaspersoft.jasperserver.war.util.SimpleResponseHeaderSetter">
+							<property name="headers">
+								<map>
+									<entry key="Pragma" value=""/>
+									<entry key="Cache-Control" value="private"/>
+								</map>
+							</property>
+						</bean>
+					</property>
+				</bean>
+			</list>
+		</property>
+	</bean>
+
+</beans>

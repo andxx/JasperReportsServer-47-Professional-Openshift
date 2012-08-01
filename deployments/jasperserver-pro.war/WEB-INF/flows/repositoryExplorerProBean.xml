@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
+      
+    <bean id="ResourceAction" class="com.jaspersoft.ji.war.action.repositoryExplorer.ResourceAction">
+        <property name="repositoryService" ref="${bean.repositoryService}"/>
+        <property name="repositoryServiceSecurityChecker" ref="${bean.repositoryServiceSecurityChecker}"/>
+        <property name="objectPermissionService" ref="${bean.objectPermissionService}"/>
+        <property name="messageSource" ref="messageSource"/>
+        <property name="schedulingService" ref="reportSchedulingService"/>
+        <property name="pagination" value="2000"/>
+        <property name="showMoveCopyConfirmation" value="true"/>
+        <property name="securityContextProvider" ref="${bean.securityContextProvider}"/>
+        <property name="configuration" ref="configurationBean" />
+    </bean>
+    
+    <bean id="RepositoryTreeAction" class="com.jaspersoft.jasperserver.war.action.tree.TreeAction">
+        <property name="treeDataProviderFactory" ref="repositoryExplorerTreeDataProviderFactory"/>
+        <property name="configurationBean" ref="configurationBean"/>
+    </bean>
+
+    <bean id="repositoryExplorerTreeDataProviderFactory" class="com.jaspersoft.jasperserver.war.model.impl.TreeDataProviderFactoryImpl">
+        <property name="treeProvidersMap">
+            <map>
+                <entry key="repositoryExplorerTreeDataProvider" value-ref="repositoryExplorerTreeDataProvider"/>
+                <entry key="repositoryExplorerTreeFoldersProvider" value-ref="repositoryExplorerTreeFoldersProvider"/>
+            </map>
+        </property>
+    </bean>
+
+    <bean id="repositoryExplorerTreeDataProvider" class="com.jaspersoft.jasperserver.war.model.impl.RepositoryExplorerTreeDataProviderImpl">
+        <property name="repositoryService" ref="${bean.repositoryService}"/>
+        <property name="repositoryServiceSecurityChecker" ref="${bean.repositoryServiceSecurityChecker}"/>
+        <property name="objectPermissionService" ref="${bean.objectPermissionService}"/>
+        <property name="themeService" ref="themeService" />
+    </bean>
+
+    <bean id="adhocRepositoryTreeFolderFilter" class="com.jaspersoft.jasperserver.war.model.impl.TypeInclusiveTreeDataFilterImpl">
+        <property name="includeTypesList">
+            <list>
+                <value>com.jaspersoft.jasperserver.api.metadata.common.domain.Folder</value>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="adhocRepositoryTreeAdhocTempBlockFilter" class="com.jaspersoft.jasperserver.war.model.impl.RepositoryExplorerTreeDataFilterImpl">
+        <property name="uriList">
+            <list>
+                <value>/temp</value>
+            </list>
+        </property>
+        <property name="userService"><ref bean="${bean.internalUserAuthorityService}"/></property>
+        <property name="roleToShowTempFolder" value="ROLE_ADMINISTRATOR"/>
+    </bean>
+
+    <bean id="adhocRepositorySaveAsFilter" class="com.jaspersoft.jasperserver.war.model.impl.ANDTreeDataFilterImpl">
+        <property name="filterList">
+            <list>
+                <ref bean="adhocRepositoryTreeFolderFilter"/>
+                <ref bean="adhocRepositoryTreeAdhocTempBlockFilter"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="repositoryExplorerTreeFoldersProvider" parent="repositoryExplorerTreeDataProvider">
+        <property name="filter" ref="adhocRepositorySaveAsFilter"/>
+    </bean>
+
+    <bean name="dsTreeDataProvider" class="com.jaspersoft.jasperserver.war.model.impl.TypedTreeDataProvider" scope="prototype">
+        <constructor-arg ref="${bean.repositoryService}" />
+        <constructor-arg>
+            <list>
+                <value>com.jaspersoft.jasperserver.api.metadata.jasperreports.domain.JdbcReportDataSource</value>
+                <value>com.jaspersoft.jasperserver.api.metadata.jasperreports.domain.JndiJdbcReportDataSource</value>
+                <value>com.jaspersoft.jasperserver.api.metadata.jasperreports.domain.BeanReportDataSource</value>
+                <value>com.jaspersoft.jasperserver.api.metadata.jasperreports.domain.CustomReportDataSource</value>
+            </list>
+        </constructor-arg>
+    </bean>
+
+    <bean name="proDsTreeDataProvider" class="com.jaspersoft.jasperserver.war.model.impl.TypedTreeDataProvider" scope="prototype">
+        <property name="repositoryService" ref="${bean.repositoryService}" />
+        <property name="supportedClasses">
+            <list>
+                <value>com.jaspersoft.jasperserver.api.metadata.jasperreports.domain.JdbcReportDataSource</value>
+                <value>com.jaspersoft.jasperserver.api.metadata.jasperreports.domain.JndiJdbcReportDataSource</value>
+                <value>com.jaspersoft.jasperserver.api.metadata.jasperreports.domain.BeanReportDataSource</value>
+                <value>com.jaspersoft.jasperserver.api.metadata.jasperreports.domain.CustomReportDataSource</value>
+                <value>com.jaspersoft.commons.semantic.datasource.SemanticLayerDataSource</value>
+            </list>
+        </property>
+    </bean>
+
+
+    <bean name="proDsTreeDataAllProvider" class="com.jaspersoft.jasperserver.war.model.impl.TypedTreeDataProvider" scope="prototype">
+        <property name="repositoryService" ref="${bean.repositoryService}" />
+        <property name="supportedClasses">
+            <list>
+                <value>com.jaspersoft.jasperserver.api.metadata.jasperreports.domain.JdbcReportDataSource</value>
+                <value>com.jaspersoft.jasperserver.api.metadata.jasperreports.domain.JndiJdbcReportDataSource</value>
+                <value>com.jaspersoft.jasperserver.api.metadata.jasperreports.domain.BeanReportDataSource</value>
+                <value>com.jaspersoft.jasperserver.api.metadata.jasperreports.domain.CustomReportDataSource</value>
+                <value>com.jaspersoft.commons.semantic.datasource.SemanticLayerDataSource</value>
+                <value>com.jaspersoft.jasperserver.api.metadata.olap.domain.MondrianConnection</value>
+                <value>com.jaspersoft.jasperserver.api.metadata.olap.domain.XMLAConnection</value>
+                <value>com.jaspersoft.ji.adhoc.AdhocDataView</value>
+            </list>
+        </property>
+    </bean>
+
+    <bean name="jrxmlTreeDataProvider" class="com.jaspersoft.jasperserver.war.model.impl.FileResourcesTreeDataProvider">
+        <property name="repositoryService" ref="${bean.repositoryService}"/>
+        <property name="fileTypes">
+            <list>
+                <value>jrxml</value>
+            </list>
+        </property>
+    </bean>
+
+    <bean name="queryTreeDataProvider" class="com.jaspersoft.jasperserver.war.model.impl.TypedTreeDataProvider">
+        <property name="repositoryService" ref="${bean.repositoryService}" />
+        <property name="supportedClasses">
+            <list>
+                <value>com.jaspersoft.jasperserver.api.metadata.common.domain.Query</value>
+            </list>
+        </property>
+    </bean>
+
+    <bean name="inputControlResourceTreeDataProvider" class="com.jaspersoft.jasperserver.war.model.impl.TypedTreeDataProvider">
+        <property name="repositoryService" ref="${bean.repositoryService}"/>
+        <property name="supportedClasses">
+            <list>
+                <value>com.jaspersoft.jasperserver.api.metadata.common.domain.InputControl</value>
+            </list>
+        </property>
+    </bean>
+
+    <!--<bean name="fileResourceTreeDataProvider" class="com.jaspersoft.jasperserver.war.model.impl.TypedTreeDataProvider" scope="prototype">
+        <constructor-arg ref="${bean.repositoryService}"/>
+        <constructor-arg>
+            <list>
+                <value>com.jaspersoft.jasperserver.api.metadata.common.domain.FileResource</value>
+            </list>
+        </constructor-arg>
+    </bean>-->
+</beans>

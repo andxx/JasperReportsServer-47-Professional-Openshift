@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+       	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd
+       	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd">
+    <context:component-scan base-package="com.jaspersoft.ji.ws.rest, com.jaspersoft.ji.jaxrs">
+        <!-- Implemantation of DomainsJaxrsService isn't complete, therefore it is by default off -->
+        <context:exclude-filter type="regex" expression=".*DomainsJaxrsService"/>
+    </context:component-scan>
+
+    <bean id="restServiceRegistryPRO" class="com.jaspersoft.jasperserver.rest.MapRESTServiceRegistry"
+          parent="restServiceRegistryCE">
+        <property name="services">
+            <map merge="true">
+                <entry key="user" value-ref="restMTUser"/>
+                <entry key="organization" value-ref="restOrganization"/>
+                <entry key="jobsummary" value-ref="proJobSummary"/>
+            </map>
+        </property>
+    </bean>
+
+
+    <util:map id="rolesThatCanCreateModifyResources" key-type="java.lang.String" value-type="java.util.List">
+        <entry key="com.jaspersoft.commons.semantic.DataDefinerUnit">
+            <list>
+                <value>ROLE_SUPERUSER</value>
+                <value>ROLE_ADMINISTRATOR</value>
+            </list>
+        </entry>
+        <entry key="com.jaspersoft.commons.semantic.datasource.SemanticLayerDataSource">
+            <list>
+                <value>ROLE_SUPERUSER</value>
+                <value>ROLE_ADMINISTRATOR</value>
+            </list>
+        </entry>
+    </util:map>
+
+    <bean id="publicOrganizationName" class="java.lang.String">
+    	<constructor-arg type="java.lang.String" value="organizations"/>
+    </bean>
+
+    <util:set id="publicRoles">
+        <value>ROLE_ADMINISTRATOR</value>
+        <value>ROLE_USER</value>
+        <value>ROLE_ANONYMOUS</value>
+        <value>ROLE_DEMO</value>
+        <value>ROLE_SUPERMART_MANAGER</value>
+    </util:set>
+
+</beans>

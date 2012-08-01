@@ -1,0 +1,292 @@
+<!-- STYLES END -->
+
+
+
+
+<!-- REPORT DEFAULT -->
+<style name="ReportDefault" isDefault="true" mode="Transparent" forecolor="#663333" backcolor="#FFFFFF" hAlign="Left" vAlign="Middle" fontName="SansSerif" fontSize="11" pdfFontName="Helvetica">
+    <box>
+        <pen lineColor="#000000"/>
+    </box>
+</style>
+
+
+
+
+<!-- TABLE STYLES -->
+<style name="PageHeaderFooter" style="ReportDefault" forecolor="#000000" vAlign="Top" fontSize="9">
+    <pen lineWidth="1.0" lineStyle="Solid"/>
+</style>
+<style name="Group1HeaderFooter" style="ReportDefault" mode="Opaque" forecolor="#663333" backcolor="#eadada" isBold="true" pdfFontName="Helvetica-Bold">
+    <box>
+        <pen lineWidth="0.5"/>
+    </box>
+</style>
+<style name="Group1Header" style="Group1HeaderFooter"/>
+<style name="Group1Footer" style="Group1HeaderFooter"/>
+<style name="Group2HeaderFooter" style="ReportDefault" mode="Opaque" forecolor="#663333" backcolor="#eadada" isBold="true" pdfFontName="Helvetica-Bold">
+    <box>
+        <pen lineWidth="0.5"/>
+    </box>
+</style>
+<style name="Group2Header" style="Group2HeaderFooter"/>
+<style name="Group2Footer" style="Group2HeaderFooter"/>
+<style name="Group3HeaderFooter" style="ReportDefault" mode="Opaque" forecolor="#663333" backcolor="#eadada" isBold="true" pdfFontName="Helvetica-Bold">
+    <box>
+        <pen lineWidth="0.5"/>
+    </box>
+</style>
+<style name="Group3Header" style="Group3HeaderFooter"/>
+<style name="Group3Footer" style="Group3HeaderFooter"/>
+<style name="ColumnHeaderFooter" style="ReportDefault" mode="Opaque" forecolor="#663333" backcolor="#eadada" isBold="true" pdfFontName="Helvetica-Bold">
+    <box>
+        <pen lineWidth="0.5"/>
+    </box>
+</style>
+<style name="TableSummaries" style="ReportDefault" mode="Opaque" forecolor="#663333" backcolor="FFFFFF" isBold="true" pdfFontName="Helvetica-Bold">
+    <box>
+        <pen lineWidth="0.5"/>
+    </box>
+</style>
+<style name="Title" style="ReportDefault" mode="Opaque" forecolor="#663333" backcolor="#FFFFFF" hAlign="Center" fontSize="18" isBold="true" pdfFontName="Helvetica-Bold">
+    <box>
+        <pen lineColor="#000000"/>
+        <topPen lineWidth="0.0"/>
+    </box>
+</style>
+<style name="Details" style="ReportDefault" mode="Opaque" forecolor="#663333" backcolor="#FFFFFF">
+    <box>
+        <pen lineWidth="0.5"/>
+        <topPen lineWidth="0.0"/>
+        <bottomPen lineWidth="0.0"/>
+    </box>
+    <conditionalStyle>
+        <conditionExpression><![CDATA[new Boolean($V{InnerRowCount}.intValue() % 2 == 0)]]></conditionExpression>
+        <style style="Details" mode="Opaque" forecolor="#663333" backcolor="#eadada"/>
+    </conditionalStyle>
+</style>
+
+
+
+
+<!-- CROSSTAB STYLES -->
+<style name="CrosstabDefault" style="ReportDefault" mode="Opaque" forecolor="#663333">
+    <box padding="5">
+        <pen lineWidth="0" lineColor="#663333"/>
+    </box>
+</style>
+<style name="CrosstabTitle" style="CrosstabDefault" mode="Transparent" forecolor="#000000" hAlign="Center" fontSize="13" isBold="true" pdfFontName="Helvetica-Bold">
+</style>
+<style name="CrosstabHeader" style="CrosstabDefault" mode="Opaque" forecolor="#663333" backcolor="#FFFFFF" hAlign="Center" isBold="true" pdfFontName="Helvetica-Bold">
+    <box>
+        <pen lineWidth="0.5"/>
+    </box>
+</style>
+<style name="RowInner" style="CrosstabDefault" mode="Opaque" forecolor="#663333" backcolor="#eadada" hAlign="Left">
+    <box>
+        <rightPen lineWidth="0.5"/>
+    </box>
+    <conditionalStyle>
+        <conditionExpression><![CDATA[new Boolean($V{ROW_COUNT}.intValue() % 2 == 0)]]></conditionExpression>
+        <style backcolor="#FFFFFF"/>
+    </conditionalStyle>
+    <conditionalStyle>
+                <conditionExpression><![CDATA[new Boolean($P{CrosstabRowGroupsCount}.intValue() == 1)]]></conditionExpression>
+        <style>
+                    <box>
+                        <leftPen lineWidth="0.5"/>
+                    </box>
+                </style>
+    </conditionalStyle>
+</style>
+<style name="RowInnerTotal" style="CrosstabDefault" mode="Opaque" forecolor="#663333" backcolor="#FFFFFF" hAlign="Right" isBold="true" pdfFontName="Helvetica-Bold">
+    <box>
+                <topPen lineWidth="0.5"/>
+                <bottomPen lineWidth="0.5"/>
+        <rightPen lineWidth="0.5"/>
+    </box>
+    <conditionalStyle>
+                <conditionExpression><![CDATA[new Boolean($P{CrosstabRowGroupsCount}.intValue() == 1)]]></conditionExpression>
+        <style>
+                    <box>
+                        <leftPen lineWidth="0.5"/>
+                    </box>
+                </style>
+    </conditionalStyle>
+</style>
+<style name="RowOuter" style="CrosstabDefault" mode="Opaque" forecolor="#663333" backcolor="#FFFFFF" hAlign="Left" isBold="true" pdfFontName="Helvetica-Bold">
+    <box>
+        <topPen lineWidth="0.5"/>
+        <bottomPen lineWidth="0.5"/>
+    </box>
+</style>
+<style name="RowOuterTotal" style="CrosstabDefault" mode="Opaque" forecolor="#663333" backcolor="#FFFFFF" hAlign="Right" isBold="true" pdfFontName="Helvetica-Bold">
+    <box>
+        <topPen lineWidth="0.5"/>
+        <bottomPen lineWidth="0.5"/>
+        <rightPen lineWidth="0.5"/>
+    </box>
+</style>
+<style name="RowMostOuter" style="RowOuter">
+    <box>
+        <leftPen lineWidth="0.5"/>
+    </box>
+</style>
+<style name="RowMostOuterTotal" style="RowOuterTotal">
+    <box>
+        <leftPen lineWidth="0.5"/>
+    </box>
+</style>
+<style name="ColumnInner" style="CrosstabDefault" mode="Opaque" forecolor="#663333" backcolor="#FFFFFF" hAlign="Right">
+    <box>
+        <bottomPen lineWidth="0.5"/>
+    </box>
+    <conditionalStyle>
+        <conditionExpression><![CDATA[new Boolean($V{COLUMN_COUNT}.intValue() == 1)]]></conditionExpression>
+        <style>
+            <box>
+                <leftPen lineWidth="0.5"/>
+            </box>
+        </style>
+    </conditionalStyle>
+    <conditionalStyle>
+        <conditionExpression><![CDATA[new Boolean($P{CrosstabColumnGroupsCount}.intValue() == 1)]]></conditionExpression>
+        <style>
+            <box>
+                <topPen lineWidth="0.5"/>
+            </box>
+        </style>
+    </conditionalStyle>
+</style>
+<style name="ColumnInnerTotal" style="CrosstabDefault" mode="Opaque" forecolor="#663333" backcolor="#FFFFFF" hAlign="Right" isBold="true" pdfFontName="Helvetica-Bold">
+    <box>
+        <bottomPen lineWidth="0.5"/>
+        <rightPen lineWidth="0.5"/>
+    </box>
+    <conditionalStyle>
+        <conditionExpression><![CDATA[new Boolean($P{CrosstabColumnGroupsCount}.intValue() == 1)]]></conditionExpression>
+        <style>
+            <box>
+                <topPen lineWidth="0.5"/>
+            </box>
+        </style>
+    </conditionalStyle>
+</style>
+<style name="ColumnOuter" style="CrosstabDefault" mode="Opaque" forecolor="#663333" backcolor="#FFFFFF" hAlign="Left" isBold="true" pdfFontName="Helvetica-Bold">
+    <box>
+        <leftPen lineWidth="0.5"/>
+        <rightPen lineWidth="0.5"/>
+    </box>
+</style>
+<style name="ColumnOuterTotal" style="CrosstabDefault" mode="Opaque" forecolor="#663333" backcolor="#FFFFFF" hAlign="Right" isBold="true" pdfFontName="Helvetica-Bold">
+    <box>
+        <leftPen lineWidth="0.5"/>
+        <bottomPen lineWidth="0.5"/>
+        <rightPen lineWidth="0.5"/>
+    </box>
+</style>
+<style name="ColumnMostOuter" style="ColumnOuter">
+    <box>
+        <topPen lineWidth="0.5"/>
+    </box>
+</style>
+<style name="ColumnMostOuterTotal" style="ColumnOuterTotal">
+    <box>
+        <topPen lineWidth="0.5"/>
+    </box>
+</style>
+<style name="RowDetailColumnDetail" style="CrosstabDefault" mode="Opaque" forecolor="#663333" backcolor="#eadada" hAlign="Right">
+    <conditionalStyle>
+        <conditionExpression><![CDATA[new Boolean($V{ROW_COUNT}.intValue() % 2 == 0)]]></conditionExpression>
+        <style backcolor="#FFFFFF"/>
+    </conditionalStyle>
+</style>
+<style name="RowDetailColumnInner" style="CrosstabDefault" mode="Opaque" forecolor="#663333" backcolor="#eadada" hAlign="Right" isBold="true" pdfFontName="Helvetica-Bold">
+    <box>
+        <rightPen lineWidth="0.5"/>
+    </box>
+    <conditionalStyle>
+        <conditionExpression><![CDATA[new Boolean($V{ROW_COUNT}.intValue() % 2 == 0)]]></conditionExpression>
+        <style backcolor="#FFFFFF"/>
+    </conditionalStyle>
+</style>
+<style name="RowDetailColumnOuter" style="CrosstabDefault" mode="Opaque" forecolor="#663333" backcolor="#eadada" hAlign="Right" isBold="true" pdfFontName="Helvetica-Bold">
+    <box>
+        <rightPen lineWidth="0.5"/>
+    </box>
+    <conditionalStyle>
+        <conditionExpression><![CDATA[new Boolean($V{ROW_COUNT}.intValue() % 2 == 0)]]></conditionExpression>
+        <style backcolor="#FFFFFF"/>
+    </conditionalStyle>
+</style>
+<style name="RowInnerColumnDetail" style="CrosstabDefault" mode="Opaque" forecolor="#663333" backcolor="#FFFFFF" hAlign="Right" isBold="true" pdfFontName="Helvetica-Bold">
+    <box>
+                <topPen lineWidth="0.5"/>
+                <bottomPen lineWidth="0.5"/>
+    </box>
+</style>
+<style name="RowInnerColumnInner" style="CrosstabDefault" mode="Opaque" forecolor="#663333" backcolor="#FFFFFF" hAlign="Right" isBold="true" pdfFontName="Helvetica-Bold">
+    <box>
+                <topPen lineWidth="0.5"/>
+                <bottomPen lineWidth="0.5"/>
+                <rightPen lineWidth="0.5"/>
+    </box>
+</style>
+<style name="RowInnerColumnOuter" style="CrosstabDefault" mode="Opaque" forecolor="#663333" backcolor="#FFFFFF" hAlign="Right" isBold="true" pdfFontName="Helvetica-Bold">
+    <box>
+                <topPen lineWidth="0.5"/>
+                <bottomPen lineWidth="0.5"/>
+                <rightPen lineWidth="0.5"/>
+    </box>
+</style>
+<style name="RowOuterColumnDetail" style="CrosstabDefault" mode="Opaque" forecolor="#663333" backcolor="#FFFFFF" hAlign="Right" isBold="true" pdfFontName="Helvetica-Bold">
+    <box>
+                <topPen lineWidth="0.5"/>
+                <bottomPen lineWidth="0.5"/>
+    </box>
+</style>
+<style name="RowOuterColumnInner" style="CrosstabDefault" mode="Opaque" forecolor="#663333" backcolor="#FFFFFF" hAlign="Right" isBold="true" pdfFontName="Helvetica-Bold">
+    <box>
+                <topPen lineWidth="0.5"/>
+                <bottomPen lineWidth="0.5"/>
+                <rightPen lineWidth="0.5"/>
+    </box>
+</style>
+<style name="RowOuterColumnOuter" style="CrosstabDefault" mode="Opaque" forecolor="#663333" backcolor="#FFFFFF" hAlign="Right" isBold="true" pdfFontName="Helvetica-Bold">
+    <box>
+                <topPen lineWidth="0.5"/>
+                <bottomPen lineWidth="0.5"/>
+                <rightPen lineWidth="0.5"/>
+    </box>
+</style>
+
+
+
+
+<!-- CHART STYLES -->
+<style name="ChartReportTitle" style="ReportDefault" mode="Opaque" forecolor="#FFFFFF" backcolor="#663333" hAlign="Center" fontSize="18" isBold="true" pdfFontName="Helvetica-Bold">
+    <box>
+        <pen lineColor="#000000"/>
+        <topPen lineWidth="0.0" lineStyle="Solid"/>
+    </box>
+</style>
+<style name="ChartTitle" isDefault="false" forecolor="#663333" fontName="SansSerif" fontSize="12" isBold="true" pdfFontName="Helvetica-Bold"/>
+<style name="ChartSubtitle" isDefault="false" forecolor="#000000" fontName="SansSerif" fontSize="9" isBold="false" pdfFontName="Helvetica"/>
+<style name="ChartLegend" isDefault="false" forecolor="#000000" backcolor="#FFFFFF" fontName="SansSerif" fontSize="9" isBold="false" pdfFontName="Helvetica"/>
+<style name="ChartSeriesColor0" isDefault="false" backcolor="#663333"/>
+<style name="ChartSeriesColor1" isDefault="false" backcolor="#F0C0C0"/>
+<style name="ChartSeriesColor2" isDefault="false" backcolor="#BEC2C6"/>
+<style name="ChartSeriesColor3" isDefault="false" backcolor="#EBD8D8"/>
+<style name="ChartSeriesColor4" isDefault="false" backcolor="#FFFFFF"/>
+<style name="ChartSeriesColor5" isDefault="false" backcolor="#9E3F3F"/>
+<style name="ChartSeriesColor6" isDefault="false" backcolor="#E5E5E5"/>
+<style name="ChartSeriesColor7" isDefault="false" backcolor="#FCF9E8"/>
+<style name="ChartCategoryAxisLabelFormat" isDefault="false" forecolor="#663333" fontName="SansSerif" fontSize="11" isBold="true" pdfFontName="Helvetica-Bold"/>
+<style name="ChartCategoryAxisTickFormat" isDefault="false" forecolor="#000000" fontName="SansSerif" fontSize="9" isBold="false" pdfFontName="Helvetica"/>
+<style name="ChartValueAxisLabelFormat" isDefault="false" forecolor="#663333" fontName="SansSerif" fontSize="11" isBold="true" pdfFontName="Helvetica-Bold"/>
+<style name="ChartValueAxisTickFormat" isDefault="false" forecolor="#000000" fontName="SansSerif" fontSize="9" isBold="false" pdfFontName="Helvetica"/>
+<style name="ChartContext" isDefault="false" backcolor="#C3D9D9"/>
+
+
+
+<!-- STYLES END -->

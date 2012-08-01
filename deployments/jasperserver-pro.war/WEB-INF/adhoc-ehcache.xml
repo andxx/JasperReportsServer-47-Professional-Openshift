@@ -1,0 +1,21 @@
+<ehcache name="adhocCache">
+
+    <diskStore path="java.io.tmpdir/jasperserver/ehcache/adhocCache"/>
+
+	<defaultCache maxElementsInMemory="10000" eternal="false"
+		overflowToDisk="true" timeToIdleSeconds="120" timeToLiveSeconds="120"
+		diskPersistent="false" diskExpiryThreadIntervalSeconds="120" />
+
+	<!-- cache used by ad hoc for caching datasets -->
+	<cache name="adhocCache" 
+		maxElementsInMemory="10000" 
+		eternal="false"
+		overflowToDisk="true" 
+		timeToIdleSeconds="7200" 
+		timeToLiveSeconds="43200"
+		diskPersistent="false"
+		statistics="true" />
+<!-- 	<cacheManagerPeerListenerFactory -->
+<!-- 		class="org.terracotta.ehcachedx.monitor.probe.ProbePeerListenerFactory" -->
+<!-- 		properties="monitorAddress=localhost, monitorPort=9889, memoryMeasurement=true" /> -->
+</ehcache>

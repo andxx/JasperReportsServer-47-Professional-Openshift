@@ -1,0 +1,32 @@
+<beans xsi:schemaLocation=" http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd" xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:util="http://www.springframework.org/schema/util">
+  <!--updater definitions so other bean files can add items to beans defined here,
+         instead of running tweakWar.js or manually hacking-->
+  <!--add hibernate hbm.xml-->
+  <bean id="addHibernateConfig" class="com.jaspersoft.jasperserver.api.common.util.spring.GenericBeanUpdaterDefinition">
+    <property name="order" value="10"/>
+    <property name="beanName" value="sessionFactory"/>
+    <property name="propertyName" value="mappingResources"/>
+    <property name="operation" value="append"/>
+  </bean>
+  <!--map an interface to a client impl-->
+  <bean id="mapClientClass" class="com.jaspersoft.jasperserver.api.common.util.spring.GenericBeanUpdaterDefinition">
+    <property name="order" value="10"/>
+    <property name="beanName" value="mappingResourceFactory"/>
+    <property name="propertyName" value="implementationClassMappings"/>
+    <property name="operation" value="append"/>
+  </bean>
+  <!--map an interface to a repo impl-->
+  <bean id="mapRepoClass" class="com.jaspersoft.jasperserver.api.common.util.spring.GenericBeanUpdaterDefinition">
+    <property name="order" value="10"/>
+    <property name="beanName" value="persistentMappings"/>
+    <property name="propertyName" value="implementationClassMappings"/>
+    <property name="operation" value="append"/>
+  </bean>
+  <!--add a message catalog-->
+  <bean id="addMessageCatalog" class="com.jaspersoft.jasperserver.api.common.util.spring.GenericBeanUpdaterDefinition">
+    <property name="order" value="10"/>
+    <property name="beanName" value="messageSource"/>
+    <property name="propertyName" value="basenames"/>
+    <property name="operation" value="append"/>
+  </bean>
+</beans>

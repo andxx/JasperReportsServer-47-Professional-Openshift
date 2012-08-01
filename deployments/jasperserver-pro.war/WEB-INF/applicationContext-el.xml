@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
+
+    <!-- 
+        This is the "parent", or template bean, for all expression evaluators.
+        The base class is used for evaluating expressions in the schema.
+        It's replaced by a subclass when used on a per-dataset basis.
+      -->
+    <bean id="expressionEvaluator" class="com.jaspersoft.commons.dataset.expr.ExpressionEvaluator" scope="prototype">
+        <!-- match sl config -->
+        <property name="dateFormat" value="MMM dd yyyy"/>
+    
+        <property name="objectTypeMapper" ref="objectTypeMapper"/>
+        
+        <!-- list of ScopeInitter impls that can mess around with the evaluator -->
+        <property name="scopeInitterList">
+            <list/>
+        </property>
+        <!-- generic expression factory -->
+        <property name="expressionFactory">
+            <bean class="com.jaspersoft.commons.dataset.expr.GenericExpressionFactory">
+                <!-- define your own functions!
+                     they must be impls of Operator
+                     they key is passed as the name
+                     NOTE: these impls don't do much anymore.
+                     You don't have to have a function defined here in order to use a function in an expression;
+                     you just have to map it to something in your dataset (generate sql or whatever).
+                  -->
+                <property name="functionMap">
+                    <map>
+                        <entry key="startsWith">
+                            <bean class="com.jaspersoft.commons.dataset.expr.StringMatchOperator"/>
+                        </entry>
+                        <entry key="endsWith">
+                            <bean class="com.jaspersoft.commons.dataset.expr.StringMatchOperator"/>
+                        </entry>
+                        <entry key="contains">
+                            <bean class="com.jaspersoft.commons.dataset.expr.StringMatchOperator"/>
+                        </entry>
+                        <entry key="length">
+                            <bean class="com.jaspersoft.commons.dataset.expr.GenericFunction">
+                                <property name="validName" value="length"/>
+                                <property name="objectType">
+                                    <bean class="org.springframework.beans.factory.config.FieldRetrievingFactoryBean">
+                                        <property name="staticField"><value>com.jaspersoft.commons.dataset.expr.ObjectType.INTEGER</value></property>
+                                    </bean>
+                                </property>
+                                <property name="anyAry" value="false"/>
+                                <property name="binary" value="false"/>
+                                <property name="unary" value="true"/>
+                            </bean>
+                        </entry>
+                        <entry key="isNull">
+                            <bean class="com.jaspersoft.commons.dataset.expr.GenericFunction">
+                                <property name="validName" value="isNull"/>
+                                <property name="objectType">
+                                    <bean class="org.springframework.beans.factory.config.FieldRetrievingFactoryBean">
+                                        <property name="staticField"><value>com.jaspersoft.commons.dataset.expr.ObjectType.BOOLEAN</value></property>
+                                    </bean>
+                                </property>
+                                <property name="anyAry" value="false"/>
+                                <property name="binary" value="false"/>
+                                <property name="unary" value="true"/>
+                            </bean>
+                        </entry>
+                    </map>
+                </property>
+            </bean>
+        </property>
+    </bean>
+
+    <!-- this map is shared among several beans so I'm breaking it out to make life easier -->
+    
+    <bean id="objectTypeMapper" class="com.jaspersoft.commons.dataset.expr.ObjectTypeMapper">
+        <property name="objectTypeMap">
+            <map>
+                <entry key="java.lang.String" value="String"/>
+                <entry key="java.lang.Character" value="Character"/>
+                <entry key="java.lang.Byte" value="Integer"/>
+                <entry key="java.lang.Short" value="Integer"/>
+                <entry key="java.lang.Integer" value="Integer"/>
+                <entry key="java.lang.Long" value="Integer"/>
+                <entry key="java.lang.Float" value="Decimal"/>
+                <entry key="java.lang.Double" value="Decimal"/>
+                <entry key="java.lang.Number" value="Decimal"/>
+                <entry key="java.util.Date" value="Date"/>
+                <entry key="java.sql.Date" value="Date"/>
+                <entry key="java.sql.Time" value="Date"/>
+                <entry key="java.sql.Timestamp" value="Timestamp"/>
+                <entry key="java.math.BigDecimal" value="Decimal"/>
+                <entry key="java.math.BigInteger" value="Integer"/>
+                <!--entry key="java.lang.Boolean" value="Integer"/-->
+                <entry key="java.lang.Boolean" value="Boolean"/>
+                <entry key="org.springframework.security.Authentication" value="Authentication"/>
+                <entry key="java.util.Map" value="Map"/>
+                <entry key="java.util.Collection" value="Collection"/>
+            </map>
+        </property>
+    </bean>
+
+    
+</beans>

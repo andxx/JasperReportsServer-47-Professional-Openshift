@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow" xmlns:ns0="http://www.w3.org/2001/XMLSchema-instance"
+      ns0:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd"
+      start-state="initAction">
+
+    <action-state id="initAction">
+        <evaluate expression="proRepositoryAction"/>
+        <evaluate expression="reportOptionsRepositoryAction.collectReportOptions"/>
+        <transition on="collected" to="defaultView"/>
+    </action-state>
+
+    <view-state id="defaultView" view="modules/repository/defaultView">
+        <on-entry>
+            <set name="flowScope.prevForm" value="'defaultView'"/>
+        </on-entry>
+        <transition on="success" to="defaultView"/>
+        <transition on="Remove" to="remove"/>
+        <transition on="ViewReport" to="chooseViewReport"/>
+        <!--<transition on="ViewOlapModel" to="viewOlapModel"/>-->
+        <transition on="ScheduleReport" to="chooseScheduling"/>
+        <transition on="runReportInBackground" to="chooseRunInBackground"/>
+        <transition on="editAdhoc" to="editAdhoc"/>
+        <transition on="goToPage" to="goToPage"/>
+        <!-- Handle back from SubFlows -->
+        <transition on="back" to="initAction"/>
+        <on-exit>
+            <evaluate expression="reportOptionsRepositoryAction.setExpandedReportOptions"/>
+        </on-exit>
+    </view-state>
+
+    <view-state id="homeView" view="home/home">
+        <on-entry>
+            <set name="flowScope.prevForm" value="'homeView'"/>
+        </on-entry>
+        <transition on="cancel" to="cancel"/>
+    </view-state>
+
+    <action-state id="goToPage">
+        <evaluate expression="proRepositoryAction"/>
+        <transition on="success" to="initAction"/>
+    </action-state>
+
+    <action-state id="remove">
+        <evaluate expression="proRepositoryAction"/>
+        <transition on="success" to="initAction"/>
+        <transition on="error" to="displayError"/>
+    </action-state>
+
+    <decision-state id="chooseViewReport">
+        <if test="requestParameters.resourceType == 'com.jaspersoft.ji.adhoc.AdhocReportUnit'" then="viewAdhocReport"/>
+        <if test="requestParameters.resourceType == 'com.jaspersoft.jasperserver.api.metadata.jasperreports.domain.ReportUnit'"
+            then="viewReport"/>
+        <if test="requestParameters.resourceType == 'com.jaspersoft.ji.report.options.metadata.ReportOptions'"
+            then="viewReportOptions" else="initAction"/>
+    </decision-state>
+
+    <subflow-state id="editAdhoc" subflow="adhocFlow">
+        <input name="adhocReport" value="requestParameters.resource"/>
+        <transition on="done" to="initAction"/>
+    </subflow-state>
+
+    <subflow-state id="viewReport" subflow="viewReportFlow">
+        <input name="reportUnit" value="requestParameters.resource"/>
+        <input name="inhibitRequestParsing" value="true"/>
+        <transition on="done" to="initAction"/>
+        <transition on="cancel" to="initAction"/>
+    </subflow-state>
+
+    <subflow-state id="viewReportOptions" subflow="viewReportFlow">
+        <input name="reportOptionsURI" value="requestParameters.resource"/>
+        <input name="inhibitRequestParsing" value="true"/>
+        <transition on="done" to="initAction"/>
+        <transition on="cancel" to="initAction"/>
+    </subflow-state>
+
+    <subflow-state id="viewAdhocReport" subflow="viewAdhocReportFlow">
+        <input name="reportUnit" value="requestParameters.resource"/>
+        <input name="inhibitRequestParsing" value="true"/>
+        <transition on="done" to="initAction"/>
+        <transition on="cancel" to="initAction"/>
+    </subflow-state>
+
+    <subflow-state id="viewDashboard" subflow="dashboardRuntimeFlow">
+        <input name="dashboardResource" value="requestParameters.resource"/>
+        <transition on="done" to="initAction"/>
+        <transition on="cancel" to="initAction"/>
+    </subflow-state>
+
+    <!--
+        <subflow-state id="viewOlapModel" flow="viewOlapModelFlow">
+            <attribute-mapper>
+                <input-mapping as="name" value="${requestParameters.resource}"/>
+            </attribute-mapper>
+            <transition on="done" to="initAction"/>
+            <transition on="cancel" to="initAction"/>
+            <transition on="displayError" to="initAction"/>
+        </subflow-state>
+    -->
+    <view-state id="displayError" view="modules/flowError">
+        <on-entry>
+            <set name="flowScope.prevForm" value="'displayError'"/>
+        </on-entry>
+        <transition on="displayError" to="initAction"/>
+    </view-state>
+
+    <decision-state id="chooseScheduling">
+        <if test="requestParameters.resourceType == 'com.jaspersoft.ji.report.options.metadata.ReportOptions'"
+            then="reportOptionsJobs" else="reportJobs"/>
+    </decision-state>
+
+    <subflow-state id="reportJobs" subflow="reportSchedulingFlow">
+        <input name="reportUnitURI" value="requestParameters.resource"/>
+        <transition on="done" to="initAction"/>
+    </subflow-state>
+
+    <subflow-state id="reportOptionsJobs" subflow="reportSchedulingFlow">
+        <input name="reportOptionsURI" value="requestParameters.resource"/>
+        <transition on="done" to="initAction"/>
+    </subflow-state>
+
+    <decision-state id="chooseRunInBackground">
+        <if test="requestParameters.resourceType == 'com.jaspersoft.ji.report.options.metadata.ReportOptions'"
+            then="runReportOptionsInBackground" else="runReportInBackground"/>
+    </decision-state>
+
+    <subflow-state id="runReportInBackground" subflow="reportJobFlow">
+        <input name="isNewMode" value="true"/>
+        <input name="isRunNowMode" value="true"/>
+        <input name="reportUnitURI" value="requestParameters.resource"/>
+        <transition on="cancel" to="initAction"/>
+        <transition on="saved" to="initAction"/>
+    </subflow-state>
+
+    <subflow-state id="runReportOptionsInBackground" subflow="reportJobFlow">
+        <input name="isNewMode" value="true"/>
+        <input name="isRunNowMode" value="true"/>
+        <input name="reportOptionsURI" value="requestParameters.resource"/>
+        <transition on="cancel" to="initAction"/>
+        <transition on="saved" to="initAction"/>
+    </subflow-state>
+
+    <end-state id="cancel"/>
+
+    <!-- exceptions handling -->
+    <decision-state id="backFromError">
+        <if test="not (flowScope.prevForm == null or flowScope.prevForm == '')" then="${flowScope.prevForm}"
+            else="cancel"/>
+    </decision-state>
+
+    <view-state id="errorPage" view="modules/system/errorPage"/>
+
+    <global-transitions>
+        <transition on="backFromErrorPage" to="backFromError"/>
+        <transition on-exception="java.lang.Throwable" to="errorPage"/>
+    </global-transitions>
+
+    <!-- end exceptions handling -->
+    <bean-import resource="spring-config.xml"/>
+
+    <bean-import resource="repositoryBeans.xml"/>
+
+    <bean-import resource="proRepositoryBeans.xml"/>
+
+    <bean-import resource="reportOptionsRepositoryBeans.xml"/>
+
+</flow>

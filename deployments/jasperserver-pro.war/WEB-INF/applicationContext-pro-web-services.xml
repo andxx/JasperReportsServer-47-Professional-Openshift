@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
+   <bean class="com.jaspersoft.jasperserver.api.common.util.spring.GenericBeanUpdater" lazy-init="false">
+		<property name="definition" ref="addWSResourceHandler"/>
+		<property name="value">
+			<map>
+                <entry key="ReportOptionsResource" value="com.jaspersoft.ji.ws.axis2.handlers.ReportOptionsHandler"/>
+				<entry key="DashboardUnit" value="com.jaspersoft.ji.ws.axis2.handlers.DashboardUnitHandler"/>
+				<entry key="Domain" value="com.jaspersoft.ji.ws.axis2.handlers.DomainDataSourceHandler"/>
+				<entry key="accessGrantSchema" value="com.jaspersoft.jasperserver.ws.axis2.repository.FileResourceHandler"/>
+                <entry key="adhocDataView" value="com.jaspersoft.ji.ws.axis2.handlers.AdhocDataViewHandler"/>
+            </map>
+		</property>
+        <property name="valueType" value="stringMap"/>
+	</bean>
+
+	<bean id="proReportSchedulerServiceImpl" class="com.jaspersoft.ji.ws.axis2.scheduling.ReportOptionsSchedulerService" parent="reportSchedulerServiceImpl">
+		<property name="scheduler" ref="reportOptionsSchedulingService"/>
+		<property name="beanTraslator" ref="proReportJobBeanTraslator"/>
+		<property name="reportOptionsService" ref="reportOptionsService"/>
+	</bean>
+
+	<bean id="proReportSchedulerService" class="org.springframework.aop.framework.ProxyFactoryBean" parent="reportSchedulerService">
+		<property name="target" ref="proReportSchedulerServiceImpl"/>
+	</bean>
+
+	<bean id="proReportJobBeanTraslator" class="com.jaspersoft.ji.ws.axis2.scheduling.ProReportJobBeanTraslator" parent="reportJobBeanTraslator">
+		<property name="reportOptionsService" ref="reportOptionsService"/>
+	</bean>
+
+    <bean id="mtUserAndRoleManagementServiceTarget" class="com.jaspersoft.ji.ws.axis2.authority.MTUserAndRoleManagementServiceImpl">
+        <property name="userAndRoleService" ref="${bean.userAndRoleService}"/>
+    </bean>
+
+    <bean id="mtUserAndRoleManagementService" class="org.springframework.aop.framework.ProxyFactoryBean">
+      <property name="proxyInterfaces">
+          <value>com.jaspersoft.jasperserver.ws.axis2.authority.UserAndRoleManagementService</value>
+      </property>
+      <property name="interceptorNames">
+        <list>
+          <idref bean="userAndRoleManagementServiceSecurity"/>
+          <idref local="mtUserAndRoleManagementServiceTarget"/>
+        </list>
+      </property>
+    </bean>
+
+    <bean id="mtPermissionsManagementService" class="com.jaspersoft.ji.ws.axis2.authority.MTPermissionsManagementServiceImpl">
+        <property name="permissionsService" ref="${bean.permissionsService}"/>
+    </bean>
+
+    <bean id="mtResourceActionResolver" class="com.jaspersoft.ji.ws.axis2.repository.RepositoryResourceActionResolver">
+        <property name="notDeletableResources">
+            <set>
+                <value><![CDATA[/public$]]></value>
+                <value><![CDATA[.*/organizations/[^/]+$]]></value>
+                <value><![CDATA[.*/organizations$]]></value>
+            </set>
+        </property>
+        <property name="notWritableFolders">
+            <set>
+                <value><![CDATA[.*/organizations$]]></value>
+            </set>
+        </property>
+    </bean>
+</beans>

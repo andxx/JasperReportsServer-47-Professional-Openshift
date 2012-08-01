@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow" xmlns:ns0="http://www.w3.org/2001/XMLSchema-instance"
+      ns0:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd"
+      start-state="startAdHoc">
+
+    <input name="reportUnit"/>
+
+    <!-- success = first time, need to select a topic -->
+    <!-- yes = existing report, go straight to full adhoc view, skipping topic -->
+    <!-- customEdit = we're editing an ARU with a custom editor so we have to escape Webflow -->
+    <action-state id="startAdHoc">
+        <on-entry>
+            <set name="flowScope.design" value="requestParameters.design"/>
+            <set name="flowScope.viewReport" value="requestParameters.viewReport"/>
+            <set name="flowScope.viewAsDashboardFrame" value="requestParameters.viewAsDashboardFrame"/>
+            <set name="flowScope.clientKey" value="requestParameters.clientKey"/>
+        </on-entry>
+        <evaluate expression="adhocAction"/>
+        <transition on="createReport" to="realmsView"/>
+        <transition on="editReport" to="redirToMainView"/>
+        <transition on="customEdit" to="redirCustomEditor"/>
+        <transition on="error" to="displayError"/>
+    </action-state>
+
+    <action-state id="restartAfterDataratorMeltdown">
+        <evaluate expression="adhocAction"/>
+        <transition on="createReport" to="realmsView"/>
+        <transition on="editReport" to="redirToMainView"/>
+        <transition on="customEdit" to="redirCustomEditor"/>
+        <transition on="error" to="displayError"/>
+    </action-state>
+
+    <view-state id="redirToMainView" view="modules/adhoc/redirToMainView">
+        <transition on="initForExistingReport" to="initForExistingReport"/>
+    </view-state>
+
+    <!-- tell parent flow to redirect to the custom editor -->
+    <end-state id="redirCustomEditor" view="externalRedirect:contextRelative:${flowScope.editorURI}"/>
+
+    <!-- todo: make separate realms page -->
+    <view-state id="realmsView" view="modules/adhoc/adhocStart">
+        <on-entry>
+            <set name="flowScope.prevForm" value="'realmsView'"/>
+        </on-entry>
+        <transition on="startAdHocWithTopic" to="initForTopic"/>
+        <transition on="startQueryBuilder" to="queryBuilder"/>
+        <transition on="startAdhocForOlap" to="initForOLAP"/>
+    </view-state>
+
+    <subflow-state id="queryBuilder" subflow="queryBuilderFlow">
+        <input name="reportType" value="requestParameters.reportType"/>
+        <transition on="finishWizard" to="initForQueryBuilder"/>
+        <transition on="cancel" to="startAdHoc"/>
+    </subflow-state>
+
+    <!-- different paths to init adhoc objects & pass on to full adhoc view -->
+    <action-state id="initForTopic">
+        <on-entry>
+            <set name="flowScope.viewReport" value="requestParameters.viewReport"/>
+            <set name="flowScope.clientKey" value="requestParameters.clientKey==null ? flowScope.clientKey : requestParameters.clientKey"/>
+            <set name="flowScope.fromDesigner" value="requestParameters.fromDesigner"/>
+        </on-entry>
+        <evaluate expression="adhocAction"/>
+        <transition on="success" to="mainView"/>
+        <transition on="error" to="displayError"/>
+    </action-state>
+
+    <action-state id="initForQueryBuilder">
+        <on-entry>
+            <set name="flowScope.viewReport" value="requestParameters.viewReport"/>
+            <set name="flowScope.clientKey" value="requestParameters.clientKey==null ? flowScope.clientKey : requestParameters.clientKey"/>
+            <set name="flowScope.fromDesigner" value="requestParameters.fromDesigner"/>
+        </on-entry>
+        <evaluate expression="adhocAction"/>
+        <transition on="success" to="mainView"/>
+        <transition on="error" to="displayError"/>
+    </action-state>
+
+    <action-state id="initForExistingReport">
+        <on-entry>
+            <set name="flowScope.viewReport" value="requestParameters.viewReport"/>
+            <set name="flowScope.clientKey" value="requestParameters.clientKey==null ? flowScope.clientKey : requestParameters.clientKey"/>
+            <set name="flowScope.fromDesigner" value="requestParameters.fromDesigner"/>
+        </on-entry>
+        <evaluate expression="adhocAction"/>
+        <transition on="success" to="mainView"/>
+        <transition on="initForExistingOLAPReport" to="initForExistingOLAPReport"/>
+        <transition on="error" to="displayError"/>
+    </action-state>
+
+    <action-state id="initForOLAP">
+        <on-entry>
+            <set name="flowScope.viewReport" value="requestParameters.viewReport"/>
+            <set name="flowScope.clientKey" value="requestParameters.clientKey==null ? flowScope.clientKey : requestParameters.clientKey"/>
+            <set name="flowScope.fromDesigner" value="requestParameters.fromDesigner"/>
+        </on-entry>
+        <evaluate expression="adhocOLAPAction"/>
+        <transition on="success" to="mainView"/>
+        <transition on="error" to="displayError"/>
+    </action-state>
+
+    <action-state id="initForExistingOLAPReport">
+        <evaluate expression="adhocOLAPAction"/>
+        <transition on="success" to="mainView"/>
+        <transition on="error" to="displayError"/>
+    </action-state>
+
+    <!-- full view: ajax is now outside of webflow, so your only transition is to exit -->
+    <view-state id="mainView" view="${flowScope.mainViewName}">
+        <on-entry>
+            <set name="flowScope.prevForm" value="'mainView'"/>
+        </on-entry>
+        <transition on="cancel" to="done"/>
+    </view-state>
+
+    <view-state id="displayError" view="modules/flowError">
+        <on-entry>
+            <set name="flowScope.prevForm" value="'displayError'"/>
+        </on-entry>
+        <transition on="displayError" to="init"/>
+    </view-state>
+
+    <end-state id="done"/>
+    <end-state id="cancelWithError" view="flowRedirect:searchFlow?lastMode=true&amp;errorPopupMessage=${requestScope.errorPopupMessage}"/>
+
+    <!-- exceptions handling -->
+    <decision-state id="backFromError">
+        <if test="not (flowScope.prevForm == null or flowScope.prevForm == '')" then="${flowScope.prevForm}"
+            else="done"/>
+    </decision-state>
+
+    <view-state id="errorPage" view="modules/system/errorPage"/>
+
+    <global-transitions>
+        <transition on="backFromErrorPage" to="backFromError"/>
+        <transition on-exception="com.jaspersoft.commons.datarator.exception.DataratorRetrievalException"
+                    to="restartAfterDataratorMeltdown"/>
+         <transition on-exception="com.jaspersoft.jasperserver.api.JSNotImplementedException" to="cancelWithError"/>
+        <transition on-exception="java.lang.Throwable" to="errorPage"/>
+    </global-transitions>
+
+    <!-- end exceptions handling -->
+    <bean-import resource="spring-config.xml"/>
+
+    <bean-import resource="viewReportBeans.xml"/>
+
+    <bean-import resource="adhocActionBeans.xml"/>
+
+</flow>

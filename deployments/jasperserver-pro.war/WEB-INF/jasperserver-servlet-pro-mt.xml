@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
+
+    <bean id="mtServletPropertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="location" value="/WEB-INF/js.spring.properties" />
+    </bean>
+
+    <bean id="proUrlHandlerMapping" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+        <property name="properties">
+            <props>
+                <!-- note: any new anonymous or user pages must be added
+                     to the filterInvocationInterceptor bean in applicationContext-security.xml
+                     All other pages require ROLE_ADMINISTRATOR to access
+                 -->
+				<prop key="/fileview/**">jsFileViewContr</prop>
+
+                <!-- anonymous pages -->
+                <prop key="/login.html">mtjsCommContr</prop>
+                <prop key="/logout.html">mtjsCommContr</prop>
+                <prop key="/exituser.html">mtjsCommContr</prop>
+                <prop key="/loginerror.html">mtjsCommContr</prop>
+                <prop key="/error.html">mtjsCommContr</prop>
+                <prop key="/encrypt.html">mtjsCommContr</prop>
+                <!-- user pages -->
+                <prop key="/loginsuccess.html">loginController</prop>
+                <prop key="/home.html">loginController</prop>
+                <!-- OLAP pages -->
+                <prop key="/olap/viewOlap.html">olapModelController</prop>
+                <prop key="/olap/error.html">olapContr</prop>
+                <prop key="/olap/busy.html">olapContr</prop>
+                <prop key="/olap/flush.html">olapContr</prop>
+                <prop key="/olap/properties.html">olapContr</prop>
+                <prop key="/listOlapViews.html">olapViewListController</prop>
+
+                <!-- admin pages -->
+                <prop key="/**/flow.html">flowController</prop>
+                <prop key="/**/flowFile/**">flowController</prop>
+                <prop key="/menutest.html">mtjsCommContr</prop>
+                <prop key="/heartbeat.html">mtjsCommContr</prop>
+                <prop key="/heartbeatInfo.html">mtjsCommContr</prop>
+				<prop key="/reportimage">reportImageController</prop>
+				<prop key="/reportresource">reportResourceController</prop>
+				<prop key="/jrpxml">xmlExportController</prop>
+
+				<!-- report execution cancel -->
+				<prop key="/viewReportCancel.html">reportExecutionController</prop>
+				<prop key="/viewReportAsyncCancel.html">reportExecutionController</prop>
+				<prop key="/viewReportPageUpdateCheck.html">reportExecutionController</prop>
+
+                <!-- System error pages -->
+                <prop key="/404.html">systemErrorController</prop>
+                <prop key="/500.html">systemErrorController</prop>
+			</props>
+        </property>
+    </bean>
+
+    <!-- js common controller -->
+    <bean id="mtjsCommContr" parent="jsCommContr" class="com.jaspersoft.jasperserver.multipleTenancy.MTJSCommonController">
+        <property name="methodNameResolver" ref="mtParamResolver"/>
+        <property name="tenantService" ref="${bean.tenantService}"/>
+        <property name="auditContext" ref="${bean.auditContext}"/>
+    </bean>
+
+
+    <!-- js mac method name resolver -->
+    <bean id="mtParamResolver" class="org.springframework.web.servlet.mvc.multiaction.PropertiesMethodNameResolver">
+        <property name="mappings">
+            <props>
+                <prop key="/home.html">homePage</prop>
+                <prop key="/login.html">login</prop>
+                <prop key="/loginsuccess.html">loginSuccess</prop>
+                <prop key="/logout.html">logout</prop>
+                <prop key="/exituser.html">exitUser</prop>
+                <prop key="/loginerror.html">modules/loginError</prop>
+                <prop key="/error.html">securityError</prop>
+                <prop key="/menutest.html">menuTest</prop>
+                <prop key="/heartbeat.html">heartbeat</prop>
+                <prop key="/heartbeatInfo.html">heartbeatInfo</prop>
+                <prop key="/olap/viewOlap.html">modules/olap/viewOlap</prop>
+                <prop key="/olap/busy.html">modules/olap/busy</prop>
+                <prop key="/olap/flush.html">modules/olap/flush</prop>
+                <prop key="/olap/properties.html">modules/olap/properties</prop>
+                <prop key="/olap/error.html">modules/system/errorPage</prop>
+                <prop key="/encrypt.html">encryptionPage</prop>
+            </props>
+        </property>
+    </bean>
+
+</beans>

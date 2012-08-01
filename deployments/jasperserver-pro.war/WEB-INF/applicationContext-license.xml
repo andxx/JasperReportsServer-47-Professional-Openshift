@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd">
+       
+    <!-- license controller, used in jasperserver-servlet.xml -->
+    <bean id="licContr" class="com.jaspersoft.ji.license.LicenseController">
+        <property name="methodNameResolver" ref="licParamResolver"/>
+        <property name="repository">
+            <ref bean="${bean.repositoryService}"/>
+        </property>
+        <property name="userAuthService">
+            <ref bean="${bean.internalUserAuthorityService}"/>
+        </property>
+        <property name="objPermService">
+            <ref bean="${bean.objectPermissionService}"/>
+        </property>
+    </bean>
+
+    <bean id="licHandlerMapping" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+        <property name="mappings">
+            <props>
+                <prop key="/licensefailed.html">licContr</prop>
+                <prop key="/licenseAnalysisFeatureUnavailable.html">licContr</prop>
+                <prop key="/licenseFeatureUnavailable.html">licContr</prop>
+            </props>
+        </property>
+    </bean>
+
+    <!-- used by above -->
+    <bean id="licParamResolver" class="org.springframework.web.servlet.mvc.multiaction.PropertiesMethodNameResolver">
+      <property name="mappings">
+        <props>
+          <prop key="/licensefailed.html">licenseFailed</prop>
+          <prop key="/licenseAnalysisFeatureUnavailable.html">licenseAnalysisFeatureUnavailable</prop>
+          <prop key="/licenseFeatureUnavailable.html">licenseFeatureUnavailable</prop>
+        </props>
+      </property>
+    </bean>
+  
+    <!-- allow any roles for license failed page. -->
+    <bean class="com.jaspersoft.jasperserver.api.common.util.spring.GenericBeanUpdater">
+        <property name="definition" ref="setRolesForURL"/>
+        <property name="value">
+            <value>
+            /licensefailed.html=ROLE_ADMINISTRATOR,ROLE_USER,ROLE_ANONYMOUS
+            /licensefeatureunavailable.html=ROLE_ADMINISTRATOR,ROLE_USER
+            </value>
+        </property>
+        <property name="valueType" value="string"/>
+    </bean>
+    
+    <!-- license filter, used in appCon-security.xml (acegi filter chain) -->
+    <bean id="JILicenseFilter" class="com.jaspersoft.ji.license.JILicenseFilter">
+        <property name="licenseFailedUrl">
+            <value>/licensefailed.html</value>
+        </property>
+    </bean>
+
+    <bean id="licenseCheckFilter" class="com.jaspersoft.ji.license.LicenseCheckFilter">
+        <property name="userService">
+            <ref bean="${bean.internalUserAuthorityService}"/>
+        </property>
+        <property name="mailService" ref="mailService"/>
+    </bean>
+
+    <!-- set up license filter -->
+    <bean class="com.jaspersoft.jasperserver.api.common.util.spring.GenericBeanUpdater">
+        <property name="definition" ref="insertFilter"/>
+        <property name="value" value="JILicenseFilter,licenseCheckFilter,"/>
+        <property name="before" value="exceptionTranslationFilter"/>
+        <property name="valueType" value="string"/>
+    </bean>
+
+    <bean id="wsJILicenseFilter" class="com.jaspersoft.ji.license.WSJILicenseFilter">
+        <property name="licenseFailedUrl" value=""/>
+    </bean>
+
+    <bean class="com.jaspersoft.jasperserver.api.common.util.spring.GenericBeanUpdater">
+        <property name="definition" ref="insertFilter"/>
+        <property name="value" value="wsJILicenseFilter,"/>
+        <property name="before" value="wsBasicAuthExceptionTranslationFilter"/>
+        <property name="valueType" value="string"/>
+    </bean>
+
+    <bean id="restJILicenseFilter" class="com.jaspersoft.ji.license.RestLicenseFilter">
+        <property name="licenseFailedUrl" value=""/>
+    </bean>
+
+    <bean class="com.jaspersoft.jasperserver.api.common.util.spring.GenericBeanUpdater">
+        <property name="definition" ref="insertFilter"/>
+        <property name="value" value="restJILicenseFilter,"/>
+        <property name="after" value="/rest/login="/>
+        <property name="valueType" value="string"/>
+    </bean>
+
+    <bean class="com.jaspersoft.jasperserver.api.common.util.spring.GenericBeanUpdater">
+        <property name="definition" ref="insertFilter"/>
+        <property name="value" value="restJILicenseFilter,"/>
+        <property name="after" value="/rest/**="/>
+        <property name="valueType" value="string"/>
+    </bean>
+
+    <bean id="licenseBean" class="com.jaspersoft.ji.license.LicenseBean">
+        <property name="licenseServerActivationPort" value="${property.licenseServerActivationPort}" />
+    </bean>
+
+    <!-- add message catalog -->
+    <bean class="com.jaspersoft.jasperserver.api.common.util.spring.GenericBeanUpdater">
+        <property name="definition" ref="addMessageCatalog"/>
+        <property name="value">
+            <list>
+                <value>${resource.root}/bundles/LicenseMessages</value>
+            </list>
+        </property>
+        <property name="valueType" value="stringList"/>
+    </bean>
+
+    <bean class="com.jaspersoft.ji.license.UserAuthorityServiceInjector">
+        <property name="userAuthorityService" ref="${bean.userAuthorityService}"/>
+        <property name="repositoryService" ref="${bean.repositoryService}"/>
+        <property name="tenantService" ref="tenantService"/>
+
+        <!--<property name="auditContext" ref="${bean.auditContext}"/>-->
+        <property name="userAuthorityServiceAwareClasses">
+            <value>com.jaspersoft.ji.license.LicenseManager</value>
+        </property>
+    </bean>
+
+    <bean id="licenseCheckAspect" class="com.jaspersoft.ji.license.LicenseCheckAspect">
+    </bean>
+
+    <aop:config>
+        <aop:aspect ref="licenseCheckAspect">
+            <aop:pointcut id="listExecution"
+                        expression="execution(* com.jaspersoft.jasperserver.ws.axis2.RepositoryServiceContext.list(String))
+                        and bean(managementServiceImpl)
+                        and args(requestXmlString)"/>
+            <aop:around pointcut-ref="listExecution"
+                        method="list"/>
+            <aop:pointcut id="runReportExecution"
+                        expression="execution(* com.jaspersoft.jasperserver.api.engine.common.service.EngineService.execute(com.jaspersoft.jasperserver.api.common.domain.ExecutionContext, com.jaspersoft.jasperserver.api.engine.common.domain.Request))
+                        and bean(engineService)
+                        and args(executionContext, request)"/>
+            <aop:around pointcut-ref="runReportExecution"
+                        method="runReport"/>
+            <aop:pointcut id="MSCallExecution"
+                        expression="execution(* com.jaspersoft.jasperserver.ws.axis2.RepositoryServiceContext*.*(..))
+                        and bean(managementServiceImpl)"/>
+            <aop:around pointcut-ref="MSCallExecution"
+                        method="executeMSCall"/>
+            <aop:pointcut id="schedulerCallExecution"
+                        expression="execution(* com.jaspersoft.jasperserver.ws.axis2.scheduling.ReportSchedulerService*.*(..))
+                        and bean(proReportSchedulerServiceImpl)"/>
+            <aop:around pointcut-ref="schedulerCallExecution"
+                        method="executeSchedulerCall"/>  
+        </aop:aspect>
+    </aop:config>
+
+</beans>

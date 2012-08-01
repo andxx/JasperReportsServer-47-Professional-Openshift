@@ -1,0 +1,64 @@
+/* locally specific toolbar button styles */
+        
+        .buttonSet #presentationMode b {
+            background-image: url(../images/button_presentationMode.png);
+        }
+        
+        .buttonSet #save b {
+            background-image: url(../images/button_save.png);
+        }
+        
+        .buttonSet #export b {
+            background-image: url(../images/button_export.png);
+        }
+
+        .buttonSet #selectFields b {
+            background-image: url(../images/button_presentationMode.png);
+        }
+
+        
+        #stateControls.buttonSet {
+            left:80px;
+        }
+        
+        .buttonSet #undo b {
+            background-image: url(../images/button_undo.png);
+        }
+        
+        .buttonSet #redo b {
+            background-image: url(../images/button_redo.png);
+        }
+        
+        .buttonSet #undoAll b {
+            background-image: url(../images/button_reset.png);
+        }
+        
+        #functions.buttonSet {
+            left:160px;
+        }
+        
+        .buttonSet #sampleData b {
+            background-image: url(../images/button_sampleData.png);
+        }
+        
+        .buttonSet #pivot b {
+            background-image: url(../images/button_pivot.png);
+        }
+        
+        .buttonSet #sort b {
+            background-image: url(../images/button_sort.png);
+        }
+        
+        .buttonSet #filter b {
+            background-image: url(../images/button_filter.png);
+        }
+        
+        .buttonSet #styles b {
+            background-image: url(../images/button_styles.png);
+        }
+        
+        .buttonSet #pageProperties b {
+            background-image: url(../images/button_objects.png);
+        }
+
+        

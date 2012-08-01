@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:lang="http://www.springframework.org/schema/lang"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+       http://www.springframework.org/schema/lang http://www.springframework.org/schema/lang/spring-lang-3.1.xsd">
+
+    <bean id="viewNameTranslator" class="org.springframework.web.servlet.view.DefaultRequestToViewNameTranslator"/>
+
+    <bean id="adhocAjaxParamResolver" class="org.springframework.web.servlet.mvc.multiaction.ParameterMethodNameResolver">
+        <property name="paramName" value="action"/>
+    </bean>
+
+    <bean id="adhocHandlerMapping" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+        <property name="mappings">
+            <props>
+				<prop key="/adhoc/table.html">adhocTableAjaxController</prop>
+				<prop key="/adhoc/crosstab.html">adhocCrosstabAjaxController</prop>
+				<prop key="/adhoc/chart.html">adhocChartAjaxController</prop>
+				<prop key="/adhoc/status.html">adhocController</prop>
+                <prop key="/dashboard/dashboard.html">dashboardAjaxController</prop>
+                <prop key="/reportGenerator.html">reportGenerator</prop>
+                <prop key="/dataViewConverter.html">dataViewConverter</prop>
+			</props>
+		</property>
+	</bean>
+
+            <!-- Make maxSize bigger if you are displaying dashboards with 10+ frames and you are getting image loading problems -->
+    <bean id="drillThroughRSAccessor" class="com.jaspersoft.jasperserver.war.util.LRUSessionObjectAccessor">
+        <property name="listSessionName" value="drillThroughRSSerie"/>
+        <property name="maxSize" value="10"/>
+        <property name="listener">
+        	<bean class="com.jaspersoft.jasperserver.war.util.SessionReportListener">
+        		<property name="virtualizerFactory">
+        			<ref bean="fileVirtualizerFactory"/>
+        		</property>
+        	</bean>
+        </property>
+    </bean>
+
+    <bean id="adhocMonitor" class="com.jaspersoft.ji.adhoc.action.AdhocMonitorHolder">
+        <property name="engine" ref="adhocEngineService"/>
+    </bean>
+    
+    <lang:groovy id="adhocModChecker"
+          refresh-check-delay="5000"
+          script-source="/WEB-INF/groovy/action/AdhocModChecker.groovy">
+        <lang:property name="engine" ref="adhocEngineService"/>
+    </lang:groovy>
+    
+    <bean id="adhocAndDashboardController" class="com.jaspersoft.ji.adhoc.action.AdhocAjaxController">
+        <property name="methodNameResolver" ref="adhocAjaxParamResolver"/>
+        <property name="repository" ref="easyXMLizedRepository"/>
+        <property name="engine" ref="adhocEngineService"/>
+        <property name="messages" ref="messageSource"/>
+        <property name="auditContext" ref="${bean.auditContext}"/>
+        <property name="tenantService" ref="${bean.hibernateTenantService}"/>
+        <property name="drillThroughRSAccessor" ref="drillThroughRSAccessor"/>
+        <property name="dataViewService" ref="adhocDataViewService"/>
+        <property name="referenceDetectionService" ref="adhocReferenceDetectionService"/>
+        <property name="maxDependentReports" value="20"/>
+        <property name="requestMonitorList">
+        	<list>
+	        	<ref bean="adhocMonitor"/>
+        	</list>
+        </property>
+    </bean>
+
+    <bean id="adhocController" class="com.jaspersoft.ji.adhoc.action.AdhocAjaxController" parent="adhocAndDashboardController">
+        <property name="requestMonitorList">
+        	<list merge="true">
+	        	<ref bean="adhocModChecker"/>
+        	</list>
+        </property>
+    </bean>
+
+    <bean id="adhocTableAjaxController" class="com.jaspersoft.ji.adhoc.action.AdhocTableAjaxController" parent="adhocController"/>
+
+    <bean id="adhocCrosstabAjaxController" class="com.jaspersoft.ji.adhoc.action.AdhocCrosstabAjaxController" parent="adhocController"/>
+
+    <bean id="adhocChartAjaxController" class="com.jaspersoft.ji.adhoc.action.AdhocChartAjaxController" parent="adhocController"/>
+
+    <bean id="dashboardAjaxController" class="com.jaspersoft.ji.adhoc.action.DashboardAjaxController" parent="adhocAndDashboardController"/>
+
+
+    <bean id="reportGenerator" class="com.jaspersoft.ji.adhoc.action.ReportGeneratorController">
+        <property name="methodNameResolver" ref="adhocAjaxParamResolver"/>
+        <property name="dataViewService" ref="adhocDataViewService"/>
+        <property name="resourceService" ref="resourceService"/>
+        <property name="messageSource" ref="messageSource"/>
+        <property name="engineService" ref="adhocEngineService"/>
+    </bean>
+
+    <bean id="dataViewConverter" class="com.jaspersoft.ji.adhoc.action.DataViewConverterController">
+        <property name="methodNameResolver" ref="adhocAjaxParamResolver"/>
+        <property name="repositoryService" ref="${bean.repositoryService}"/>
+        <property name="adhocUpgradeExecutor" ref="adhocUpgradeExecutor"/>
+        <property name="messageSource" ref="messageSource"/>
+    </bean>
+
+</beans>

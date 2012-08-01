@@ -1,0 +1,124 @@
+#toolbar {			
+	height:39px;
+	overflow: hidden;
+}  
+		
+#modeTabs, #source {
+	height:66px;
+}
+
+#dataPanel {
+	height:95%;
+	margin-bottom: 100px;
+}
+
+#fieldsContainer {
+	position:static;
+	width:193px;
+	height:expression(decoratedBody.offsetHeight - (toolbar.offsetHeight) - (source.offsetHeight));
+}
+
+#divider {
+	width:39px;
+}
+
+#modeTabs.tabs li p {
+	height:23px;
+}
+
+#modeTabs.tabs li.selected p {
+	height:26px;
+	margin-bottom:-1px;
+}
+
+.tabs ul {
+	bottom:7px;
+}
+
+#modeTabs.tabs ul li {
+	height:24px;
+	width:12em;
+}
+
+
+#modeTabs.tabs ul li.selected {
+	height:23px;
+}
+
+.buttonSet .button b {
+	height:30px;
+	margin-bottom:-2px;
+	background-position: 4px 2px;
+}
+
+.buttonSet .button.disabled b {
+	filter: alpha(opacity=25);
+}
+
+.buttonSet .button.disabled .menuSignal {
+	filter: alpha(opacity=25);
+}
+
+/* Todo: hard coding tab height due to delay in rendering - fix this */
+#mainTableContainer {
+	height:expression(decoratedBody.offsetHeight - (toolbar.offsetHeight) - (modeTabs?66:0));
+	width:expression(decoratedBody.offsetWidth - (dataPanel.offsetWidth));
+}
+
+#mainTableContainer.withFilterPanel {
+	width:expression(decoratedBody.offsetWidth - (dataPanel.offsetWidth) - 251);
+}
+
+#filters {
+	height:expression(decoratedBody.offsetHeight - (toolbar.offsetHeight) - (modeTabs?66:0));
+}
+
+.pod.filter {
+	width:200px;
+}
+
+.widget .header {
+	width:205px;
+	position:static;
+}
+
+.widget .header .title {
+	width:165px;
+	float:left;
+}
+
+.widget .header h4 {
+	font-size: 11px;
+}
+
+.widget .options.up {
+	border-bottom-width: 0;
+}
+
+.pod.widget.filter select.multi-select,
+.pod.widget.filter select.single-select,
+.pod.widget.filter input.single-input, 
+.pod.widget.filter input.single-input-date {
+    width:170px;
+}
+
+.pod.widget.filter select.multi-select {
+	height:auto;
+}
+
+.pod.widget .container {
+	width:205px;
+}
+
+
+.pod.widget .header button,
+.pod.widget .header span {
+	position:static;
+	float:right;
+	margin-left:2px;
+	cursor:pointer;
+}
+
+
+
+

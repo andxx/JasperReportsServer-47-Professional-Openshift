@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
+
+    <!-- security for pro flows -->
+    <bean class="com.jaspersoft.jasperserver.api.common.util.spring.GenericBeanUpdater">
+        <property name="definition" ref="addFlowDefinitionSources"/>
+        <property name="value">
+            <value>
+                adminHomeFlow=ROLE_ADMINISTRATOR
+                mondrianPropertiesFlow=ROLE_SUPERUSER
+                designerOptionsFlow=ROLE_SUPERUSER
+                designerCacheFlow=ROLE_SUPERUSER
+            </value>
+        </property>
+        <property name="valueType" value="string"/>
+    </bean>
+
+   <!-- set up ad hoc pages -->
+    <bean class="com.jaspersoft.jasperserver.api.common.util.spring.GenericBeanUpdater">
+        <property name="definition" ref="setRolesForURL"/>
+        <property name="value">
+            <value>
+            /adhoc/cacheadmin.html=ROLE_SUPERUSER
+            /adhoc/cachedetail.html=ROLE_SUPERUSER
+			/adhoc/querygovernorsettings.html=ROLE_SUPERUSER
+            /log_settings.html=ROLE_SUPERUSER
+            /dataviewconverter.html=ROLE_USER,ROLE_ADMINISTRATOR
+            </value>
+        </property>
+        <property name="valueType" value="string"/>
+    </bean>
+</beans>

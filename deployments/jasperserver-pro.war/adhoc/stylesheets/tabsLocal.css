@@ -1,0 +1,22 @@
+/* locally specific tab styles */
+		
+/* mode tabs */
+		
+		#modeTabs {
+			height:56px;
+			left:233px;
+			padding:10px 15px 0;
+			position:absolute;
+			top:37px;
+			width:100%;
+			background:transparent url(../images/border_horizontal_bg.gif) repeat-x scroll 0 57px;
+            border: none;			
+		}
+        
+        ul.tabSet {
+            bottom:8px;
+            margin-left:30px;
+            position:absolute;
+        }            
+
+		

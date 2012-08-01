@@ -1,0 +1,139 @@
+/* data panel module details */
+		
+		#source, #fieldList {
+			padding:10px 15px 0 15px;
+		}
+		
+		#source a {
+			color:#b3b3b3;
+			font-weight: normal;
+		}
+		
+		#source a:hover {
+			color:#993200;
+		}
+		
+		#source a:active {
+			color:#003066;
+		}
+
+		.reentranceLink a {
+			color:#b3b3b3;
+			font-weight: normal;
+		}
+
+		.reentranceLink a:hover {
+			color:#993200;
+		}
+
+		.reentranceLink a:active {
+			color:#003066;
+		}
+
+		#source {
+			background: url(../images/border_horizontal_bg.gif) repeat-x 0px 55px;
+			height:54px;
+		}
+		
+		#dataPanel p.label {
+			font-weight: bold;
+			color:#000033;
+			margin-top:7px;
+		}
+		
+		.fieldList {
+			overflow:auto;
+			position:absolute;
+			top:63px;
+			bottom:20px;
+			width:165px;
+			padding-left: 15px;
+			padding-top: 10px;    
+			padding-right: 15px;                     
+			margin-bottom: 20px;		
+		}
+				
+		.fieldList ul {
+
+		}
+		
+		.fieldList li {
+			padding: 0 0 0 20px;
+			background: url(../../../proto_shared/images/add.gif) no-repeat 0px 0px;
+		}
+		
+		.fieldList li.spacer {
+			background: url(../../../proto_shared/images/spacer_icon.gif) no-repeat 5px 5px;
+			font-style: italic;
+		}
+		
+		#divider {
+			width: 39px;
+			height:100%;
+			position:absolute;
+			right: 0;
+			border-top: 1px solid #B5C4CF;
+			background-color: #CED8DF;
+			background: url(../images/border_vertical_bg.gif) repeat-y 0px 0px;	
+		}
+		
+		#divider #intersection {
+			height: 9px;
+			width: 39px;
+			position:absolute;
+			top:54px;
+			left:0px;
+			background-color: #CED8DF;
+			background: url(../images/border_intersection_bg.gif) no-repeat 0px 0px;	
+		}
+		
+		#divider #groupTarget {
+			position:relative;
+			top:67px;
+			left:3px;
+			background: url(../images/group.png) no-repeat 3px 3px;
+			width:32px;
+			height: 32px;
+			border:1px solid transparent;
+			
+		}
+		
+		#groupTarget.over {
+			border:1px solid white;
+			background-color: #EEEEEE;
+			
+		}
+
+        .manageFieldsContainer {
+            display:none;
+            width:430px;
+            height:370px;
+            z-index:198;
+            background-color:white;
+            /*top:180px;*/
+            /*left:13px;*/
+        }
+
+        .domainMenu {
+            width:100px;
+            position:absolute;
+            display:none;
+            z-index: 198;
+            background-color:white;
+            border: solid black 1px;
+        }
+
+        .domainMenuLi {
+            height: 20px;
+        }
+
+        .semanticTreeHeader {
+            font-weight: bold;    
+        }
+
+        .semanticTreeDiv {
+            width:100%;
+            height:300px;
+            overflow: auto;
+            border:solid black 1px;
+        }

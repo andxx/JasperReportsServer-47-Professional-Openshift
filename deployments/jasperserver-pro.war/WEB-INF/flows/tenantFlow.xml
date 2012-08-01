@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow" xmlns:ns0="http://www.w3.org/2001/XMLSchema-instance"
+      ns0:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd"
+      start-state="initEvent">
+
+    <decision-state id="tenantStart">
+        <if test="requestParameters.method != null" then="${requestParameters.method}" else="initEvent"/>
+    </decision-state>
+
+    <action-state id="initEvent">
+        <evaluate expression="tenantManagerAction"/>
+        <transition on="success" to="tenantView"/>
+    </action-state>
+
+    <view-state id="tenantView" view="modules/manage/orgs">
+        <on-entry>
+          <set name="flowScope.prevForm" value="'tenantView'"/>
+        </on-entry>
+
+        <transition on="browse" to="next">
+            <evaluate expression="tenantManagerAction.browse"/>
+        </transition>
+        <transition on="search" to="next">
+            <evaluate expression="tenantManagerAction.search"/>
+        </transition>
+        <transition on="next" to="next"/>
+
+        <transition on="selectAndGetDetails" to="getDetails">
+            <evaluate expression="tenantManagerAction.select"/>
+        </transition>
+
+        <transition on="searchAssigned" to="nextAssigned">
+            <evaluate expression="tenantManagerAction.searchAssigned"/>
+        </transition>
+
+        <transition on="delete" to="ajaxView">
+            <evaluate expression="tenantManagerAction.delete"/>
+        </transition>
+        <transition on="deleteAll" to="ajaxView">
+            <evaluate expression="tenantManagerAction.deleteAll"/>
+        </transition>
+        <transition on="update" to="ajaxView">
+            <evaluate expression="tenantManagerAction.update"/>
+        </transition>
+        <transition on="create" to="ajaxView">
+            <evaluate expression="tenantManagerAction.create"/>
+        </transition>
+        <transition on="exist" to="ajaxView">
+            <evaluate expression="tenantManagerAction.exist"/>
+        </transition>
+        <transition on="aliasExist" to="ajaxView">
+            <evaluate expression="tenantManagerAction.aliasExist"/>
+        </transition>
+    </view-state>
+
+    <action-state id="next">
+        <evaluate expression="tenantManagerAction"/>
+        <transition on="success" to="ajaxView"/>
+    </action-state>
+
+    <action-state id="getDetails">
+        <evaluate expression="tenantManagerAction"/>
+        <transition on="success" to="ajaxView"/>
+    </action-state>
+
+    <action-state id="nextAssigned">
+        <evaluate expression="tenantManagerAction"/>
+        <transition on="success" to="ajaxView"/>
+    </action-state>
+
+    <view-state id="ajaxView" view="ajax/ajaxresponse"/>
+
+    <view-state id="ajaxError" view="ajax/ajaxerror"/>
+
+    <!-- exceptions handling -->
+    <decision-state id="backFromError">
+        <if test="not (flowScope.prevForm == null or flowScope.prevForm == '')" then="${flowScope.prevForm}"
+            else="initEvent"/>
+    </decision-state>
+
+    <view-state id="errorPage" view="modules/system/errorPage"/>
+
+    <global-transitions>
+        <transition on="backFromErrorPage" to="backFromError"/>
+        <transition on-exception="java.lang.Throwable" to="errorPage"/>
+    </global-transitions>
+
+    <!-- end exceptions handling -->
+    <bean-import resource="spring-config.xml"/>
+    <bean-import resource="tenantBean.xml"/>
+
+</flow>

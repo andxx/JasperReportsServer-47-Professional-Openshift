@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow" xmlns:ns0="http://www.w3.org/2001/XMLSchema-instance"
+      ns0:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd"
+      start-state="initAction">
+
+  <view-state id="initAction" view="modules/administer/designerCache">
+        <on-entry>
+            <evaluate expression="designerCacheAction.init"/>
+        </on-entry>
+        <transition on="getDetails" to="getDetails"/>
+        <transition on="isServerAvailable" to="isServerAvailable"/>
+        <transition on="clearQuery" to="clearQuery"/>
+        <transition on="clearAll" to="clearAll"/>
+    </view-state>
+
+    <action-state id="getDetails">
+        <evaluate expression="designerCacheAction.getDetails"/>
+        <transition on="success" to="ajaxView"/>
+        <transition on="error" to="errorPage"/>
+    </action-state>
+
+    <action-state id="clearQuery">
+        <evaluate expression="designerCacheAction.clearQuery"/>
+        <transition on="success" to="ajaxView"/>
+        <transition on="error" to="errorPage"/>
+    </action-state>
+
+    <action-state id="clearAll">
+        <evaluate expression="designerCacheAction.clearAll"/>
+        <transition on="success" to="ajaxView"/>
+        <transition on="error" to="errorPage"/>
+    </action-state>
+
+    <action-state id="isServerAvailable">
+        <evaluate expression="designerCacheAction.isServerAvailable"/>
+        <transition on="success" to="ajaxView"/>
+        <transition on="error" to="errorPage"/>
+    </action-state>
+
+    <view-state id="ajaxView" view="ajax/ajaxresponse"/>
+
+    <view-state id="ajaxError" view="ajax/ajaxerror"/>
+
+    <view-state id="errorPage" view="modules/system/errorPage"/>
+
+    <global-transitions>
+        <transition on-exception="java.lang.Throwable" to="errorPage"/>
+    </global-transitions>
+
+    <!-- end exceptions handling -->
+    <bean-import resource="spring-config.xml"/>
+
+    <bean-import resource="designerCacheBeans.xml"/>
+
+</flow>

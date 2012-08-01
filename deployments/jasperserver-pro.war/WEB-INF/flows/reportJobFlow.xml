@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow" xmlns:ns0="http://www.w3.org/2001/XMLSchema-instance"
+      ns0:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd"
+      start-state="checkJob">
+
+    <input name="isNewMode"/>
+    <input name="isRunNowMode"/>
+    <input name="reportUnitURI"/>
+    <input name="reportOptionsURI"/>
+
+    <action-state id="checkJob">
+        <evaluate expression="reportOptionsJobEditAction.setupForm"/>
+        <transition on="success" to="initReportOptions"/>
+        <transition on="notFound" to="jobNotFound"/>
+    </action-state>
+
+    <action-state id="initReportOptions">
+        <evaluate expression="reportJobOptionsSaveAction"/>
+        <transition to="checkForParameters"/>
+    </action-state>
+
+    <action-state id="checkForParameters">
+        <evaluate expression="scheduleReportOptionsParametersAction"/>
+        <transition on="optionsInvalid" to="optionsInvalid">
+            <set name="requestScope.messageCode" value="'report.options.schedule.error.invalid'"/>
+        </transition>
+        <transition on="success" to="checkRunNow"/>
+    </action-state>
+
+    <view-state id="optionsInvalid" view="modules/FlowErrorMessage">
+        <transition on="back" to="cancel"/>
+    </view-state>
+
+    <decision-state id="checkRunNow">
+        <if test="flowScope.isRunNowMode" then="setNowModeDefaults" else="jobSetUp"/>
+    </decision-state>
+
+    <action-state id="setNowModeDefaults">
+        <evaluate expression="reportOptionsJobEditAction"/>
+        <evaluate expression="scheduleReportOptionsParametersAction.prepareParameterValues"/>
+        <transition on="success" to="runNowInitialView"/>
+    </action-state>
+
+    <decision-state id="runNowInitialView">
+        <if test="flowScope.reportOptionsURI == null" then="setupNext" else="jobOutput"/>
+    </decision-state>
+
+    <decision-state id="setupNext">
+        <if test="flowScope.hasReportParameters" then="jobParameters" else="jobOutput"/>
+    </decision-state>
+
+    <decision-state id="outputPrev">
+        <if test="flowScope.hasReportParameters" then="jobParameters" else="jobSetUp"/>
+    </decision-state>
+
+
+    <view-state id="jobSetUp" view="modules/reportScheduling/jobSetUp">
+        <on-entry>
+            <set name="flowScope.prevForm" value="'jobSetUp'"/>
+        </on-entry>
+        <on-render>
+            <evaluate expression="reportJobEditAction.setTriggerReferenceData"/>
+        </on-render>
+        <transition on="next" to="setupNext">
+            <evaluate expression="reportOptionsJobEditAction.setTriggerReferenceData"/>
+            <evaluate expression="reportOptionsJobEditAction.bindAndValidate">
+                <attribute name="validatorMethod" value="validateJobDetails"/>
+            </evaluate>
+            <evaluate expression="reportOptionsJobEditAction.bindAndValidate">
+                <attribute name="validatorMethod" value="validateJobTrigger"/>
+            </evaluate>
+        </transition>
+        <transition on="jobParameters" to="jobParameters">
+            <evaluate expression="reportOptionsJobEditAction.bindAndValidate">
+                <attribute name="validatorMethod" value="validateJobDetails"/>
+            </evaluate>
+            <evaluate expression="reportOptionsJobEditAction.bindAndValidate">
+                <attribute name="validatorMethod" value="validateJobTrigger"/>
+            </evaluate>
+        </transition>
+        <transition on="jobOutput" to="jobOutput">
+            <evaluate expression="reportOptionsJobEditAction.bindAndValidate">
+                <attribute name="validatorMethod" value="validateJobDetails"/>
+            </evaluate>
+            <evaluate expression="reportOptionsJobEditAction.bindAndValidate">
+                <attribute name="validatorMethod" value="validateJobTrigger"/>
+            </evaluate>
+        </transition>
+        <transition on="noRecurrence" to="jobSetUp">
+            <evaluate expression="reportOptionsJobEditAction.bind"/>
+            <evaluate expression="reportOptionsJobEditAction.setTriggerRecurrenceNone"/>
+        </transition>
+        <transition on="simpleRecurrence" to="jobSetUp">
+            <evaluate expression="reportOptionsJobEditAction.bind"/>
+            <evaluate expression="reportOptionsJobEditAction.setTriggerRecurrenceSimple"/>
+        </transition>
+        <transition on="calendarRecurrence" to="jobSetUp">
+            <evaluate expression="reportOptionsJobEditAction.bind"/>
+            <evaluate expression="reportOptionsJobEditAction.setTriggerRecurrenceCalendar"/>
+        </transition>
+    </view-state>
+
+
+    <view-state id="jobParameters" view="modules/reportScheduling/jobParameters">
+        <on-entry>
+            <set name="flowScope.prevForm" value="'jobParameters'"/>
+            <set name="flowScope.isPro" value="true"/>
+            <evaluate expression="scheduleReportOptionsParametersAction.prepareParameterValues"/>
+        </on-entry>
+        <transition on="back" to="jobSetUp">
+            <evaluate expression="scheduleReportOptionsParametersAction.setParameterValues"/>
+            <evaluate expression="reportOptionsJobEditAction.setupForm"/>
+        </transition>
+        <transition on="next" to="jobOutput">
+            <evaluate expression="scheduleReportOptionsParametersAction.setParameterValues"/>
+            <evaluate expression="reportOptionsJobEditAction.setupForm"/>
+        </transition>
+        <transition on="save" to="saveJob">
+            <evaluate expression="scheduleReportOptionsParametersAction.setParameterValues"/>
+        </transition>
+        <transition on="jobSetUp" to="jobSetUp">
+            <evaluate expression="scheduleReportOptionsParametersAction.setParameterValues"/>
+            <evaluate expression="reportOptionsJobEditAction.setupForm"/>
+        </transition>
+        <transition on="jobOutput" to="jobOutput">
+            <evaluate expression="scheduleReportOptionsParametersAction.setParameterValues"/>
+            <evaluate expression="reportOptionsJobEditAction.setupForm"/>
+        </transition>
+
+        <transition on="applyParameter" to="applyParameter"/>
+        <transition on="saveOptions" to="saveOptions"/>
+        <transition on="getOptionsName" to="ajaxView">
+            <evaluate expression="reportJobOptionsSaveAction.getOptionsName"/>
+        </transition>
+        <on-exit>
+            <evaluate expression="reportJobOptionsSaveAction.putReportOptionsList"/>
+            <evaluate expression="reportJobOptionsSaveAction.setCurrentOptionsURI"/>
+        </on-exit>
+    </view-state>
+
+    <action-state id="applyParameter">
+       <evaluate expression="scheduleReportOptionsParametersAction.setInputValues"/>
+       <transition on="success" to="ajaxView"/>
+       <transition on="error" to="ajaxView"/>
+    </action-state>
+
+    <action-state id="saveOptions">
+        <evaluate expression="reportJobOptionsSaveAction"/>
+        <transition on="success" to="ajaxView"/>
+        <transition on="error" to="ajaxView"/>
+<!--
+        <transition on="alreadyExists" to="ajaxView"/>
+        <transition on-exception="org.springframework.security.AccessDeniedException" to="ajaxView">
+            <set name="requestScope.messageCode" value="'report.options.error.save.options.access.denied'"/>
+        </transition>
+-->
+    </action-state>
+
+
+
+    <view-state id="jobOutput" view="modules/reportScheduling/jobOutput">
+        <on-entry>
+            <set name="flowScope.prevForm" value="'jobOutput'"/>
+            <evaluate expression="reportOptionsJobEditAction.setOutputReferenceData"/>
+        </on-entry>
+        <transition on="back" to="outputPrev">
+            <evaluate expression="reportOptionsJobEditAction.bind"/>
+        </transition>
+        <transition on="jobSetUp" to="jobSetUp">
+            <evaluate expression="reportOptionsJobEditAction.bind"/>
+        </transition>
+        <transition on="jobParameters" to="jobParameters">
+            <evaluate expression="reportOptionsJobEditAction.bind"/>
+        </transition>
+        <transition on="jobOutput" to="jobOutput">
+            <evaluate expression="reportOptionsJobEditAction.bind"/>
+        </transition>
+        <transition on="save" to="saveJob">
+            <evaluate expression="reportOptionsJobEditAction.setOutputReferenceData"/>
+            <evaluate expression="reportOptionsJobEditAction.bindAndValidate">
+                <attribute name="validatorMethod" value="validateJobOutput"/>
+            </evaluate>
+        </transition>
+    </view-state>
+
+    <action-state id="saveJob">
+        <evaluate expression="reportOptionsJobEditAction"/>
+        <transition on="success" to="saved"/>
+        <transition on="notFound" to="jobNotFound"/>
+        <transition on="detailsError" to="jobSetUp"/>
+        <transition on="triggerError" to="jobSetUp"/>
+        <transition on="outputError" to="jobOutput"/>
+    </action-state>
+
+    
+    <view-state id="ajaxView" view="ajax/ajaxresponse"/>
+    
+    <end-state id="cancel" view="flowRedirect:searchFlow?lastMode=true"/>
+    <end-state id="saved" view="flowRedirect:searchFlow?lastMode=true"/>
+    <end-state id="cancelWithError" view="flowRedirect:searchFlow?lastMode=true&amp;errorPopupMessage=${requestScope.errorPopupMessage}"/>
+
+    <end-state id="jobNotFound">
+        <output name="errorMessage"/>
+        <output name="errorArguments"/>
+    </end-state>
+
+    <!-- exceptions handling -->
+    <decision-state id="backFromError">
+        <if test="not (flowScope.prevForm == null or flowScope.prevForm == '')" then="${flowScope.prevForm}"
+            else="saved"/>
+    </decision-state>
+
+    <view-state id="errorPage" view="modules/system/errorPage"/>
+    <!-- end exceptions handling -->
+
+    <global-transitions>
+        <transition on="cancel" to="cancel"/>
+        <transition on="backFromErrorPage" to="backFromError"/>
+        <transition on-exception="com.jaspersoft.jasperserver.api.JSNotImplementedException" to="cancelWithError"/>
+        <transition on-exception="java.lang.Throwable" to="errorPage"/>
+    </global-transitions>
+
+    <bean-import resource="spring-config.xml"/>
+
+    <bean-import resource="reportJobBeans.xml"/>
+
+    <bean-import resource="reportOptionsSaveBeans.xml"/>
+
+    <bean-import resource="reportOptionsJobBeans.xml"/>
+
+
+</flow>

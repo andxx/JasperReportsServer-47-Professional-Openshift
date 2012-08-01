@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+       http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd">
+
+    <bean id="adhocAction" class="com.jaspersoft.ji.adhoc.action.AdhocAction">
+        <property name="repository" ref="easyXMLizedRepository"/>
+        <property name="repositoryForACLUpdate" ref="${bean.repositoryServiceForAclUpdate}"/>
+        <property name="engine" ref="adhocEngineService"/>
+        <property name="adhocEngine" ref="adhocEngineService"/>
+        <property name="messages" ref="messageSource"/>
+        <property name="reportOptionsService" ref="reportOptionsService"/>
+        <property name="config" value="WEB-INF/adhoc.properties"/>
+        <property name="calendarFormatProvider" ref="messagesCalendarFormatProvider"/>
+        <property name="calendarDatePatternAttrName" value="calendarDatePattern"/>
+        <property name="calendarDatetimePatternAttrName" value="calendarDatetimePattern"/>
+		<property name="attributeInputControlsInformation" value="inputControlsInformation"/>
+		<property name="inputControlsAttrName" value="inputControls"/>
+        <property name="controlsDisplayFormAttrName" value="controlsDisplayForm"/>
+        <property name="configuration" ref="configurationBean" />
+        <property name="auditContext" ref="${bean.auditContext}" />
+        <property name="olapConnectionService" ref="olapConnectionService" />
+        <property name="messageSourceObjectAttrName" value="messageSource"/>
+        <property name="reportLoadingService" ref="reportLoadingService"/>
+        <property name="inputControlsLogicService" ref="inputControlsLogicService"/>
+        <property name="securityChecker" ref="${bean.repositoryServiceSecurityChecker}"/>
+    </bean>
+    
+    <bean id="adhocOLAPAction" class="com.jaspersoft.ji.adhoc.action.AdhocOLAPAction">
+        <property name="adhocEngine" ref="adhocEngineService"/>
+        <property name="messages" ref="messageSource"/>
+        <property name="configuration" ref="configurationBean" />
+        <property name="auditContext" ref="${bean.auditContext}" />
+    </bean>
+</beans>

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
+       
+  <!--
+  <bean id="mondrianMessageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
+    <property name="basename" value="${resource.root}/bundles/mondrian_exception_messages"/>
+    <property name="useCodeAsDefaultMessage"><value>true</value></property>
+  </bean>
+  -->
+
+
+  <!-- NOTE: todo: Bug 20356. buildomatic load-foodmart-db fails when using the pro mondrian-aop-woven.jar file   -->
+  <!--             The load-foodmart target uses the buildomatic/conf_source/iePro files. Removed the pro         -->
+  <!--             mondrian jar. Also have to update spring configs so import-export does not use the two beans   -->
+  <!--             in this file.                                                                                  -->
+  <!--             Note: This same named spring config file is found in both the japserserver-war/shared-config   -->
+  <!--             and unit-test/shared-config folders. When mondrian/Analysis profiling is deprecated these      -->
+  <!--             spring configs can be removed.                                                                 -->
+
+  <bean id="i18nMondrianAspect" 
+	class="com.jaspersoft.ji.ja.i18n.I18NAspect"
+	factory-method="aspectOf">
+    <property name="messages" ref="messageSource"/>
+  </bean>
+
+  <bean id="profilingAspect"
+        class="com.jaspersoft.ji.ja.profiling.ProfilingAspect"
+        factory-method="aspectOf">
+    <property name="globalProfilingState" ref="globalProfilingState"/>
+  </bean>
+  
+</beans>

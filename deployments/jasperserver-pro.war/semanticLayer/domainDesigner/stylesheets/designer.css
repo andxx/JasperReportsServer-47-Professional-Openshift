@@ -1,0 +1,325 @@
+.new_dialogcell {
+	font-weight:normal;
+ }
+.new_dialoginsetframe {
+	background-color:#FFFFFF;
+}
+.navbuttondisabled {
+	border-left:none;
+        border-right:none;
+}
+
+.newTableCell, .newTableHeader {
+	font-family:Verdana, Arial, Helvetica, sans-serif;
+	font-size:60%;
+	height:25px;
+	padding-top:0px;
+	padding-bottom:0px;
+	padding-left:8px;
+	padding-right:8px;
+}
+.newTableHeader {
+	background-color:#E5DFD1;
+	color:#732600;
+	height:20px;
+	padding-left:12px;
+	border-bottom:solid 1px #CDAE9F;
+}
+
+.contentcell {
+	background-image:  none;
+
+}
+
+.appTitle {
+	font-size:90%;
+	padding-bottom:10px;
+	background-image:  none;
+	height:25px;
+}
+.topSidePanel {
+	background-image:  url('../images/bg_sidepanel.gif' );
+	background-repeat: repeat-x;
+	background-position: left top;
+	background-color:#FAF6EE;
+}
+.bottomSidePanel {
+	background-image:  url('../images/bg_sidepanel2.gif' );
+	background-repeat: repeat-x;
+	background-position: left top;
+	background-color:#FAF6EE;
+}
+.topToolbar {
+	border:solid 1px #687F99;
+	background-color:#F7F0E1;
+}
+.topToolbarButton {
+
+	width:24px;
+	height:24px;
+
+}
+.leftDesignToolbar {
+	background-image:  url('../images/bg_leftdesign.gif' );
+	background-repeat: repeat-y;
+	background-position: left top;
+	background-color:#FAF6EE;
+	width:214px;
+}
+.rightDesignToolbar {
+	background-image:  url('../images/bg_rightdesign.gif' );
+	background-repeat: repeat-y;
+	background-position: left top;
+	background-color:#FAF6EE;
+	width:124px;
+}
+.leftJoinToolbar {
+	background-image:  url('../images/bg_leftjoin.gif' );
+	background-repeat: repeat-y;
+	background-position: left top;
+	background-color:#FAF6EE;
+}
+.rightJoinToolbar {
+	background-image:  url('../images/bg_rightjoin.gif' );
+	background-repeat: repeat-y;
+	background-position: left top;
+	background-color:#FAF6EE;
+}
+.joinsToolbar {
+	background-image:  url('../images/bg_joins.gif' );
+	background-repeat: repeat-y;
+	background-position: left top;
+	background-color:#FAF6EE;
+}
+.joinsTableHeaderWrapper {
+	background-color: #F7F0E1;
+	border-bottom: solid 1px #CDAE9F;
+	height:20px;
+}
+.joinsTableHeader {
+	color:#732600;
+	background-color: #F7F0E1;
+	font-size:60%;
+	padding-left:2px;
+	height:20px;
+}
+.joinRowNotSelected, .joinRowSelected {
+	border-bottom: solid 1px #C5D1D9;
+	border-right: solid 1px #C5D1D9;
+	padding-left:2px;
+	padding-right:2px;
+	height:18px;
+
+}
+.joinRowSelected {
+	background-color:#F8CE84;
+}
+.joinScale {
+	font-size:90%;
+}
+.tabPageBorder {
+	border-bottom:solid 1px #687F99;
+}
+.tabBackTable {
+	background-color:#FFFFFF;
+}
+.tabPageSelected, .tabPageNotSelected {
+	padding:3px;
+	padding-bottom:5px;
+	border:solid 1px  #993200;
+	color: #06508C;
+	background-color:#FFFFFF;
+	font-size:75%;
+	font-weight:bold;
+	text-align:center;
+	vertical-align:middle;
+	width:66px;
+	cursor:default;
+	border-bottom:none;
+    white-space: nowrap;
+}
+.tabPageNotSelected {
+	border:solid 1px #687F99;
+	color:#000033;
+	background-color:#E1E7EB;
+	cursor:pointer;
+}
+.tabSpacer {
+	width:5px;
+	border-bottom:solid 1px #687F99;
+}
+.pageContent {
+	background-image:  url('../images/bg_content.gif' );
+	background-repeat: repeat-y;
+	background-position: left top;
+	border-left:solid 1px #687F99;
+}
+
+.outsidePageContent {
+	background-color:#FFFFFF;
+}
+.infoOnly {
+	color: #054173;
+	font-size:100%;
+}
+a.toggleLink {
+	color:#993200;
+	text-decoration:underline;
+	font-weight:normal;
+	font-size:100%;
+}
+a.toggleLink:hover {
+	color:#06508C;
+}
+.insidebutton {
+         background-color:#F7F0E1;
+         border-color:#993200;
+         padding-left:0px;
+	 padding-right:0px;
+}
+.insidebuttonhover {
+	background-color:#E5DFD1;
+	border-color:#384766;
+	padding-left:0px;
+	padding-right:0px;
+}
+.insidebuttondisabled {
+	padding-left:0px;
+	padding-right:0px;
+}
+
+.imagebutton {
+         background-color:#F7F0E1;
+         border-color:#993200;
+         padding:0px;
+}
+.imagebuttonhover {
+	background-color:#E5DFD1;
+	border-color:#384766;
+	padding:0px;
+}
+.imagebuttondisabled {
+	padding:0px;
+}
+.altImagebutton {
+         background-color:#C4D1D9; 
+         border:solid 1px #FFFFFF;
+         padding:0px;
+}
+.altImagebuttonhover {
+	background-color:#E5DFD1; 
+	border:solid 1px #993200;
+	padding:0px;
+}
+.altImagebuttondisabled {
+	padding:0px;
+    border:solid 1px #C4D1D9;
+}
+.internaldialog {
+       border-left:solid 1px #E5D17B;
+       border-top:solid 1px #E5D17B;
+       border-right:solid 1px #993200;
+       border-bottom:solid 1px #993200;
+       background-color:#FAF6EE;
+}
+.propertiesHeader {
+	color:#384766;
+	border-bottom:solid 1px #E5D17B;
+	text-align:center;
+	vertical-align:bottom;
+	padding-top:2px;
+	padding-bottom:3px;
+	height:22px;
+}
+.propertiesHeaderHighlight {
+	background-color:#FFFFFF;
+}
+.propertiesLeftCell, .propertiesRightCell, .propertiesButtonCell {
+	border-bottom:solid 1px #C4D1D9;
+	height:20px;
+	font-size:65%;
+}
+.propertiesLeftCell {
+	padding-right:2px;
+}
+.propertiesButton {
+         background-color:#F7F0E1; 
+         border:solid 1px #993200;
+         border-top:solid 1px #C5D1D9;
+         border-left:solid 1px #C5D1D9;
+         padding:0px;
+}
+.propertiesButtonHover {
+	background-color:#E5DFD1; 
+        border:solid 1px #993200;
+	padding:0px;
+}
+.propertiesRightCell {
+	border-left:solid 1px #C4D1D9;
+	padding-left:2px;
+
+}
+.noValueSet {
+	font-style:italic;
+	color:#687F99;
+}
+.readOnly {
+	color:#993200 !important;
+}
+.inputcontrol {
+    font-size:95%;
+	width:143px;
+    height:17px;
+}
+
+.propertyvalue {
+    font-size:100%;
+    width:143px;
+    height:17px;
+}
+.ddTabPanelBorderTop {
+    border-bottom:solid 1px #687f99;
+}
+}
+
+.dialogListItem {
+        font-family:Verdana, Arial, Helvetica, sans-serif;
+        padding:2px;
+
+}
+
+.dialogListItemUnselected {
+    font-family:Verdana, Arial, Helvetica, sans-serif;
+    padding:2px;
+
+}
+
+.dialogListItemSelected {
+    font-family:Verdana, Arial, Helvetica, sans-serif;
+    padding:2px;
+    BACKGROUND-COLOR: #F8CE84;
+    border-bottom: solid 1px #C4D1D9;
+}
+
+.spanSchemasNotSelected {
+	font-style:italic;
+	color:#fa2a2a;
+}
+.minortextfieldortable {
+	background-color:#FFFFFF;
+	color:#732600;
+	font-weight:normal;
+	FONT-FAMILY: Verdana, Arial, Helvetica, sans-serif;
+	font-size:70%;
+}
+
+.ddTitle {
+    padding-left: 20px;
+    padding-right: 20px;
+    text-align: center;
+    white-space: nowrap;
+}
+.warnOfDeleteItemsTable {
+    margin: 10px 0px;
+    text-align: left;
+}

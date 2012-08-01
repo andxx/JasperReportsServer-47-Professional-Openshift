@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans
+  xmlns="http://www.springframework.org/schema/beans"
+  xmlns:context="http://www.springframework.org/schema/context"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+  http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd">
+
+    <context:component-scan base-package="com.jaspersoft.ji.war.action.cascade"/>
+
+	<bean id="domainFilterResolver" class="com.jaspersoft.ji.war.action.cascade.DomainFilterResolver">
+        <property name="builtInParameterProviders" ref="builtInParameterProviders"/>
+        <property name="semanticLayerFactory" ref="semanticLayerFactory"/>
+    </bean>
+
+    <bean id="controlLogicUriMappingPro" class="java.util.HashMap" parent="controlLogicUriMappingCe">
+        <constructor-arg index="0">
+            <map merge="true">
+                <!-- this map contain mapping from report URI to input control logic alias -->
+                <!-- key - regular expression -->
+                <!-- value - input control logic alias - -->
+                <entry key="/dashboard/designer/[^/]+" value="dashboardDesignerInputControlLogic"/>
+                <entry key="/dashboard/viewer/[^/]+" value="dashboardRuntimeInputControlLogic"/>
+            </map>
+        </constructor-arg>
+    </bean>
+
+    <bean id="controlLogicReportTypeMappingPro" class="java.util.HashMap" parent="controlLogicReportTypeMappingCe">
+        <constructor-arg  index="0">
+            <map merge="true">
+                <entry key="com.jaspersoft.ji.report.options.metadata.ReportOptions" value="reportOptionsInputControlLogic"/>
+            </map>
+        </constructor-arg>
+    </bean>
+
+    <bean id="controlLogicRegestryPro" class="java.util.HashMap" parent="controlLogicRegestryCe">
+        <constructor-arg  index="0">
+            <map merge="true">
+                <entry key="reportOptionsInputControlLogic" value-ref="reportOptionsInputControlLogic"/>
+                <entry key="dashboardDesignerInputControlLogic" value-ref="dashboardDesignerInputControlLogic"/>
+                <entry key="dashboardRuntimeInputControlLogic" value-ref="dashboardRuntimeInputControlLogic"/>
+            </map>
+        </constructor-arg>
+    </bean>
+
+</beans>

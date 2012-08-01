@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
+    
+    <bean id="adhocTreeAction" class="com.jaspersoft.jasperserver.war.action.tree.TreeAction">
+        <property name="treeDataProviderFactory" ref="adhocTreeDataProviderFactory"/>
+        <property name="configurationBean" ref="configurationBean"/>
+    </bean>
+
+    <bean id="adhocTreeDataProviderFactory" class="com.jaspersoft.jasperserver.war.model.impl.TreeDataProviderFactoryImpl">
+        <property name="treeProvidersMap">
+            <map>
+                <entry key="adhocRepositoryTreeDataProvider" value-ref="adhocRepositoryTreeDavaProvider"/>
+                <entry key="adhocRepositoryTreeFoldersProvider" value-ref="adhocRepositoryTreeFoldersProvider"/>
+                <entry key="dashboardRepositoryTreeFoldersProvider" value-ref="dashboardRepositoryTreeFoldersProvider"/>
+            </map>
+        </property>
+    </bean>
+
+    <bean id="adhocRepositoryTreeDavaProvider" class="com.jaspersoft.jasperserver.war.model.impl.RepositoryTreeDataProviderImpl">
+        <property name="repositoryService" ref="${bean.repositoryService}"/>
+        <property name="repositoryServiceSecurityChecker" ref="${bean.repositoryServiceSecurityChecker}"/>
+    </bean>
+
+    <bean id="adhocRepositoryTreeFolderFilter" class="com.jaspersoft.jasperserver.war.model.impl.TypeInclusiveTreeDataFilterImpl">
+        <property name="includeTypesList">
+            <list>
+                <value>com.jaspersoft.jasperserver.api.metadata.common.domain.Folder</value>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="adhocRepositoryTreeAdhocTempBlockFilter" class="com.jaspersoft.jasperserver.war.model.impl.UriExclusiveTreeDataFilterImpl">
+        <property name="uriList">
+            <list>
+                <value>*/temp</value>
+                <value>*/themes</value>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="adhocRepositorySaveAsFilter" class="com.jaspersoft.jasperserver.war.model.impl.ANDTreeDataFilterImpl">
+        <property name="filterList">
+            <list>
+                <ref bean="adhocRepositoryTreeFolderFilter"/>
+                <ref bean="adhocRepositoryTreeAdhocTempBlockFilter"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="adhocRepositoryTreeFoldersProvider" class="com.jaspersoft.jasperserver.war.model.impl.RepositoryTreeDataProviderImpl">
+        <property name="repositoryService" ref="${bean.repositoryService}"/>
+        <property name="repositoryServiceSecurityChecker" ref="${bean.repositoryServiceSecurityChecker}"/>
+        <property name="filter" ref="adhocRepositorySaveAsFilter"/>
+    </bean>
+
+    <bean id="dashboardRepositoryTreeFoldersProvider" class="com.jaspersoft.jasperserver.war.model.impl.RepositoryTreeDataProviderImpl">
+        <property name="repositoryService" ref="${bean.repositoryService}"/>
+        <property name="repositoryServiceSecurityChecker" ref="${bean.repositoryServiceSecurityChecker}"/>
+        <property name="filter" ref="dashboardRepositoryFilter"/>
+    </bean>
+
+    <bean id="dashboardRepositoryFilter" class="com.jaspersoft.jasperserver.war.model.impl.ANDTreeDataFilterImpl">
+        <property name="filterList">
+            <list>
+                <ref bean="dashboardRepositoryContentTypeFilter"/>
+                <ref bean="adhocRepositoryTreeAdhocTempBlockFilter"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="dashboardRepositoryContentTypeFilter" class="com.jaspersoft.jasperserver.war.model.impl.TypeInclusiveTreeDataFilterImpl">
+        <property name="includeTypesList">
+            <list>
+                <value>com.jaspersoft.jasperserver.api.metadata.common.domain.Folder</value>
+                <value>com.jaspersoft.ji.adhoc.AdhocReportUnit</value>
+                <value>com.jaspersoft.jasperserver.api.metadata.jasperreports.domain.ReportUnit</value>
+                <value>com.jaspersoft.ji.adhoc.DashboardResource</value>
+            </list>
+        </property>
+    </bean>
+
+</beans>

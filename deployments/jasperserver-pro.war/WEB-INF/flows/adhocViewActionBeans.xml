@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="
+http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd">
+       
+    <!-- copy of viewReportAction using a subclassed bean -->
+    <bean id="viewAdhocReportAction" class="com.jaspersoft.ji.adhoc.action.ViewAdhocReportAction" parent="reportOptionsViewAction">
+        <property name="olapReportCheckUtil" ref="${bean.olapReportCheckUtil}"/>
+        <property name="engine" ref="adhocEngineService"/>
+        <property name="adhocEngine" ref="adhocEngineService"/>
+        <property name="repository" ref="easyXMLizedRepository"/>
+        <property name="reportUnitLabelAttrName" value="reportUnitLabel"/>
+        <property name="auditContext" ref="${bean.auditContext}"/>
+        <property name="semanticLayerFactory" ref="semanticLayerFactory"/>
+    </bean>
+    
+    <!-- 
+        update the mapped action bean so that ad hoc reports will use the adhoc view report bean
+      -->
+    <bean class="com.jaspersoft.jasperserver.api.common.util.spring.GenericBeanUpdater">
+        <property name="definition" ref="setViewReportActionMap"/>
+        <property name="valueType" value="idRefMap"/>
+        <property name="value">
+            <util:map map-class="java.util.LinkedHashMap">
+                <entry key="com.jaspersoft.ji.adhoc.AdhocReportUnit"
+                    value="viewAdhocReportAction"/>
+                <entry key="com.jaspersoft.jasperserver.api.metadata.jasperreports.domain.ReportUnit"
+                    value="viewReportAction"/>
+            </util:map>
+        </property>
+    </bean>
+    
+    <bean id="adhocReportOptionsSaveAction" class="com.jaspersoft.ji.report.options.actions.ReportOptionsSaveAction" parent="baseReportOptionsSaveAction">
+        <property name="inputControlsAction" ref="viewAdhocReportAction"/>
+    </bean>
+
+    <bean class="com.jaspersoft.jasperserver.api.common.util.spring.BeanPropertyOverrider">
+        <property name="beanName" value="reportExcelNoPaginationExporter"/>
+        <property name="propertyName" value="viewReportAction"/>
+        <property name="overrideReference" value="viewAdhocReportAction"/>
+    </bean>
+
+    <bean class="com.jaspersoft.jasperserver.api.common.util.spring.BeanPropertyOverrider">
+        <property name="beanName" value="reportXlsxNoPaginationExporter"/>
+        <property name="propertyName" value="viewReportAction"/>
+        <property name="overrideReference" value="viewAdhocReportAction"/>
+    </bean>
+</beans>

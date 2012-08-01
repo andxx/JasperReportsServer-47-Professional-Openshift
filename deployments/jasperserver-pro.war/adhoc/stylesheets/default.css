@@ -1,0 +1,74 @@
+.mainTableClass {
+margin:0;padding:0;tableLayout:fixed; font-family:verdana, arial, san-serif;
+}
+.titleCell {
+height:40px; color: #000000; background-color:#FFFFFF; border-top:solid 1px #000000; font-size: 18px; font-weight: bold; vertical-align: middle; text-align:center;
+}
+.columnHeaderCell {
+height:25px; color:#000000;background-color:#C0C0C0; border-bottom:solid 1px #000000; border-top:solid 1px #000000; font-size: 12px;font-weight: bold;vertical-align: middle;
+}
+.group1Cell {
+height:25px; color:#000000;background-color:#FFFFFF; font-weight:bold; font-size:12px;vertical-align: middle;
+}
+.group2Cell {
+height:25px; color:#000000;background-color:#D0D0D0;  font-weight:bold; font-size:12px;vertical-align: middle;
+}
+.group3Cell {
+height:25px; color:#000000;background-color:#FFFFFF;  font-weight:bold; font-size:12px;vertical-align: middle;
+}
+.detailCell {
+height:20px; color:#000000;background-color:#FFFFFF; font-size: 11px;vertical-align: middle;
+}
+.detail2Cell {
+height:20px; color:#000000;background-color:#EFEFEF; font-size: 11px;vertical-align: middle;
+}
+.summaryCell {
+height:25px; color:#000000;background-color:#C0C0C0; border-bottom:solid 1px #000000; border-top:solid 1px #000000; font-size: 12px;font-weight: bold;vertical-align: middle; 
+}
+
+/* XTs */
+
+.XTDefaults {	color:#000000; 	}
+	
+.XTTitleStyle {
+	text-align: center;border: #000000;font-size: 13px;color: #000000;font-weight: bold;}
+.XTColumn1 {
+	background-color: #C0C0C0;font-weight: bold;}
+.XTColumn2 {
+	background-color: #EFEFEF;font-weight: bold;}
+.XTColumn3 {
+	background-color: #F5F2F2;font-weight: bold;}
+.XTRow1 {
+	background-color: #FFFFFF;font-weight: bold;}	
+.XTRow2 {
+	background-color: #D0D0D0;font-weight: bold;}
+.XTRow3 {
+	background-color: #F5F2F2;font-weight: bold;}
+.XTGrandTotal { 
+	background-color: #C0C0C0;font-weight: bold;}
+.XTColumnWidth {
+	width:100px; }
+.XTRowWidth {
+	width:100px; }
+.XTMeasureCell {
+	height: 30px;background-color: #FFFFFF;color: #000000;font-size: 10.0px;}
+	
+/* Charts */
+
+.chartReportTitleStyle {
+	height:40px; color: #000000; background-color:#FFFFFF; border-top:solid 1px #000000; border-bottom:solid 1px #000000;  font-family: Arial; font-size: 18px; font-weight: bold; vertical-align: middle; text-align:center;
+}
+.chartTitleStyle {
+	height:40px; color: #000000; font-family: Arial; font-size: 12px; font-weight: bold; vertical-align: middle; text-align:center;
+}
+
+
+
+
+
+
+
+	
+
+
+

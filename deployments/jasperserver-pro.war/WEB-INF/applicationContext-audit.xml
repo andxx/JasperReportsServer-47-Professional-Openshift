@@ -1,0 +1,547 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="
+http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd
+http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd">
+
+    <!-- Hibernate config files -->
+    <bean class="com.jaspersoft.jasperserver.api.common.util.spring.GenericBeanUpdater">
+        <property name="definition" ref="addHibernateConfig"/>
+        <property name="value">
+            <list>
+                <value>/com/jaspersoft/ji/logging/audit/domain/hibernate/RepoAuditEvent.hbm.xml</value>
+                <value>/com/jaspersoft/ji/logging/audit/domain/hibernate/RepoAuditEventArchive.hbm.xml</value>
+                <value>/com/jaspersoft/ji/logging/audit/domain/hibernate/RepoAuditEventProperty.hbm.xml</value>
+                <value>/com/jaspersoft/ji/logging/audit/domain/hibernate/RepoAuditEventPropertyArchive.hbm.xml</value>
+            </list>
+        </property>
+        <property name="valueType" value="stringList"/>
+    </bean>
+
+    <!-- client class mapping -->
+    <bean class="com.jaspersoft.jasperserver.api.common.util.spring.GenericBeanUpdater">
+        <property name="definition" ref="mapClientClass"/>
+        <property name="value">
+            <map>
+                <entry key="com.jaspersoft.jasperserver.api.logging.audit.domain.AuditEvent"
+                    value="com.jaspersoft.ji.logging.audit.domain.AuditEventImpl"/>
+                <entry key="com.jaspersoft.jasperserver.api.logging.audit.domain.AuditEventProperty"
+                    value="com.jaspersoft.ji.logging.audit.domain.AuditEventPropertyImpl"/>
+            </map>
+        </property>
+        <property name="valueType" value="stringMap"/>
+    </bean>
+
+    <!-- repo class mapping -->
+    <bean class="com.jaspersoft.jasperserver.api.common.util.spring.GenericBeanUpdater">
+        <property name="definition" ref="mapRepoClass"/>
+        <property name="value">
+            <map>
+                <entry key="com.jaspersoft.jasperserver.api.logging.audit.domain.AuditEvent"
+                    value="com.jaspersoft.ji.logging.audit.domain.hibernate.RepoAuditEvent"/>
+                <entry key="com.jaspersoft.jasperserver.api.logging.audit.domain.AuditEventProperty"
+                    value="com.jaspersoft.ji.logging.audit.domain.hibernate.RepoAuditEventProperty"/>
+            </map>
+        </property>
+        <property name="valueType" value="stringMap"/>
+    </bean>
+
+    <bean id="auditEventPurgerJob" class="com.jaspersoft.jasperserver.api.engine.scheduling.quartz.JSMethodInvokingJobDetailFactoryBean" depends-on="reportScheduler">
+        <!-- depdns-on reportScheduler is workaround for non-trivial cyclic dependencies of quartzScheduler. If auditEventPurgerJob happens to be instantiated closer to beginning
+        then Spring context fails to instantiate. So, need to put off its instantiation until quartzScheduler is fully initialized by reportScheduler -->
+        <property name="targetObject" ref="auditService"/>
+        <property name="targetMethod" value="purgeAuditEvents"/>
+        <property name="scheduler" ref="quartzScheduler"/>
+    </bean>
+
+    <bean id="auditEventArchiverJob" class="com.jaspersoft.jasperserver.api.engine.scheduling.quartz.JSMethodInvokingJobDetailFactoryBean">
+        <property name="targetObject" ref="auditService"/>
+        <property name="targetMethod" value="archiveAuditEvents"/>
+        <property name="scheduler" ref="quartzScheduler"/>
+    </bean>
+
+    <bean id="auditEventArchiverTrigger" class="com.jaspersoft.jasperserver.api.engine.scheduling.quartz.JSCronTriggerBean">
+        <property name="jobDetail" ref="auditEventArchiverJob"/>
+        <property name="cronExpression" value="0 0 5 * * ?"/>
+        <!-- no longer in quartz
+        <property name="volatility" value="true"/>
+        -->
+    </bean>
+
+    <bean id="auditEventPurgerTrigger" class="com.jaspersoft.jasperserver.api.engine.scheduling.quartz.JSCronTriggerBean">
+        <property name="jobDetail" ref="auditEventPurgerJob"/>
+        <property name="cronExpression" value="0 0 3 * * ?"/>
+         <!-- no longer in quartz
+        <property name="volatility" value="true"/>
+        -->
+    </bean>
+
+    <!--
+
+    <bean id="auditEventPurgerJob" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+        <property name="targetObject" ref="auditService"/>
+        <property name="targetMethod" value="purgeAuditEvents"/>
+    </bean>
+
+    <bean id="auditEventArchiverJob" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+        <property name="targetObject" ref="auditService"/>
+        <property name="targetMethod" value="archiveAuditEvents"/>
+    </bean>
+
+    <bean id="auditEventArchiverTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+        <property name="jobDetail" ref="auditEventArchiverJob"/>
+        <property name="cronExpression" value="0 0 5 * * ?"/>
+        <property name="volatility" value="true"/>
+    </bean>
+
+    <bean id="auditEventPurgerTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+        <property name="jobDetail" ref="auditEventPurgerJob"/>
+        <property name="cronExpression" value="0 0 3 * * ?"/>
+        <property name="volatility" value="true"/>
+    </bean>
+     -->
+
+
+    <bean id="proMaintenanceSchedulerTriggers" class="java.util.ArrayList">
+        <constructor-arg>
+            <list>
+                <ref bean="logPurgerTrigger"/>
+                <ref bean="heartbeatTrigger"/>
+                <ref bean="accessEventPurgerTrigger"/>
+                <ref bean="auditEventPurgerTrigger"/>
+                <ref bean="auditEventArchiverTrigger"/>
+            </list>
+        </constructor-arg>
+    </bean>
+
+    <bean id="auditService"
+        class="com.jaspersoft.ji.logging.audit.service.AuditServiceImpl">
+        <property name="sessionFactory" ref="sessionFactory"/>
+        <property name="persistentClassFactory" ref="persistentMappings"/>
+        <property name="clientClassFactory" ref="mappingResourceFactory"/>
+        <property name="maxAuditEventAgeToArchive" value="30"/>
+        <property name="maxAuditEventAge" value="0"/>
+    </bean>
+
+    <bean class="com.jaspersoft.jasperserver.api.common.util.spring.GenericBeanUpdater">
+        <property name="definition">
+            <bean class="com.jaspersoft.jasperserver.api.common.util.spring.GenericBeanUpdaterDefinition">
+                <property name="order" value="10"/>
+                <property name="beanName" value="loggingEventsService"/>
+                <property name="propertyName" value="routingMap"/>
+                <property name="operation" value="append"/>
+            </bean>
+        </property>
+        <property name="value">
+            <map>
+                <entry key="com.jaspersoft.jasperserver.api.logging.audit.domain.AuditEvent">
+                    <idref bean="auditService"/>
+                </entry>
+            </map>
+        </property>
+        <property name="valueType" value="idRefMap"/>
+    </bean>
+
+    <bean class="com.jaspersoft.jasperserver.api.common.util.spring.GenericBeanUpdater">
+        <property name="definition">
+            <bean class="com.jaspersoft.jasperserver.api.common.util.spring.GenericBeanUpdaterDefinition">
+                <property name="order" value="10"/>
+                <property name="beanName" value="loggingContextProvider"/>
+                <property name="propertyName" value="enabledLoggingTypesMap"/>
+                <property name="operation" value="append"/>
+            </bean>
+        </property>
+        <property name="value">
+            <map>
+                <entry key="com.jaspersoft.jasperserver.api.logging.audit.domain.AuditEvent" value="false"/>
+            </map>
+        </property>
+        <property name="valueType" value="stringMap"/>
+    </bean>
+
+    <!-- Map which maps audit events and their properties which will be saved into db -->
+    <util:map id="enabledEventsMapping">
+        <entry key="WEB_SERVICES">
+            <map>
+                <!--key - name of the event type. value - comma separated list of property types-->
+                <entry key="login" value="username,organization,loginFailure,exception"/>
+                <entry key="runReport" value="reportParam,reportRenderingTime,reportRenderingStartTime,queryExecutionTime,queryExecutionStartTime,reportExecutionTime,reportExecutionStartTime,dataSource,sqlQuery,domainQuery,exception"/>
+                <entry key="inputControlsQuery" value="reportParam,queryExecutionTime,queryExecutionStartTime,dataSource,sqlQuery,domainQuery,exception"/>
+                <!--<entry key="accessResource" value="exception"/>-->
+                <entry key="saveResource" value="exception"/>
+                <entry key="updateResource" value="exception"/>
+                <entry key="deleteResource" value="exception"/>
+                <entry key="copyResource" value="destFolderUri,exception"/>
+                <entry key="moveResource" value="destFolderUri,exception"/>
+                <entry key="createFolder" value="folderName,folderLabel,folderDescription,exception"/>
+                <entry key="updateFolder" value="folderName,folderLabel,folderDescription,exception"/>
+                <entry key="deleteFolder" value="exception"/>
+                <entry key="copyFolder" value="destFolderUri,exception"/>
+                <entry key="moveFolder" value="destFolderUri,exception"/>
+                <entry key="createOrganization" value="tenantId,tenantDesc,exception"/>
+                <entry key="updateOrganization" value="tenantId,tenantDesc,exception"/>
+                <entry key="deleteOrganization" value="tenantId,tenantDesc,exception"/>
+                <entry key="scheduleReport" value="jobLabel,jobDescription,jobBaseOutputFilename,jobOutputFormats,jobOutputLocale,jobDestinationFolder,jobNotificationEmails,jobTriggerStartType,jobTimezone,jobStartDate,jobEndDate,jobTriggerType,jobSimpleTriggerOccurenceCount,jobSimpleTriggerRecurrenceInterval,jobSimpleTriggerRecurrenceIntervalUnit,jobCalendarTriggerMinutes,jobCalendarTriggerHours,jobCalendarTriggerDaysType,jobCalendarTriggerWeekDays,jobCalendarTriggerMonthDays,jobCalendarTriggerMonths,jobParam,exception"/>
+                <entry key="updateReportScheduling" value="jobLabel,jobDescription,jobBaseOutputFilename,jobOutputFormats,jobOutputLocale,jobDestinationFolder,jobNotificationEmails,jobTriggerStartType,jobTimezone,jobStartDate,jobEndDate,jobTriggerType,jobSimpleTriggerOccurenceCount,jobSimpleTriggerRecurrenceInterval,jobSimpleTriggerRecurrenceIntervalUnit,jobCalendarTriggerMinutes,jobCalendarTriggerHours,jobCalendarTriggerDaysType,jobCalendarTriggerWeekDays,jobCalendarTriggerMonthDays,jobCalendarTriggerMonths,jobParam,exception"/>
+                <entry key="deleteReportScheduling" value="jobLabel,jobDescription,jobBaseOutputFilename,jobOutputFormats,jobOutputLocale,jobDestinationFolder,jobNotificationEmails,jobTriggerStartType,jobTimezone,jobStartDate,jobEndDate,jobTriggerType,jobSimpleTriggerOccurenceCount,jobSimpleTriggerRecurrenceInterval,jobSimpleTriggerRecurrenceIntervalUnit,jobCalendarTriggerMinutes,jobCalendarTriggerHours,jobCalendarTriggerDaysType,jobCalendarTriggerWeekDays,jobCalendarTriggerMonthDays,jobCalendarTriggerMonths,jobParam,exception"/>
+                <entry key="createPermission" value="recipientType,recipientName,recipientTenantId,previousPermissionValue,permissionValue,exception"/>
+                <entry key="updatePermission" value="recipientType,recipientName,recipientTenantId,previousPermissionValue,permissionValue,exception"/>
+                <entry key="deletePermission" value="recipientType,recipientName,recipientTenantId,previousPermissionValue,permissionValue,exception"/>
+                <entry key="createUser" value="username,tenantId,email,fullName,passwordChangeTime,enabled,externallyDefined,attribute,roleName,exception"/>
+                <entry key="updateUser" value="username,tenantId,email,fullName,passwordChangeTime,enabled,externallyDefined,attribute,roleName,exception"/>
+                <entry key="deleteUser" value="username,tenantId,email,fullName,passwordChangeTime,enabled,externallyDefined,attribute,roleName,exception"/>
+                <entry key="createRole" value="roleName,tenantId,externallyDefined,attribute,addedUserId,exception"/>
+                <entry key="updateRole" value="roleName,tenantId,externallyDefined,attribute,addedUserId,removedUserId,exception"/>
+                <entry key="deleteRole" value="roleName,tenantId,externallyDefined,attribute,userId,exception"/>
+            </map>
+        </entry>
+        <entry key="GUI">
+            <map>
+                <!--key - name of the event type. value - comma separated list of property types-->
+                <entry key="login" value="username,organization,loginFailure,exception"/>
+                <entry key="logout" value="exception"/>
+                <entry key="runReport" value="reportParam,reportRenderingTime,reportRenderingStartTime,queryExecutionTime,queryExecutionStartTime,reportExecutionTime,reportExecutionStartTime,dataSource,sqlQuery,domainQuery,exception"/>
+                <entry key="inputControlsQuery" value="reportParam,queryExecutionTime,queryExecutionStartTime,dataSource,sqlQuery,domainQuery,exception"/>
+                <entry key="adHocEditing" value="filter,fromCache,adhocAction,adhocSessionId,adhocStepId,reportParam,reportRenderingTime,reportRenderingStartTime,queryExecutionTime,queryExecutionStartTime,reportExecutionTime,reportExecutionStartTime,dataSource,sqlQuery,domainQuery,mdxQuery,exception"/>
+                <entry key="dashboardEditing" value="dashboardAction,dashboardSessionId,dashboardStepId,reportUri,exception"/>
+                <!--<entry key="accessResource" value="exception"/>-->
+                <entry key="saveResource" value="exception"/>
+                <entry key="updateResource" value="exception"/>
+                <entry key="deleteResource" value="exception"/>
+                <entry key="copyResource" value="destFolderUri,exception"/>
+                <entry key="moveResource" value="destFolderUri,exception"/>
+                <entry key="createFolder" value="folderName,folderLabel,folderDescription,exception"/>
+                <entry key="updateFolder" value="folderName,folderLabel,folderDescription,exception"/>
+                <entry key="deleteFolder" value="exception"/>
+                <entry key="copyFolder" value="destFolderUri,exception"/>
+                <entry key="moveFolder" value="destFolderUri,exception"/>
+                <entry key="switchUser" value="username,organization,exception"/>
+                <entry key="exitSwitchedUser" value="username,organization,exception"/>
+                <entry key="createOrganization" value="tenantId,tenantDesc,exception"/>
+                <entry key="updateOrganization" value="tenantId,tenantDesc,exception"/>
+                <entry key="deleteOrganization" value="tenantId,tenantDesc,exception"/>
+                <entry key="scheduleReport" value="jobLabel,jobDescription,jobBaseOutputFilename,jobOutputFormats,jobOutputLocale,jobDestinationFolder,jobNotificationEmails,jobTriggerStartType,jobTimezone,jobStartDate,jobEndDate,jobTriggerType,jobSimpleTriggerOccurenceCount,jobSimpleTriggerRecurrenceInterval,jobSimpleTriggerRecurrenceIntervalUnit,jobCalendarTriggerMinutes,jobCalendarTriggerHours,jobCalendarTriggerDaysType,jobCalendarTriggerWeekDays,jobCalendarTriggerMonthDays,jobCalendarTriggerMonths,jobParam,exception"/>
+                <entry key="updateReportScheduling" value="jobLabel,jobDescription,jobBaseOutputFilename,jobOutputFormats,jobOutputLocale,jobDestinationFolder,jobNotificationEmails,jobTriggerStartType,jobTimezone,jobStartDate,jobEndDate,jobTriggerType,jobSimpleTriggerOccurenceCount,jobSimpleTriggerRecurrenceInterval,jobSimpleTriggerRecurrenceIntervalUnit,jobCalendarTriggerMinutes,jobCalendarTriggerHours,jobCalendarTriggerDaysType,jobCalendarTriggerWeekDays,jobCalendarTriggerMonthDays,jobCalendarTriggerMonths,jobParam,exception"/>
+                <entry key="deleteReportScheduling" value="jobLabel,jobDescription,jobBaseOutputFilename,jobOutputFormats,jobOutputLocale,jobDestinationFolder,jobNotificationEmails,jobTriggerStartType,jobTimezone,jobStartDate,jobEndDate,jobTriggerType,jobSimpleTriggerOccurenceCount,jobSimpleTriggerRecurrenceInterval,jobSimpleTriggerRecurrenceIntervalUnit,jobCalendarTriggerMinutes,jobCalendarTriggerHours,jobCalendarTriggerDaysType,jobCalendarTriggerWeekDays,jobCalendarTriggerMonthDays,jobCalendarTriggerMonths,jobParam,exception"/>
+                <entry key="createPermission" value="recipientType,recipientName,recipientTenantId,previousPermissionValue,permissionValue,exception"/>
+                <entry key="updatePermission" value="recipientType,recipientName,recipientTenantId,previousPermissionValue,permissionValue,exception"/>
+                <entry key="deletePermission" value="recipientType,recipientName,recipientTenantId,previousPermissionValue,permissionValue,exception"/>
+                <entry key="createUser" value="username,tenantId,email,fullName,passwordChangeTime,enabled,externallyDefined,attribute,roleName,exception"/>
+                <entry key="updateUser" value="username,tenantId,email,fullName,passwordChangeTime,enabled,externallyDefined,attribute,roleName,exception"/>
+                <entry key="deleteUser" value="username,tenantId,email,fullName,passwordChangeTime,enabled,externallyDefined,attribute,roleName,exception"/>
+                <entry key="createRole" value="roleName,tenantId,externallyDefined,attribute,addedUserId,exception"/>
+                <entry key="updateRole" value="roleName,tenantId,externallyDefined,attribute,addedUserId,removedUserId,exception"/>
+                <entry key="deleteRole" value="roleName,tenantId,externallyDefined,attribute,userId,exception"/>
+                <entry key="olapView" value="mdxQuery,drillThroughSqlQuery,exception"/>
+                <entry key="updateAdhocOptions" value="maxAvailableValues,maxResultSetRows,maxExecutionTimeSec,sqlStrategyEnabled,domainStrategyEnabled,exception"/>
+                <entry key="updateAnalysisOptions" value="analysisOption,exception"/>
+                <entry key="clearAdhocCacheEntry" value="cacheCreationTime,cacheLastUsageTime,cacheTimesUsed,cacheFetchTime,cacheRowCount,cacheQuery,cacheQueryLanguage,cacheParam,exception"/>
+            </map>
+        </entry>
+        <entry key="INTERNAL">
+            <map>
+                <!--key - name of the event type. value - comma separated list of property types-->
+                <entry key="runReport" value="reportParam,reportRenderingTime,reportRenderingStartTime,queryExecutionTime,queryExecutionStartTime,reportExecutionTime,reportExecutionStartTime,dataSource,sqlQuery,domainQuery,exception,jobLabel,jobID"/>
+            </map>
+        </entry>
+    </util:map>
+
+    <!-- map which holds associations beetween audit event types and event listeners -->
+    <util:map id="auditEventListenersMap">
+        <!--
+             * - means that such event listeners will be executed for any
+             type of audit events. Also they will be executed
+             before any other listener which is specified in
+             entry with key different from *
+        -->
+        <entry key="*">
+            <list>
+                <!-- do not remove this listeners -->
+                <ref bean="handleResourceTypeNullsAuditEventListener"/>
+                <ref bean="externalUserAuditEventListener"/>
+                <!-- -->
+            </list>
+        </entry>
+        <entry key="runReport">
+            <list>
+                <!-- do not remove this listeners -->
+                <ref bean="removeReportParamsAuditEventListener"/>
+                <!-- -->
+            </list>
+        </entry>
+        <entry key="adHocEditing">
+            <list>
+                <!-- do not remove this listeners -->
+                <ref bean="removeReportParamsAuditEventListener"/>
+                <ref bean="mtAdHocEditingAuditEventListener"/>
+                <!-- -->
+            </list>
+        </entry>
+        <entry key="dashboardEditing">
+            <list>
+                <!-- do not remove this listeners -->
+                <ref bean="removeUnnecessaryDashboardActivityAuditEventListener"/>
+                <!-- -->
+            </list>
+        </entry>
+        <entry key="inputControlsQuery">
+            <list>
+                <!-- do not remove this listeners -->
+                <ref bean="removeReportParamsAuditEventListener"/>
+                <ref bean="inputControlsQueryAuditEventListener"/>
+                <!-- -->
+            </list>
+        </entry>
+    </util:map>
+
+    <bean id="removeReportParamsAuditEventListener"
+          class="com.jaspersoft.ji.logging.audit.custom.RemoveReportParamsAuditEventListener">
+        <property name="reportParamsToSkip">
+            <list>
+                <value>slFactory</value>
+                <value>slSchema</value>
+                <value>LoggedInUser</value>
+                <value>LoggedInUsername</value>
+                <value>datasourceURI</value>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="removeUnnecessaryDashboardActivityAuditEventListener"
+          class="com.jaspersoft.ji.logging.audit.custom.RemoveUnnecessaryDashboardActivityAuditEventListener">
+        <property name="activityNamesToSkip">
+            <list>
+                <value>save</value>
+                <value>resizeFramesAndRenderControls</value>
+                <value>saveTempDashboard</value>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="inputControlsQueryAuditEventListener"
+          class="com.jaspersoft.ji.logging.audit.custom.InputControlsQueryAuditEventListener">
+        <property name="repositoryService" ref="${bean.internalRepositoryService}"/>
+    </bean>
+
+    <bean id="handleResourceTypeNullsAuditEventListener"
+          class="com.jaspersoft.ji.logging.audit.custom.HandleResourceTypeNullsAuditEventListener"/>
+
+    <bean id="externalUserAuditEventListener"
+          class="com.jaspersoft.ji.logging.audit.custom.ExternalUserAuditEventListener"/>
+
+    <!-- map which holds associations beetween value types of audit event properties and property converters -->
+    <util:map id="auditEventPropertyConvertersMap">
+        <!-- Key - type of audit event value. Value - converter class -->
+        <!-- common params -->
+        <entry key="exception" value="com.jaspersoft.ji.logging.audit.util.ExceptionToAuditEventPropertyConverter"/>
+        <entry key="username" value="com.jaspersoft.ji.logging.audit.util.StringToAuditEventPropertyConverter"/>
+        <entry key="organization" value="com.jaspersoft.ji.logging.audit.util.StringToAuditEventPropertyConverter"/>
+        <!-- run report and adhoc\dashboard editing params -->
+        <entry key="filter" value="com.jaspersoft.ji.logging.audit.util.StringToAuditEventPropertyConverter"/>
+        <entry key="fromCache" value="com.jaspersoft.ji.logging.audit.util.BooleanToAuditEventPropertyConverter"/>
+        <entry key="adhocAction" value="com.jaspersoft.ji.logging.audit.util.StringToAuditEventPropertyConverter"/>
+        <entry key="adhocSessionId" value="com.jaspersoft.ji.logging.audit.util.LongToAuditEventPropertyConverter"/>
+        <entry key="adhocStepId" value="com.jaspersoft.ji.logging.audit.util.LongToAuditEventPropertyConverter"/>
+        <entry key="dashboardAction" value="com.jaspersoft.ji.logging.audit.util.StringToAuditEventPropertyConverter"/>
+        <entry key="dashboardSessionId" value="com.jaspersoft.ji.logging.audit.util.LongToAuditEventPropertyConverter"/>
+        <entry key="dashboardStepId" value="com.jaspersoft.ji.logging.audit.util.LongToAuditEventPropertyConverter"/>
+        <entry key="reportParam" value="com.jaspersoft.ji.logging.audit.util.ReportParamToAuditEventPropertyConverter"/>
+        <entry key="reportRenderingTime" value="com.jaspersoft.ji.logging.audit.util.LongToAuditEventPropertyConverter"/>
+        <entry key="reportRenderingStartTime" value="com.jaspersoft.ji.logging.audit.util.DateToAuditEventPropertyConverter"/>
+        <entry key="queryExecutionTime" value="com.jaspersoft.ji.logging.audit.util.LongToAuditEventPropertyConverter"/>
+        <entry key="queryExecutionStartTime" value="com.jaspersoft.ji.logging.audit.util.DateToAuditEventPropertyConverter"/>
+        <entry key="reportExecutionTime" value="com.jaspersoft.ji.logging.audit.util.LongToAuditEventPropertyConverter"/>
+        <entry key="reportExecutionStartTime" value="com.jaspersoft.ji.logging.audit.util.DateToAuditEventPropertyConverter"/>
+        <entry key="dataSource" value="com.jaspersoft.ji.logging.audit.util.StringToAuditEventPropertyConverter"/>
+        <entry key="sqlQuery" value="com.jaspersoft.ji.logging.audit.util.ClobToAuditEventPropertyConverter"/>
+        <entry key="domainQuery" value="com.jaspersoft.ji.logging.audit.util.ClobToAuditEventPropertyConverter"/>
+        <entry key="checkParams" value="com.jaspersoft.ji.logging.audit.util.BooleanToAuditEventPropertyConverter"/>
+        <entry key="reportUri" value="com.jaspersoft.ji.logging.audit.util.StringToAuditEventPropertyConverter"/>
+        <!-- login params -->
+        <entry key="loginFailure" value="com.jaspersoft.ji.logging.audit.util.StringToAuditEventPropertyConverter"/>
+        <!-- organization management params -->
+        <entry key="tenantId" value="com.jaspersoft.ji.logging.audit.util.StringToAuditEventPropertyConverter"/>
+        <entry key="tenantDesc" value="com.jaspersoft.ji.logging.audit.util.StringToAuditEventPropertyConverter"/>
+        <!-- schedule report params -->
+        <entry key="jobID" value="com.jaspersoft.ji.logging.audit.util.LongToAuditEventPropertyConverter"/>
+        <entry key="jobLabel" value="com.jaspersoft.ji.logging.audit.util.StringToAuditEventPropertyConverter"/>
+        <entry key="jobDescription" value="com.jaspersoft.ji.logging.audit.util.StringToAuditEventPropertyConverter"/>
+        <entry key="jobBaseOutputFilename" value="com.jaspersoft.ji.logging.audit.util.StringToAuditEventPropertyConverter"/>
+        <entry key="jobOutputFormats" value="com.jaspersoft.ji.logging.audit.util.StringToAuditEventPropertyConverter"/>
+        <entry key="jobOutputLocale" value="com.jaspersoft.ji.logging.audit.util.StringToAuditEventPropertyConverter"/>
+        <entry key="jobDestinationFolder" value="com.jaspersoft.ji.logging.audit.util.StringToAuditEventPropertyConverter"/>
+        <entry key="jobNotificationEmails" value="com.jaspersoft.ji.logging.audit.util.StringToAuditEventPropertyConverter"/>
+        <entry key="jobTriggerType" value="com.jaspersoft.ji.logging.audit.util.StringToAuditEventPropertyConverter"/>
+        <entry key="jobTriggerStartType" value="com.jaspersoft.ji.logging.audit.util.StringToAuditEventPropertyConverter"/>
+        <entry key="jobTimezone" value="com.jaspersoft.ji.logging.audit.util.StringToAuditEventPropertyConverter"/>
+        <entry key="jobStartDate" value="com.jaspersoft.ji.logging.audit.util.DateToAuditEventPropertyConverter"/>
+        <entry key="jobEndDate" value="com.jaspersoft.ji.logging.audit.util.DateToAuditEventPropertyConverter"/>
+        <entry key="jobParam" value="com.jaspersoft.ji.logging.audit.util.StringToAuditEventPropertyConverter"/>
+        <entry key="jobSimpleTriggerOccurenceCount" value="com.jaspersoft.ji.logging.audit.util.LongToAuditEventPropertyConverter"/>
+        <entry key="jobSimpleTriggerRecurrenceInterval" value="com.jaspersoft.ji.logging.audit.util.LongToAuditEventPropertyConverter"/>
+        <entry key="jobSimpleTriggerRecurrenceIntervalUnit" value="com.jaspersoft.ji.logging.audit.util.StringToAuditEventPropertyConverter"/>
+        <entry key="jobCalendarTriggerMinutes" value="com.jaspersoft.ji.logging.audit.util.StringToAuditEventPropertyConverter"/>
+        <entry key="jobCalendarTriggerHours" value="com.jaspersoft.ji.logging.audit.util.StringToAuditEventPropertyConverter"/>
+        <entry key="jobCalendarTriggerDaysType" value="com.jaspersoft.ji.logging.audit.util.StringToAuditEventPropertyConverter"/>
+        <entry key="jobCalendarTriggerWeekDays" value="com.jaspersoft.ji.logging.audit.util.StringToAuditEventPropertyConverter"/>
+        <entry key="jobCalendarTriggerMonthDays" value="com.jaspersoft.ji.logging.audit.util.StringToAuditEventPropertyConverter"/>
+        <entry key="jobCalendarTriggerMonths" value="com.jaspersoft.ji.logging.audit.util.StringToAuditEventPropertyConverter"/>
+        <!-- permission management params -->
+        <entry key="recipientType" value="com.jaspersoft.ji.logging.audit.util.StringToAuditEventPropertyConverter"/>
+        <entry key="recipientName" value="com.jaspersoft.ji.logging.audit.util.StringToAuditEventPropertyConverter"/>
+        <entry key="recipientTenantId" value="com.jaspersoft.ji.logging.audit.util.StringToAuditEventPropertyConverter"/>
+        <entry key="previousPermissionValue" value="com.jaspersoft.ji.logging.audit.util.PermissionToAuditEventPropertyConverter"/>
+        <entry key="permissionValue" value="com.jaspersoft.ji.logging.audit.util.PermissionToAuditEventPropertyConverter"/>
+        <!-- user management params -->
+        <entry key="email" value="com.jaspersoft.ji.logging.audit.util.StringToAuditEventPropertyConverter"/>
+        <entry key="fullName" value="com.jaspersoft.ji.logging.audit.util.StringToAuditEventPropertyConverter"/>
+        <entry key="passwordChangeTime" value="com.jaspersoft.ji.logging.audit.util.DateToAuditEventPropertyConverter"/>
+        <entry key="attribute" value="com.jaspersoft.ji.logging.audit.util.ProfileAttributeToAuditEventPropertyConverter"/>
+        <!-- role management params -->
+        <entry key="roleName" value="com.jaspersoft.ji.logging.audit.util.StringToAuditEventPropertyConverter"/>
+        <entry key="enabled" value="com.jaspersoft.ji.logging.audit.util.BooleanToAuditEventPropertyConverter"/>
+        <entry key="externallyDefined" value="com.jaspersoft.ji.logging.audit.util.BooleanToAuditEventPropertyConverter"/>
+        <entry key="userId" value="com.jaspersoft.ji.logging.audit.util.LongToAuditEventPropertyConverter"/>
+        <entry key="addedUserId" value="com.jaspersoft.ji.logging.audit.util.LongToAuditEventPropertyConverter"/>
+        <entry key="removedUserId" value="com.jaspersoft.ji.logging.audit.util.LongToAuditEventPropertyConverter"/>
+        <!-- olap view params -->
+        <entry key="mdxQuery" value="com.jaspersoft.ji.logging.audit.util.ClobToAuditEventPropertyConverter"/>
+        <entry key="drillThroughSqlQuery" value="com.jaspersoft.ji.logging.audit.util.ClobToAuditEventPropertyConverter"/>
+        <!-- adhoc options params -->
+        <entry key="maxAvailableValues" value="com.jaspersoft.ji.logging.audit.util.LongToAuditEventPropertyConverter"/>
+        <entry key="maxResultSetRows" value="com.jaspersoft.ji.logging.audit.util.LongToAuditEventPropertyConverter"/>
+        <entry key="maxExecutionTimeSec" value="com.jaspersoft.ji.logging.audit.util.LongToAuditEventPropertyConverter"/>
+        <entry key="domainStrategyEnabled" value="com.jaspersoft.ji.logging.audit.util.BooleanToAuditEventPropertyConverter"/>
+        <entry key="sqlStrategyEnabled" value="com.jaspersoft.ji.logging.audit.util.BooleanToAuditEventPropertyConverter"/>
+        <!-- analysis options params -->
+        <entry key="analysisOption" value="com.jaspersoft.ji.logging.audit.util.AnalysisOptionToAuditEventPropertyConverter"/>
+        <!-- adhoc cache params -->
+        <entry key="cacheCreationTime" value="com.jaspersoft.ji.logging.audit.util.LongToAuditEventPropertyConverter"/>
+        <entry key="cacheLastUsageTime" value="com.jaspersoft.ji.logging.audit.util.LongToAuditEventPropertyConverter"/>
+        <entry key="cacheTimesUsed" value="com.jaspersoft.ji.logging.audit.util.LongToAuditEventPropertyConverter"/>
+        <entry key="cacheFetchTime" value="com.jaspersoft.ji.logging.audit.util.LongToAuditEventPropertyConverter"/>
+        <entry key="cacheRowCount" value="com.jaspersoft.ji.logging.audit.util.LongToAuditEventPropertyConverter"/>
+        <entry key="cacheQuery" value="com.jaspersoft.ji.logging.audit.util.ClobToAuditEventPropertyConverter"/>
+        <entry key="cacheQueryLanguage" value="com.jaspersoft.ji.logging.audit.util.StringToAuditEventPropertyConverter"/>
+        <entry key="cacheParam" value="com.jaspersoft.ji.logging.audit.util.StringToAuditEventPropertyConverter"/>
+        <!-- resource and folder copy and move params -->
+        <entry key="destFolderUri" value="com.jaspersoft.ji.logging.audit.util.StringToAuditEventPropertyConverter"/>
+        <entry key="folderName" value="com.jaspersoft.ji.logging.audit.util.StringToAuditEventPropertyConverter"/>
+        <entry key="folderLabel" value="com.jaspersoft.ji.logging.audit.util.StringToAuditEventPropertyConverter"/>
+        <entry key="folderDescription" value="com.jaspersoft.ji.logging.audit.util.StringToAuditEventPropertyConverter"/>
+    </util:map>
+
+    <bean id="basicProLoggingContextProvider"
+          class="com.jaspersoft.ji.logging.context.BasicProLoggingContextProvider"
+          parent="loggingContextProvider" abstract="true">
+        <property name="auditEventListenerMap" ref="auditEventListenersMap"/>
+    </bean>
+
+    <bean id="auditContext" class="com.jaspersoft.ji.logging.audit.context.AuditContextImpl">
+        <property name="loggingContextProvider" ref="${bean.loggingContextProvider}"/>
+        <property name="clientClassFactory" ref="mappingResourceFactory"/>
+        <property name="securityContextProvider" ref="${bean.securityContextProvider}"/>
+        <property name="enabledEventsMapping" ref="enabledEventsMapping"/>
+        <property name="auditEventPropertyConverterMap" ref="auditEventPropertyConvertersMap"/>
+        <property name="resourceTypeMap">
+            <map>
+                <entry key="com.jaspersoft.jasperserver.api.metadata.jasperreports.domain.ReportUnit" value="ReportUnit"/>
+                <entry key="com.jaspersoft.jasperserver.api.metadata.olap.domain.OlapUnit" value="OlapUnit"/>
+                <entry key="com.jaspersoft.jasperserver.api.metadata.common.domain.Query" value="Query"/>
+                <entry key="com.jaspersoft.jasperserver.api.metadata.common.domain.InputControl" value="InputControl"/>
+                <entry key="com.jaspersoft.jasperserver.api.metadata.common.domain.ListOfValues" value="ListOfValues"/>
+                <entry key="com.jaspersoft.jasperserver.api.metadata.common.domain.ListOfValuesItem" value="ListOfValuesItem"/>
+                <entry key="com.jaspersoft.jasperserver.api.metadata.common.domain.FileResource" value="FileResource"/>
+                <entry key="com.jaspersoft.jasperserver.api.metadata.common.domain.Folder" value="Folder"/>
+                <entry key="com.jaspersoft.jasperserver.api.metadata.common.domain.ContentResource" value="ContentResource"/>
+                <entry key="com.jaspersoft.jasperserver.api.metadata.jasperreports.domain.ReportDataSource" value="ReportDataSource"/>
+                <entry key="com.jaspersoft.jasperserver.api.metadata.jasperreports.domain.JdbcReportDataSource" value="JdbcReportDataSource"/>
+                <entry key="com.jaspersoft.jasperserver.api.metadata.jasperreports.domain.JndiJdbcReportDataSource" value="JndiJdbcReportDataSource"/>
+                <entry key="com.jaspersoft.jasperserver.api.metadata.jasperreports.domain.BeanReportDataSource" value="BeanReportDataSource"/>
+                <entry key="com.jaspersoft.jasperserver.api.metadata.jasperreports.domain.CustomReportDataSource" value="CustomReportDataSource"/>
+                <entry key="com.jaspersoft.jasperserver.api.metadata.common.domain.DataType" value="DataType"/>
+                <entry key="com.jaspersoft.jasperserver.api.metadata.olap.domain.OlapClientConnection" value="OlapClientConnection"/>
+                <entry key="com.jaspersoft.jasperserver.api.metadata.olap.domain.OlapDataSource" value="OlapDataSource"/>
+                <entry key="com.jaspersoft.jasperserver.api.metadata.olap.domain.XMLAConnection" value="XMLAConnection"/>
+                <entry key="com.jaspersoft.jasperserver.api.metadata.olap.domain.JdbcOlapDataSource" value="JdbcOlapDataSource"/>
+                <entry key="com.jaspersoft.jasperserver.api.metadata.olap.domain.JndiJdbcOlapDataSource" value="JndiJdbcOlapDataSource"/>
+                <entry key="com.jaspersoft.jasperserver.api.metadata.olap.domain.MondrianConnection" value="MondrianConnection"/>
+                <entry key="com.jaspersoft.jasperserver.api.metadata.olap.domain.MondrianXMLADefinition" value="MondrianXMLADefinition"/>
+                <entry key="com.jaspersoft.ji.adhoc.AdhocReportUnit" value="AdhocReportUnit"/>
+                <entry key="com.jaspersoft.ji.adhoc.AdhocDataView" value="AdhocDataView"/>
+                <entry key="com.jaspersoft.ji.adhoc.DashboardResource" value="DashboardResource"/>
+                <entry key="com.jaspersoft.commons.semantic.DataDefinerUnit" value="DataDefinerUnit"/>
+                <entry key="com.jaspersoft.ji.report.options.metadata.ReportOptions" value="ReportOptions"/>
+                <entry key="com.jaspersoft.ji.ja.security.domain.SecureMondrianConnection" value="SecureMondrianConnection"/>
+                <entry key="com.jaspersoft.commons.semantic.datasource.SemanticLayerDataSource" value="SemanticLayerDataSource"/>
+            </map>
+        </property>
+    </bean>
+
+    <bean class="com.jaspersoft.ji.logging.audit.context.AuditContextStaticInjector">
+        <property name="auditContext" ref="${bean.auditContext}"/>
+        <property name="auditContextAwareClasses">
+            <list>
+                <value>com.jaspersoft.commons.util.JSControlledJdbcQueryExecuter</value>
+                <value>com.jaspersoft.commons.semantic.datasource.SemanticLayerQueryExecuter</value>
+                <value>com.jaspersoft.ji.report.options.engine.ReportOptionsExecutionJob</value>
+                <value>com.jaspersoft.ji.logging.audit.context.AuditContextStaticProvider</value>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="proLoggingFilter" class="com.jaspersoft.ji.logging.filter.ProLoggingFilter" parent="loggingFilter">
+        <property name="auditContext" ref="${bean.auditContext}"/>
+        <property name="requestTypeListener" ref="${bean.requestTypeListener}"/>
+        <property name="requestTypeMapping">
+            <map>
+                <entry key="WEB_SERVICES">
+                    <value>/(services|rest)(/.*)?</value>
+                </entry>
+                <entry key="GUI">
+                    <value>/*</value>
+                </entry>
+            </map>
+        </property>
+    </bean>
+
+   <bean id="authenticationManagerAuditLogger" class="com.jaspersoft.ji.security.AuthenticationManagerAuditLogger">
+       <property name="auditContext" ref="${bean.auditContext}"/>
+   </bean>
+
+    <aop:config>
+      <aop:aspect ref="authenticationManagerAuditLogger">
+         <aop:pointcut id="authenticateExecution"
+                    expression="execution(* org.springframework.security.AuthenticationManager.authenticate(org.springframework.security.Authentication))
+                    and bean(authenticationManager)
+                    and args(authentication)"/>
+         <aop:pointcut id="makeUserLoggedInExecution"
+                     expression="execution(* com.jaspersoft.jasperserver.api.metadata.user.service.impl.ExternalUserService.makeUserLoggedIn(com.jaspersoft.jasperserver.api.metadata.user.domain.User))
+                     and args(user)"/>          
+         <aop:around pointcut-ref="authenticateExecution"
+                  method="authenticate"/>
+         <aop:before pointcut-ref="makeUserLoggedInExecution"
+                   method="beforeMakeUserLoggedIn"/>
+      </aop:aspect>
+   </aop:config>
+
+    <bean id="dummyRequestTypeListener"
+          class="com.jaspersoft.ji.logging.audit.context.DummyRequestTypeListener"/>
+
+	<util:list id="proReportExecutionListenerFactories">
+		<ref bean="localeContextReportExecutionListenerFactory"/>
+		<ref bean="securityContextReportExecutionListenerFactory"/>
+		<ref local="reportExecutionAuditRequestTypeListenerFactory"/>
+		<ref bean="reportExecutionAuditListenerFactory"/>
+	</util:list>
+	
+	<bean id="reportExecutionAuditRequestTypeListenerFactory" class="com.jaspersoft.ji.engine.ReportExecutionAuditRequestTypeListenerFactory">
+		<property name="requestTypeListener" ref="${bean.requestTypeListener}"/>
+	</bean>
+
+</beans>

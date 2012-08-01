@@ -1,0 +1,21 @@
+<ehcache name="dataSnapshots">
+
+    <diskStore path="java.io.tmpdir/jasperserver/ehcache/dataSnapshots"/>
+
+	<cache name="snapshotMetadata"
+		maxElementsInMemory="1000"
+		eternal="false" 
+		overflowToDisk="false"
+		timeToIdleSeconds="600"
+		timeToLiveSeconds="7200"
+		diskPersistent="false"/>
+
+	<cache name="contentsCache"
+		maxElementsInMemory="20"
+		eternal="false" 
+		overflowToDisk="false"
+		timeToIdleSeconds="600"
+		timeToLiveSeconds="7200"
+		diskPersistent="false"/>
+
+</ehcache>

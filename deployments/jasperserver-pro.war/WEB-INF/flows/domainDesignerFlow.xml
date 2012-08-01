@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow" xmlns:ns0="http://www.w3.org/2001/XMLSchema-instance"
+      ns0:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd"
+      start-state="checkDatasources">
+
+    <input name="ddSchema"/>
+    <input name="ddDatasources"/>
+    <input name="ddBundle"/>
+
+    <decision-state id="checkDatasources">
+        <if test="not (flowScope.ddDatasources == null)" then="initAction"
+            else="redirect"/>
+    </decision-state>
+
+    <action-state id="initAction">
+        <evaluate expression="domainDesignerAction"/>
+        <transition on="success" to="tables"/>
+    </action-state>
+
+    <view-state id="tables" view="modules/semanticLayer/domainDesigner/tables">
+        <on-entry>
+            <evaluate expression="domainDesignerAction.prepareTables"/>
+        </on-entry>
+        <transition on="initAction" to="initAction"/>
+        <transition on="setDatasources" to="ajaxView">
+            <evaluate expression="domainDesignerAction.setDatasources"/>
+        </transition>
+        <transition on="pickDatasource" to="ajaxView">
+            <evaluate expression="domainDesignerAction.pickDatasource"/>
+        </transition>
+        <transition on="checkForSchemas" to="ajaxView">
+            <evaluate expression="domainDesignerAction.checkForSchemas"/>
+        </transition>
+        <transition on="validateDeletedTablesForCalcFields" to="ajaxView">
+            <evaluate expression="domainDesignerAction.validateDeletedTablesForCalcFields"/>
+        </transition>
+        <transition on="deleteCalculatedField" to="ajaxView">
+            <evaluate expression="domainDesignerAction.deleteCalculatedField"/>
+        </transition>
+        <on-exit>
+            <evaluate expression="domainDesignerAction.processParameters"/>
+        </on-exit>
+    </view-state>
+
+    <view-state id="query" view="modules/semanticLayer/domainDesigner/derivedTables">
+        <transition on="runJDBCQuery" to="runJDBCQuery"/>
+        <!--<transition on="changeTableAlias" to="ajaxView">
+            <evaluate expression="domainDesignerAction.changeTableAlias"/>
+        </transition>-->
+        <transition on="validateDeletedTablesForCalcFields" to="ajaxView">
+            <evaluate expression="domainDesignerAction.validateDeletedTablesForCalcFields"/>
+        </transition>
+        <on-exit>
+            <evaluate expression="domainDesignerAction.processParameters"/>
+            <!--<evaluate expression="domainDesignerAction.processJoins"/>-->
+        </on-exit>
+    </view-state>
+
+    <view-state id="joins" view="modules/semanticLayer/domainDesigner/joins">
+        <on-entry>
+            <evaluate expression="domainDesignerAction.prepareJoins"/>
+        </on-entry>
+        <transition on="changeTableAlias" to="ajaxView">
+            <evaluate expression="domainDesignerAction.changeTableAlias"/>
+        </transition>
+        <transition on="validateDeletedTablesForCalcFields" to="ajaxView">
+            <evaluate expression="domainDesignerAction.validateDeletedTablesForCalcFields"/>
+        </transition>
+        <transition on="deleteCalculatedField" to="ajaxView">
+            <evaluate expression="domainDesignerAction.deleteCalculatedField"/>
+        </transition>
+        <transition on="validateUnjoinedTableForCalcFields" to="ajaxView">
+            <evaluate expression="domainDesignerAction.validateUnjoinedTableForCalcFields"/>
+        </transition>
+        <on-exit>
+            <evaluate expression="domainDesignerAction.processParameters"/>
+            <evaluate expression="domainDesignerAction.processJoins"/>
+        </on-exit>
+    </view-state>
+
+    <view-state id="calcFields" view="modules/semanticLayer/domainDesigner/calculatedFields">
+        <on-entry>
+            <evaluate expression="domainDesignerAction.prepareCalcFields"/>
+        </on-entry>
+        <transition on="bundle" to="generateBundleStubs"/>
+        <transition on="validateSchema" to="validateSchema"/>
+        <transition on="changeTableAlias" to="ajaxView">
+            <evaluate expression="domainDesignerAction.changeTableAlias"/>
+        </transition>
+        <transition on="prepareCalcFields" to="prepareCalcFields"/>
+        <transition on="createCalcField" to="ajaxView">
+            <evaluate expression="domainDesignerAction.createCalcField"/>
+        </transition>
+        <transition on="validateCalcField" to="ajaxView">
+            <evaluate expression="domainDesignerAction.validateCalcField"/>
+        </transition>
+        <transition on="validateCalculateFieldDeletion" to="ajaxView">
+            <evaluate expression="domainDesignerAction.validateCalculateFieldDeletion"/>
+        </transition>
+        <transition on="deleteCalculatedField" to="ajaxView">
+            <evaluate expression="domainDesignerAction.deleteCalculatedField"/>
+        </transition>
+        <on-exit>
+            <!--<action bean="domainDesignerAction" method="processParameters"/>-->
+            <evaluate expression="domainDesignerAction.processCalcFields"/>
+        </on-exit>
+    </view-state>
+
+    <view-state id="filters" view="modules/semanticLayer/domainDesigner/filters">
+        <on-entry>
+            <evaluate expression="domainDesignerAction.prepareFilters"/>
+        </on-entry>
+        <transition on="availableValues" to="ajaxView">
+            <evaluate expression="domainDesignerAction.getAvailableValues"/>
+        </transition>
+        <on-exit>
+            <evaluate expression="domainDesignerAction.processFilters"/>
+        </on-exit>
+    </view-state>
+
+    <view-state id="design" view="modules/semanticLayer/domainDesigner/display">
+        <on-entry>
+            <evaluate expression="domainDesignerAction.prepareDesign"/>
+        </on-entry>
+        <transition on="updateJoinView" to="updateJoinView"/>
+        <transition on="changeTableAlias" to="ajaxView">
+            <evaluate expression="domainDesignerAction.changeTableAlias"/>
+        </transition>
+        <transition on="validateDeletedTablesForCalcFields" to="ajaxView">
+            <evaluate expression="domainDesignerAction.validateDeletedTablesForCalcFields"/>
+        </transition>
+        <transition on="deleteCalculatedField" to="ajaxView">
+            <evaluate expression="domainDesignerAction.deleteCalculatedField"/>
+        </transition>
+        <on-exit>
+            <evaluate expression="domainDesignerAction.processParameters"/>
+            <evaluate expression="domainDesignerAction.processDesign"/>
+        </on-exit>
+    </view-state>
+
+    <action-state id="checkForEmptySets">
+        <evaluate expression="domainDesignerAction.checkForEmptySets"/>
+        <transition on="success" to="ajaxView"/>
+    </action-state>
+
+    <action-state id="runJDBCQuery">
+        <evaluate expression="domainDesignerAction.runJDBCQuery"/>
+        <transition on="success" to="ajaxView"/>
+    </action-state>
+
+    <action-state id="deleteEmptySets">
+        <evaluate expression="domainDesignerAction.deleteEmptySets"/>
+        <transition on="success" to="ajaxView"/>
+    </action-state>
+
+    <action-state id="prepareCalcFields">
+        <evaluate expression="domainDesignerAction.prepareCalcFields"/>
+        <transition on="success" to="ajaxView"/>
+    </action-state>
+
+    <action-state id="generateBundleStubs">
+        <evaluate expression="domainDesignerAction.generateBundleStubs"/>
+        <transition on="success" to="ajaxView"/>
+    </action-state>
+
+    <action-state id="validateSchema">
+        <evaluate expression="domainDesignerAction.validateSchema"/>
+        <transition on="success" to="ajaxView"/>
+    </action-state>
+
+    <action-state id="updateJoinView">
+        <evaluate expression="domainDesignerAction.updateJoinView"/>
+        <transition on="success" to="ajaxView"/>
+    </action-state>
+
+    <action-state id="done">
+        <evaluate expression="domainDesignerAction.prepareDatasources">
+            <attribute name="name" value="datasources"/>
+        </evaluate>
+        <evaluate expression="domainDesignerAction.prepareSchema">
+            <attribute name="name" value="schema"/>
+        </evaluate>
+        <transition on="schema.success" to="finish"/>
+    </action-state>
+
+    <view-state id="ajaxView" view="ajax/ajaxresponse"/>
+
+    <view-state id="ajaxError" view="ajax/ajaxerror"/>
+
+    <end-state id="cancel"/>
+
+    <end-state id="finish">
+        <output name="ddSchema" value="flowScope.ddSchema"/>
+        <output name="ddDatasources" value="flowScope.ddDatasources"/>
+    </end-state>
+
+    <end-state id="redirect" view="flowRedirect:createSLDatasourceFlow"/>
+
+    <!-- exceptions handling -->
+    <decision-state id="backFromError">
+        <if test="not (flowScope.prevForm == null or flowScope.prevForm == '')" then="${flowScope.prevForm}"
+            else="finish"/>
+    </decision-state>
+
+    <view-state id="errorPage" view="modules/system/errorPage"/>
+
+    <global-transitions>
+        <transition on="tables" to="tables"/>
+        <transition on="joins" to="joins"/>
+        <transition on="query" to="query"/>
+        <transition on="calcFields" to="calcFields"/>
+        <transition on="filters" to="filters"/>
+        <transition on="design" to="design"/>
+        <transition on="resetSession" to="ajaxView">
+            <evaluate expression="domainDesignerAction.resetSession"/>
+        </transition>
+        <transition on="exportToXML">
+            <evaluate expression="domainDesignerAction.exportToXML"/>
+        </transition>
+        <transition on="bundle" to="generateBundleStubs"/>
+        <transition on="downloadBundleStubs">
+            <evaluate expression="domainDesignerAction.downloadBundleStubs"/>
+        </transition>
+        <transition on="validateSchema" to="validateSchema"/>
+        <transition on="checkForEmptySets" to="checkForEmptySets"/>
+        <transition on="deleteEmptySets" to="deleteEmptySets"/>
+        <transition on="done" to="done"/>
+        <transition on="cancel" to="cancel"/>
+        <transition on="backFromErrorPage" to="backFromError"/>
+        <transition on-exception="java.lang.Throwable" to="errorPage"/>
+    </global-transitions>
+
+    <bean-import resource="spring-config.xml"/>
+
+    <bean-import resource="domainDesignerBeans.xml"/>
+
+</flow>

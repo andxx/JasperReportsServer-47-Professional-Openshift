@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="
+http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd">
+
+    <bean id="createSLDatasourceAction" class="com.jaspersoft.ji.semantic.action.CreateSLDatasourceAction">
+        <property name="repository" ref="${bean.repositoryService}"/>
+        <property name="repositoryTreeFoldersProvider" ref="adhocRepositoryTreeFoldersProvider"/>
+        <property name="formObjectClass" value="com.jaspersoft.ji.semantic.action.FileUploadBean"/>
+        <property name="semanticLayerFactory" ref="semanticLayerFactory"/>
+        <property name="transactionManager" ref="transactionManager"/>
+        <property name="domainXMLValidator" ref="domainXMLValidator"/>
+        <property name="domainValidator" ref="domainValidator"/>
+        <property name="messages" ref="messageSource"/>
+        <property name="securityContextProvider" ref="${bean.securityContextProvider}"/>
+        <property name="configuration" ref="configurationBean" />
+        <property name="dataSourceTypes">
+            <util:property-path path="dataSourceTreeDataProvider.supportedClasses" />
+        </property>
+    </bean>
+
+    <import resource="adhocTreeBeans.xml"/>
+</beans>

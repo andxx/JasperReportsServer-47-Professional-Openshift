@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow" xmlns:ns0="http://www.w3.org/2001/XMLSchema-instance"
+      ns0:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd"
+      start-state="initAction">
+
+    <input name="parentFolder"/>
+    <input name="reportType"/>
+
+    <action-state id="initAction">
+        <on-entry>
+            <set name="flowScope.prevForm" value="'realmsView'"/>
+        </on-entry>
+        <evaluate expression="queryBuilderAction"/>
+        <transition on="success" to="fields"/>
+    </action-state>
+
+    <view-state id="fields" view="modules/semanticLayer/dataChooser/fields">
+        <on-entry>
+            <set name="flowScope.prevForm" value="'fields'"/>
+        </on-entry>
+        <on-exit>
+            <evaluate expression="queryBuilderAction.processParameters"/>
+        </on-exit>
+    </view-state>
+
+    <view-state id="preFilters" view="modules/semanticLayer/dataChooser/preFilters">
+        <on-entry>
+            <set name="flowScope.prevForm" value="'fields'"/>
+            <evaluate expression="queryBuilderAction.processParameters"/>
+            <evaluate expression="queryBuilderAction.prepareRules"/>
+        </on-entry>
+        <transition on="reloadTrees" to="ajaxView">
+            <evaluate expression="queryBuilderAction.pickSemanticLayer"/>
+        </transition>
+        <transition on="updateReportBundles" to="ajaxView">
+            <evaluate expression="queryBuilderAction.updateReportBundles"/>
+        </transition>
+        <transition on="availableValues" to="ajaxView">
+            <evaluate expression="queryBuilderAction.getAvailableValues"/>
+        </transition>
+        <on-exit>
+            <evaluate expression="queryBuilderAction.processParameters"/>
+            <evaluate expression="queryBuilderAction.updateRules"/>
+        </on-exit>
+    </view-state>
+
+    <view-state id="display" view="modules/semanticLayer/dataChooser/display">
+        <on-entry>
+            <evaluate expression="queryBuilderAction.processParameters"/>
+            <evaluate expression="queryBuilderAction.prepareTable"/>
+        </on-entry>
+        <on-exit>
+            <evaluate expression="queryBuilderAction.updateSortedModel"/>
+            <evaluate expression="queryBuilderAction.processParameters"/>
+            <evaluate expression="queryBuilderAction.processTable"/>
+        </on-exit>
+    </view-state>
+
+    <view-state id="saveAsTopic" view="modules/semanticLayer/dataChooser/saveAsTopic">
+        <on-entry>
+            <!--<action bean="queryBuilderAction" method="prepareTopicInfo"/>-->
+            <evaluate expression="queryBuilderAction.processParameters"/>
+            <evaluate expression="queryBuilderAction.initStep3Parameters"/>
+        </on-entry>
+        <on-exit>
+            <evaluate expression="queryBuilderAction.processParameters"/>
+            <evaluate expression="queryBuilderAction.updateTopicInfo"/>
+        </on-exit>
+    </view-state>
+    
+    <!--<action-state id="prepareQuery">-->
+    <!--<action bean="queryBuilderAction"/>-->
+    <!--<transition on="success" to="redirect"/>-->
+    <!--</action-state>-->
+    <action-state id="tempSave">
+        <evaluate expression="queryBuilderAction.tempSave"/>
+        <transition on="success" to="redirect"/>
+        <transition on="error" to="displayError"/>
+    </action-state>
+
+    <!--<action-state id="save">-->
+    <!--<action bean="queryBuilderAction"/>-->
+    <!--<transition on="success" to="redirect"/>-->
+    <!--<transition on="error" to="displayError"/>-->
+    <!--</action-state>-->
+    <action-state id="save">
+        <evaluate expression="queryBuilderAction"/>
+        <transition on="success" to="redirect"/>
+    </action-state>
+
+    <view-state id="redirect" view="modules/semanticLayer/dataChooser/redirect">
+        <transition on="finishWizard" to="finishWizard"/>
+    </view-state>
+
+    <view-state id="cancelRedirect" view="modules/semanticLayer/dataChooser/cancel">
+        <transition on="cancel" to="cancel"/>
+    </view-state>
+
+    <view-state id="ajaxView" view="ajax/ajaxresponse"/>
+
+    <view-state id="ajaxError" view="ajax/ajaxerror"/>
+
+    <end-state id="finishWizard"/>
+
+    <end-state id="cancel"/>
+
+    <!--<end-state id="cancel" view="flowRedirect:homeFlow"/>-->
+    <end-state id="displayError" view="reportUnitFlow/errorPage"/>
+
+    <!-- exceptions handling -->
+    <decision-state id="backFromError">
+        <if test="not (flowScope.prevForm == null or flowScope.prevForm == '')" then="${flowScope.prevForm}"
+            else="finishWizard"/>
+    </decision-state>
+
+    <view-state id="errorPage" view="modules/system/errorPage"/>
+
+    <global-transitions>
+        <transition on="backFromErrorPage" to="backFromError"/>
+        <transition on="resetSession" to="ajaxView">
+            <evaluate expression="queryBuilderAction.resetSession"/>
+        </transition>
+        <transition on="checkIfExists" to="ajaxView">
+            <evaluate expression="queryBuilderAction.checkIfExists"/>
+        </transition>
+        <transition on="done" to="tempSave"/>
+        <transition on="save" to="save"/>
+        <transition on="redirect" to="redirect"/>
+        <transition on="cancelRedirect" to="cancelRedirect"/>
+        <transition on="fields" to="fields"/>
+        <transition on="preFilters" to="preFilters"/>
+        <transition on="display" to="display"/>
+        <transition on="saveAsTopic" to="saveAsTopic"/>
+        <transition on-exception="java.lang.Throwable" to="errorPage"/>
+    </global-transitions>
+
+    <!-- end exceptions handling -->
+    <bean-import resource="spring-config.xml"/>
+
+    <bean-import resource="queryBuilderBeans.xml"/>
+
+</flow>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
+
+	<bean id="workManagerTaskExecutor" class="org.springframework.scheduling.commonj.WorkManagerTaskExecutor"
+			lazy-init="true">
+		<property name="workManagerName" value="${report.scheduler.work.manager.name}"/>
+	</bean>
+
+    <!-- todo: 2011-01-31  thorick   plug in TaskExecutorThreadExecutor -->
+	<bean id="workManagerThreadExecutor" class="com.jaspersoft.jasperserver.api.engine.scheduling.quartz.TaskExecutorThreadExecutor"
+			lazy-init="true">
+		<property name="taskExecutor"><ref local="workManagerTaskExecutor"/></property>
+	</bean>
+
+</beans>

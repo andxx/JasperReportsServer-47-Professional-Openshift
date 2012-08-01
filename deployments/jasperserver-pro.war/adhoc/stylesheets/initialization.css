@@ -1,0 +1,70 @@
+/* Initialization CSS for Ad Hoc Explorer (JS 4.0 design)
+	based on concept and draft by
+		Faruk Ates - www.kurafire.net
+   		Addendum by Robert Nyman - www.robertnyman.com */
+
+/* Neutralize styling: 
+   Elements we want to clean out entirely: */
+
+
+/* Neutralize styling: 
+   Elements with a vertical margin: */
+h1, h2, h3, h4, h5, h6, p, pre,
+blockquote, ul, ol, dl, address {
+	/* margin: 1em 0; */
+	padding: 0;
+}
+
+/* Apply left margin:
+   Only to the few elements that need it: */
+dd, blockquote {
+	margin-left: 1em;
+}
+
+
+/* Form field text-scaling */
+input, select, textarea {
+	font-size: 100%;
+}
+
+/* Neutralize unordered lists */
+ul {
+	list-style:none;
+}
+
+/* Set up basic global styles for JasperServer */
+
+body {
+	/*margin:10px;*/
+	background-color: #D0D6D9;
+}
+
+a {
+	text-decoration: none;
+	font-weight: bold;
+	color:#003066;
+}
+
+a:hover {
+	color:#993200;
+}
+
+/* Miscellaneous conveniences: */
+form label {
+	cursor: pointer;
+}
+fieldset {
+	border: none;
+}
+
+.left {
+	float:left;
+}
+
+.right {
+	float:right;
+}
+
+.clearfix {
+	clear:both;
+}

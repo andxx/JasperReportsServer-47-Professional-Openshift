@@ -1,0 +1,323 @@
+/*
+ * Crosstab Styles
+ */
+
+.XTSpaceHdr {
+    border-style: solid;
+    border-width: 1px;
+    border-left: none;
+    border-top: none;
+    vertical-align: top;
+}
+
+.XTNoTpLtBrd {
+    border-style: solid;
+    border-width: 1px;
+    border-left: none;
+    border-top: none;
+}
+
+.XTNoTpRtBrd {
+    border-style: solid;
+    border-width: 1px;
+    border-right: none;
+    border-top: none;
+}
+
+.XTNoTpBmBrd {
+    border-style: solid;
+    border-width: 1px;
+    border-bottom: none;
+    border-top: none;
+}
+
+.XTNoBmLtBrd {
+    border-style: solid;
+    border-width: 1px;
+    border-left: none;
+    border-bottom: none;
+}
+
+.XTNoLtRtBrd {
+    border-style: solid;
+    border-width: 1px;
+    border-left: none;
+    border-right: none;
+}
+
+.XTNoLtBrd {
+    border-style: solid;
+    border-width: 1px;
+    border-left: none;
+}
+
+.XTNoRtBrd {
+    border-style: solid;
+    border-width: 1px;
+    border-right: none;
+}
+
+.XTNoTpBrd {
+    border-style: solid;
+    border-width: 1px;
+    border-top: none;
+}
+
+.XTNoBmBrd {
+    border-style: solid;
+    border-width: 1px;
+    border-bottom: none;
+}
+
+.XTNoBmBrdOnly {
+    border-bottom: none;
+}
+
+.XTNoRtBrdOnly {
+    border-right: none;
+}
+
+.XTBmBrd {
+    border-style: solid;
+    border-width: 1px;
+    border-left: none;
+    border-top: none;
+    border-right: none
+}
+
+.XTTpBrd {
+    border-style: solid;
+    border-width: 1px;
+    border-left: none;
+    border-bottom: none;
+    border-right: none
+}
+
+.XTLtBrd {
+    border-style: solid;
+    border-width: 1px;
+    border-top: none;
+    border-bottom: none;
+    border-right: none
+}
+
+.XTRtBrd {
+    border-style: solid;
+    border-width: 1px;
+    border-top: none;
+    border-bottom: none;
+    border-left: none
+}
+
+.XTAllBrd {
+    border-style: solid;
+    border-width: 1px;
+}
+
+.XTNoBrd {
+    border: none;
+}
+
+.XTRightAlign {
+    text-align: right;
+    padding-right: 5px
+}
+
+.XTLeftPadding {
+    padding-left: 5px
+}
+
+.XTCellAlignTop {
+    padding-top: 8px; 
+    vertical-align: top;
+}    
+
+.XTColumnGroupCell {
+    padding-left: 5px; 
+    vertical-align: middle;
+}
+
+.XTRowGroupCell {
+    padding-left: 5px;
+    vertical-align: top;
+    padding-top: 10px; 
+}
+
+.XTColumnGroupCell.inner {
+	font-weight:normal; 
+}
+
+.XTColumnGroupCell.inner[issummaryheader=true] {
+	font-weight:bold; 
+}
+
+.XTRowGroupCell.inner { 
+	font-weight:normal; 
+	text-align: right;
+	padding-right: 5px;
+}
+
+.XTRowGroupCell.inner[issummaryheader=true] { 
+	font-weight:bold;  
+}
+
+.XTGroupMouseover {
+}
+
+
+td.crosstabSingleSelect,
+td.crosstabMultiSelect{
+    color:#FFF;
+    background-color:#0061a2;
+}
+
+.XTHighlight {  
+    text-decoration: underline     
+}
+
+.XTDefaults {
+	border-color: #000000; 
+	font-family: verdana, arial, san-serif;
+	font-size: 10px;  	
+}
+
+td.XTHeaderLabel {  
+    background-color: white;
+    font-weight: bold; 
+	padding-bottom:10px;
+	vertical-align:bottom;
+	color:#0061A2;
+}
+
+.XTHeaderLabel.column {
+	text-align: right;
+	padding-right:5px;
+}
+
+#measureHeader table td {
+	text-align:left;
+	padding-right: 5px;
+	padding-bottom:0;
+	vertical-align: middle;
+}
+
+#measureHeader table {
+	height:100%;
+}
+
+td#measureHeader {
+	padding-bottom:0px;
+}
+
+#measureHeader td.XTHeaderLabel{
+	padding-bottom:0px;
+}
+
+.XTMeasTable {
+    width: 100%;
+    border: none;
+    margin: 0px;
+    padding: 0px;
+    border-spacing: 0px;
+    border-collapse: collapse;    
+}
+ 
+.XTGrpCellImgBase {
+    background-repeat: no-repeat;    
+    background-position: 0px 2px;
+    padding-left: 15px;     
+}
+
+.XTMeasCellImgBase {
+    background-repeat: no-repeat;    
+    background-position: 5px center;
+    padding-left: 15px;     
+}
+
+.XTGrpCellImgFExpanded {
+    background-image: url(../../images/expandedArrow.gif);
+}
+
+.XTGrpCellImgFCollapsed {
+    background-image: url(../../images/collapsedArrow.gif);
+}
+
+.XTGrpCellImgFMouseoverExpanded {
+    background-image: url(../../images/expandedArrowMouseover.gif);
+}
+
+.XTGrpCellImgFMouseoverCollapsed {
+    background-image: url(../../images/collapsedArrowMouseover.gif);
+}
+
+.XTGrpCellImgFMousedownExpanded {
+    background-image: url(../../images/expandedArrowMousedown.gif);
+}
+
+.XTGrpCellImgFMousedownCollapsed {
+    background-image: url(../../images/collapsedArrowMousedown.gif);
+}
+
+.XTMeasureNoSort {
+    background-image: url(../images/sort-natural.gif);
+}
+
+.XTMeasureSortAscending {
+    background-image: url(../images/sort-up.gif);
+}
+
+.XTMeasureSortDescending {
+    background-image: url(../images/sort-down.gif);
+}
+
+a.XTMCAncr {
+    color: black;
+    font-weight: normal;
+    text-decoration: none;
+    cursor: default; 
+}
+
+a.XTMCAncr:hover {
+    color: black;    
+    text-decoration: underline;
+    cursor: pointer;     
+}
+
+td.XTColumn1 a.XTMCAncr, td.XTColumn2 a.XTMCAncr, td.XTColumn3 a.XTMCAncr, td.XTRow1 a.XTMCAncr,td.XTRow2 a.XTMCAncr, td.XTRow3 a.XTMCAncr, td.XTGrandTotal a.XTMCAncr { 
+	font-weight:bold;  
+}
+
+td.XTRGOverflow {
+   	border-left:1px solid;
+   	border-right:1px solid;
+   	border-top: 1px dashed #666;
+    border-bottom: 1px dashed #666;
+    vertical-align: middle;
+    padding: 3px 15px;
+}
+
+td.XTCGOverflow {
+    border-right: 1px dashed #666;
+    border-left: 1px dashed #666;
+    vertical-align: middle;
+    text-align: center;
+    width:20px;
+}
+
+td.XTCGOverflow a {
+	font-size: 12px;
+}
+
+a.XTOverflow {
+    color: #0061A2;
+    font-weight: bold;
+    cursor: pointer; 
+    font-size: 11px;
+}
+
+a.XTOverflow:hover {
+    text-decoration: underline;
+}
+
+
+

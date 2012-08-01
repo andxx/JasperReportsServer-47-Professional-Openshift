@@ -1,0 +1,543 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
+	
+	<bean id="hibernateRepositoryServiceProxy"
+		class="org.springframework.aop.framework.ProxyFactoryBean">
+		<property name="proxyInterfaces">
+			<value>
+				com.jaspersoft.jasperserver.api.metadata.common.service.RepositoryService
+			</value>
+		</property>
+		<property name="interceptorNames">
+			<list>
+				<idref bean="hibernateRepoServiceSecurity"/>
+		        <idref bean="permissionsPrefetcher"/>
+                <!-- idref bean="dataSourceInputControlsRetriever"/ -->
+		        <idref bean="adhocEasyXMLizer"/>
+				<idref bean="hibernateRepositoryService" />
+			</list>
+		</property>
+	</bean>
+
+    <!-- bean id="dataSourceInputControlsRetriever" class="com.jaspersoft.jasperserver.api.engine.jasperreports.util.DataSourceInputControlsRetriever">
+        <property name="reportLoader" ref="reportLoadingService"/>
+    </bean -->
+
+    <bean id="themeTenantServiceInterceptor" class="com.jaspersoft.ji.war.themes.MTThemeTenantServiceInterceptor">
+        <property name="themePropagator" ref="proThemePropagator" />
+        <property name="tenantService" ref="${bean.hibernateTenantService}" />
+    </bean>
+
+    <bean id="mtHibernateTenantService" class="org.springframework.aop.framework.ProxyFactoryBean">
+      <property name="interceptorNames">
+        <list>
+          <idref local="themeTenantServiceInterceptor"/>
+          <idref bean="tenantService"/>
+        </list>
+      </property>
+    </bean>
+
+    <bean id="mtTenantService"
+            class="com.jaspersoft.jasperserver.multipleTenancy.PathTransformationTenantService">
+        <property name="tenantService">
+            <ref bean="${bean.hibernateTenantService}"/>
+        </property>
+        <property name="contextProvider">
+            <ref local="userMultiTenancyContextProvider"/>
+        </property>
+        <property name="folderUriPathTransformer">
+            <ref local="pathTransformer"/>
+        </property>
+        <property name="tenantUriPathTransformer">
+            <ref local="tenantUriPathTransformer"/>
+        </property>
+    </bean>
+
+	<bean id="multiTenancyRepositoryService" 
+			class="com.jaspersoft.jasperserver.multipleTenancy.PathTransformationRepositoryService">
+		<property name="repository">
+			<ref local="hibernateRepositoryServiceProxy"/>
+		</property>
+		<property name="pathTransformer">
+			<ref local="repositoryPathTransformer"/>
+		</property>
+	</bean>
+
+	<bean id="multiTenancyUnsecureRepositoryService" 
+			class="com.jaspersoft.jasperserver.multipleTenancy.PathTransformationRepositoryService">
+		<property name="repository">
+			<ref local="hibernateRepositoryService"/>
+		</property>
+		<property name="pathTransformer">
+			<ref local="repositoryPathTransformer"/>
+		</property>
+	</bean>
+
+	<bean id="repositoryPathTransformer" 
+			class="com.jaspersoft.jasperserver.multipleTenancy.StandardRepositoryPathTransformer">
+		<property name="transformer"><ref local="pathTransformer"/></property>
+		<property name="objectTransformer"><ref local="objectPathTransformer"/></property>
+	</bean>
+	
+	<bean id="pathTransformer" 
+			class="com.jaspersoft.jasperserver.multipleTenancy.DefaultPathTransformer">
+		<property name="contextProvider">
+			<ref local="userMultiTenancyContextProvider"/>
+		</property>
+		<property name="additionalRootFolders">
+			<list>
+				<value>/public</value>
+			</list>
+		</property>
+	</bean>
+
+    <bean id="tenantUriPathTransformer"
+            class="com.jaspersoft.jasperserver.multipleTenancy.TenantUriPathTransformer">
+        <property name="contextProvider">
+            <ref local="userMultiTenancyContextProvider"/>
+        </property>
+        <property name="additionalRootFolders">
+            <list>
+                <!-- there aren't additional root folders for organizations -->
+                <!--<value></value>-->
+            </list>
+        </property>
+    </bean>
+
+	<bean id="userMultiTenancyContextProvider" 
+			class="com.jaspersoft.jasperserver.multipleTenancy.UserMultiTenancyContextProvider">
+		<property name="tenantService">
+			<ref bean="${bean.hibernateTenantService}"/>
+		</property>
+	</bean>
+
+
+    <alias name="multiTenancyRepositoryService" alias="mtRepositoryService"/>
+
+	<bean id="hibernateRepositoryServiceProxyForAclUpdate"
+		class="org.springframework.aop.framework.ProxyFactoryBean">
+		<property name="proxyInterfaces">
+			<value>
+				com.jaspersoft.jasperserver.api.metadata.common.service.RepositoryService
+			</value>
+		</property>
+		<property name="interceptorNames">
+			<list>
+				<idref bean="aclUpdateMethodSecurityInterceptor"/>
+				<idref bean="hibernateRepositoryService" />
+			</list>
+		</property>
+	</bean>
+
+	<bean id="multiTenancyRepositoryServiceForAclUpdate" 
+			class="com.jaspersoft.jasperserver.multipleTenancy.PathTransformationRepositoryService">
+		<property name="repository">
+			<ref local="hibernateRepositoryServiceProxyForAclUpdate"/>
+		</property>
+		<property name="pathTransformer">
+			<ref local="repositoryPathTransformer"/>
+		</property>
+	</bean>
+
+    <alias name="multiTenancyRepositoryServiceForAclUpdate" alias="mtRepositoryServiceForAclUpdate"/>
+
+    <bean id="objectPermissionServiceMTInterceptor"
+    		class="com.jaspersoft.jasperserver.multipleTenancy.PathTransformerMethodInterceptor">
+    	<property name="objectTransformer">
+    		<ref local="objectPathTransformer"/>
+    	</property>
+    </bean>
+    
+    <bean id="objectPathTransformer" class="com.jaspersoft.jasperserver.multipleTenancy.TypeMapPathTransformer">
+    	<property name="pathTransformer">
+    		<ref local="pathTransformer"/>
+    	</property>
+    	<property name="transformerFactory">
+    		<bean class="com.jaspersoft.jasperserver.api.common.service.impl.BeanForInterfaceFactoryImpl"/>
+    	</property>
+    	<property name="transformerMappings">
+    		<map>
+    			<entry key="com.jaspersoft.jasperserver.api.metadata.common.domain.ResourceLookup">
+    				<value>resourceLookupTransformer</value>
+    			</entry>
+    			<entry key="com.jaspersoft.jasperserver.api.metadata.common.domain.Resource">
+    				<value>genericResourceTransformer</value>
+    			</entry>
+    			<entry key="com.jaspersoft.jasperserver.api.metadata.common.domain.FileResource">
+    				<value>fileResourceTransformer</value>
+    			</entry>
+    			<entry key="com.jaspersoft.commons.semantic.datasource.SemanticLayerDataSource">
+    				<value>semanticLayerDataSourceTransformer</value>
+    			</entry>
+    			<entry key="com.jaspersoft.jasperserver.api.metadata.common.domain.Folder">
+    				<value>folderTransformer</value>
+    			</entry>
+    			<entry key="com.jaspersoft.jasperserver.api.metadata.common.domain.ResourceReference">
+    				<value>resourceReferenceTransformer</value>
+    			</entry>
+    			<entry key="com.jaspersoft.jasperserver.api.metadata.common.domain.InternalURI">
+    				<value>internalURITransformer</value>
+    			</entry>
+    			<entry key="com.jaspersoft.jasperserver.api.metadata.user.domain.ObjectPermission">
+    				<value>objectPermissionTransformer</value>
+    			</entry>
+    			<entry key="com.jaspersoft.ji.report.options.metadata.ReportOptionsLookup">
+    				<value>reportOptionsLookupTransformer</value>
+    			</entry>
+    			<entry key="com.jaspersoft.jasperserver.api.engine.scheduling.domain.ReportJob">
+    				<value>reportJobTransformer</value>
+    			</entry>
+                <entry key="com.jaspersoft.jasperserver.api.engine.scheduling.domain.reportjobmodel.ReportJobModel">
+    				<value>reportJobTransformer</value>
+    			</entry>
+    			<entry key="com.jaspersoft.jasperserver.api.engine.scheduling.domain.ReportJobSummary">
+    				<value>reportSummaryJobTransformer</value>
+    			</entry>
+    		</map>
+    	</property>
+    </bean>
+
+	<bean id="resourceLookupTransformer" class="com.jaspersoft.jasperserver.multipleTenancy.ResourceLookupTransformer"/>
+	<bean id="genericResourceTransformer" class="com.jaspersoft.jasperserver.multipleTenancy.GenericResourceTransformer"/>
+	<bean id="fileResourceTransformer" class="com.jaspersoft.jasperserver.multipleTenancy.FileResourceTransformer"/>
+	<bean id="semanticLayerDataSourceTransformer" class="com.jaspersoft.jasperserver.multipleTenancy.SemanticLayerDataSourceTransformer"/>
+	<bean id="folderTransformer" class="com.jaspersoft.jasperserver.multipleTenancy.FolderTransformer"/>
+	<bean id="resourceReferenceTransformer" class="com.jaspersoft.jasperserver.multipleTenancy.ResourceReferenceTransformer"/>
+	<bean id="internalURITransformer" class="com.jaspersoft.jasperserver.multipleTenancy.InternalURITransformer"/>
+	<bean id="objectPermissionTransformer" class="com.jaspersoft.jasperserver.multipleTenancy.ObjectPermissionTransformer"/>
+	<bean id="reportOptionsLookupTransformer" class="com.jaspersoft.jasperserver.multipleTenancy.ReportOptionsLookupTransformer"/>
+	<bean id="reportJobTransformer" class="com.jaspersoft.jasperserver.multipleTenancy.ReportJobTransformer"/>
+	<bean id="reportSummaryJobTransformer" class="com.jaspersoft.jasperserver.multipleTenancy.ReportJobSummaryTransformer"/>
+
+    <bean id="mtObjectPermissionService" class="org.springframework.aop.framework.ProxyFactoryBean">
+      <property name="interceptorNames">
+        <list>
+            <idref bean="objectPermissionServiceMTInterceptor"/>
+            <idref bean="objectPermissionServiceTransactionInterceptor"/>
+            <idref bean="objectPermissionServiceTarget"/>
+        </list>
+      </property>
+    </bean>
+	
+	<bean id="mtRepositorySecurityChecker"
+			class="com.jaspersoft.jasperserver.multipleTenancy.PathTransformationRepositorySecurityChecker">
+			<!--abstract="true">-->
+		<property name="checker">
+			<ref bean="repositoryServiceSecurityChecker"/>
+		</property>
+		<property name="transformer">
+			<ref local="repositoryPathTransformer"/>
+		</property>
+	</bean>
+	
+	<bean id="mtRepositoryCache"
+			class="com.jaspersoft.jasperserver.multipleTenancy.PathTransformationRepositoryCache">
+		<property name="cache" ref="hibernateRepositoryCache"/>
+		<property name="transformer"><ref local="objectPathTransformer"/></property>
+	</bean>
+	
+	<bean id="internalEngineService" 
+			class="com.jaspersoft.jasperserver.api.engine.jasperreports.service.impl.EngineServiceImpl"
+			parent="engineService">
+		<property name="repositoryService"><ref bean="${bean.internalRepositoryService}"/></property>
+		<property name="compiledReportsCache"><ref bean="hibernateRepositoryCache"/></property>
+	</bean>
+	
+	<bean id="internalCacheableCompiledReports"
+    		class="com.jaspersoft.jasperserver.api.engine.jasperreports.service.impl.CacheableCompiledReports">
+    	<property name="compiler"><ref local="internalEngineService"/></property>
+    </bean>
+
+	<bean id="threadMultiTenancyContextProvider"
+			class="com.jaspersoft.jasperserver.multipleTenancy.ThreadMultiTenancyContextProvider">
+	</bean>
+
+	<bean id="multiTenancyContextProviderChain"
+			class="com.jaspersoft.jasperserver.multipleTenancy.MultiTenancyContextProviderChain">
+		<property name="providers">
+			<list>
+				<ref local="threadMultiTenancyContextProvider"/>
+				<ref local="userMultiTenancyContextProvider"/>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="threadContextRepositoryPathTransformer" 
+			class="com.jaspersoft.jasperserver.multipleTenancy.StandardRepositoryPathTransformer">
+		<property name="transformer"><ref local="threadContextPathTransformer"/></property>
+		<property name="objectTransformer"><ref local="threadContextObjectPathTransformer"/></property>
+	</bean>
+	
+	<bean id="threadContextObjectPathTransformer" parent="objectPathTransformer" 
+			class="com.jaspersoft.jasperserver.multipleTenancy.TypeMapPathTransformer">
+    	<property name="pathTransformer">
+    		<ref local="threadContextPathTransformer"/>
+    	</property>
+	</bean>
+	
+	<bean id="threadContextPathTransformer" parent="pathTransformer"
+			class="com.jaspersoft.jasperserver.multipleTenancy.DefaultPathTransformer">
+		<property name="contextProvider">
+			<ref local="multiTenancyContextProviderChain"/>
+		</property>
+	</bean>
+
+	<bean id="threadContextRepositoryServiceTarget" 
+			class="com.jaspersoft.jasperserver.multipleTenancy.PathTransformationRepositoryService">
+		<property name="repository">
+			<ref local="hibernateRepositoryServiceProxy"/>
+		</property>
+		<property name="pathTransformer">
+			<ref local="threadContextRepositoryPathTransformer"/>
+		</property>
+	</bean>
+
+    <alias name="threadContextRepositoryServiceTarget" alias="threadContextRepositoryService"/>
+
+	<bean id="threadContextRepositoryCache" 
+			class="com.jaspersoft.jasperserver.multipleTenancy.PathTransformationRepositoryCache">
+		<property name="cache" ref="hibernateRepositoryCache"/>
+		<property name="transformer"><ref local="threadContextObjectPathTransformer"/></property>
+	</bean>
+	
+	<bean id="threadContextReportCompiler" 
+			class="com.jaspersoft.jasperserver.api.engine.jasperreports.service.impl.EngineServiceImpl"
+			parent="engineService">
+		<property name="compiledReportsCache"><ref bean="threadContextRepositoryCache"/></property>
+	</bean>
+
+	<bean id="multiTenancyRepositoryContextManager"
+			class="com.jaspersoft.jasperserver.multipleTenancy.MultiTenancyRepositoryContextManager">
+		<property name="repository"><ref local="threadContextRepositoryService"/></property>
+		<property name="directRepository"><ref local="multiTenancyRepositoryService"/></property>
+		<property name="pathTransformer"><ref local="pathTransformer"/></property>
+		<property name="threadPathTransformer"><ref local="threadContextPathTransformer"/></property>
+		<property name="tenantService"><ref bean="${bean.hibernateTenantService}"/></property>
+		<property name="threadMultiTenancyContextProvider">
+			<ref local="threadMultiTenancyContextProvider"/>
+		</property>
+		<property name="compiledReportProvider">
+			<ref local="threadContextReportCompiler"/>
+		</property>
+	</bean>
+	
+    <bean id="mtJobPersistenceService"
+    		class="com.jaspersoft.jasperserver.multipleTenancy.PathTransformationJobPersistenceService">
+    	<property name="service"><ref bean="${bean.reportOptionsJobsPersistenceService}"/></property>
+    	<property name="transformer"><ref local="objectPathTransformer"/></property>
+    </bean>
+	
+    <bean id="multiTenancyConfiguration"
+    		class="com.jaspersoft.jasperserver.multipleTenancy.DefaultMultiTenancyConfiguration">
+    	<property name="qualifiedNameSeparator" value="|"/>
+    	<property name="rootTenantId" value="organizations"/>
+        <property name="publicRoles">
+            <set>
+                <value>ROLE_ADMINISTRATOR</value>
+                <value>ROLE_USER</value>
+                <value>ROLE_ANONYMOUS</value>
+                <value>ROLE_DEMO</value>
+                <value>ROLE_SUPERMART_MANAGER</value>
+            </set>
+        </property>
+        <property name="tenantDefaultUsers" ref="tenantDefaultUsers"/>
+        <property name="tenantNameNotSupportedSymbols">
+            <value><![CDATA[[\|&*?<>/\\]]]></value>
+        </property>
+        <property name="tenantIdNotSupportedSymbols">
+            <value><![CDATA[[~!\+\-#\$%\^\|\s]]]></value>
+        </property>
+
+    </bean>
+    
+    
+    
+    <bean id="mtDaoAuthenticationProvider" class="com.jaspersoft.jasperserver.multipleTenancy.MTDaoAuthenticationProvider">
+        <!-- jdbcDaoImpl --> 
+        <!-- <property name="userDetailsService"><ref bean="inMemoryDaoImpl"/></property> -->
+        <property name="userDetailsService"><ref bean="${bean.internalUserAuthorityService}"/></property>
+        <property name="MTUserDetailsService"><ref bean="${bean.internalUserAuthorityService}"/></property>
+        <property name="tenantService" ref="${bean.hibernateTenantService}"/>
+        <property name="passwordEncoder"><ref bean="passwordEncoder"/></property>
+    </bean> 
+    
+	<bean id="multiTenancyFacade" class="com.jaspersoft.jasperserver.multipleTenancy.MultiTenancyFacadeService">
+		<property name="tenantService"><ref bean="${bean.tenantService}"/></property>
+		<property name="repositoryService"><ref bean="${bean.repositoryService}"/></property>
+		<property name="userAuthorityService"><ref bean="${bean.userAuthorityService}"/></property>
+		<property name="objectPermissionService"><ref bean="${bean.objectPermissionService}"/></property>
+        <property name="auditContext"><ref bean="${bean.auditContext}"/></property>
+        <property name="configurationBean" ref="configurationBean" />
+        <property name="mtThemePropagator" ref="proThemePropagator" />
+		<property name="addParentIdAsPrefix" value="false"/>
+	</bean>
+
+    <alias name="multiTenancyFacade" alias="multiTenancyService"/>
+
+    <bean id="tenantAction" class="com.jaspersoft.jasperserver.multipleTenancy.TenantAction">
+        <property name="tenantService" ref="${bean.tenantService}"/>
+        <property name="multiTenancyService" ref="multiTenancyService"/>
+        <property name="userAuthorityService" ref="${bean.userAuthorityService}"/>
+        <property name="configurationBean" ref="configurationBean"/>
+        <property name="mtConfiguration" ref="multiTenancyConfiguration"/>
+        <property name="auditContext" ref="${bean.auditContext}"/>
+    </bean>
+    
+    <bean id="mtHibernateRepositoryService" class="com.jaspersoft.jasperserver.api.metadata.common.service.impl.hibernate.HibernateRepositoryServiceImpl">
+        <property name="auditContext" ref="${bean.auditContext}"/>
+        <property name="accessContext" ref="${bean.accessContext}"/>
+        <property name="sessionFactory" ref="sessionFactory"/>
+        <property name="resourceFactory" ref="mappingResourceFactory"/>
+        <property name="persistentClassMappings" ref="persistentMappings"/>
+        <property name="validatorMappings" ref="validatorMappings"/>
+        <property name="collatorFactory" ref="collatorFactory"/>
+        <property name="repositoryListeners">
+            <list></list>
+        </property>
+        <property name="securityChecker">
+			<bean class="com.jaspersoft.jasperserver.multipleTenancy.security.MTDummyRepositorySecurityChecker"/>
+		</property>
+        <property name="lockFoldersOnPathChange" value="true"/>
+    </bean>
+
+    <alias name="mtHibernateRepositoryService" alias="mtUnsecureRepositoryService"/>
+
+	<bean id="internalMultiTenancyFacade" class="com.jaspersoft.jasperserver.multipleTenancy.MultiTenancyFacadeService">
+		<property name="tenantService"><ref bean="${bean.tenantService}"/></property>
+		<property name="repositoryService"><ref bean="mtUnsecureRepositoryService"/></property>
+		<property name="userAuthorityService"><ref bean="${bean.internalUserAuthorityService}"/></property>
+		<property name="objectPermissionService"><ref bean="${bean.objectPermissionService}"/></property>
+        <property name="configurationBean" ref="configurationBean" />
+        <property name="mtThemePropagator" ref="proThemePropagator" />
+        <property name="auditContext">
+            <bean class="com.jaspersoft.jasperserver.api.logging.audit.context.impl.DummyAuditContext"/>
+        </property>
+		<property name="addParentIdAsPrefix" value="false"/>
+	</bean>
+
+    <alias name="internalMultiTenancyFacade" alias="internalMultiTenancyService"/>
+
+	<bean id="multiTenancyUserPersistenceHandler"
+			class="com.jaspersoft.jasperserver.multipleTenancy.MultiTenancyUserPersistenceHandler"
+			parent="standardUserPersistenceHandler">
+		<property name="configuration"><ref local="multiTenancyConfiguration"/></property>
+	</bean>
+    
+    <bean id="tenantDefaultUsers" class="java.util.ArrayList">
+        <constructor-arg>
+            <list>
+                <bean class="com.jaspersoft.jasperserver.multipleTenancy.configuration.NewUser">
+                    <property name="username" value="jasperadmin"/>
+                    <property name="fullName" value="jasperadmin"/>
+                    <property name="password" value="jasperadmin"/>
+                    <property name="emailAddress" value=""/>
+                    <property name="roles">
+                        <list>
+                            <bean class="com.jaspersoft.jasperserver.multipleTenancy.configuration.RoleRef">
+                                <property name="roleName" value="ROLE_ADMINISTRATOR"/>
+                            </bean>
+                            <bean class="com.jaspersoft.jasperserver.multipleTenancy.configuration.RoleRef">
+                                <property name="roleName" value="ROLE_USER"/>
+                            </bean>
+                        </list>
+                    </property>
+                </bean>
+                <bean class="com.jaspersoft.jasperserver.multipleTenancy.configuration.NewUser">
+                    <property name="username" value="joeuser"/>
+                    <property name="fullName" value="joeuser"/>
+                    <property name="password" value="joeuser"/>
+                    <property name="emailAddress" value=""/>
+                    <property name="roles">
+                        <list>
+                            <bean class="com.jaspersoft.jasperserver.multipleTenancy.configuration.RoleRef">
+                                <property name="roleName" value="ROLE_USER"/>
+                            </bean>
+                            <!--<bean class="com.jaspersoft.jasperserver.multipleTenancy.configuration.NewRole">-->
+                                <!--<property name="roleName" value="ROLE_#{tenantId}"/>-->
+                            <!--</bean>-->
+                        </list>
+                    </property>
+                </bean>
+            </list>
+        </constructor-arg>
+    </bean>
+    
+	<bean id="mtReportExecutionHyperlinkProducer" class="com.jaspersoft.jasperserver.multipleTenancy.MTReportExecutionHyperlinkProducerFactory"
+		parent="reportExecutionHyperlinkProducer">
+		<property name="reportResultAccessor"><ref bean="jasperPrintAccessor"/></property>
+		<property name="reportResultRequestName" value="jasperPrintName"/>
+		<property name="reportResultParameterName" value="jrprint"/>
+		<property name="tenantService"><ref bean="${bean.hibernateTenantService}"/></property>
+		<property name="pathTransformer"><ref bean="pathTransformer"/></property>
+		<property name="threadPathTransformer"><ref bean="threadContextPathTransformer"/></property>
+		<property name="threadMultiTenancyContextProvider"><ref bean="threadMultiTenancyContextProvider"/></property>
+	</bean>
+	
+    <bean id="mtSwfReportExecutionHyperlinkProducer" class="com.jaspersoft.jasperserver.multipleTenancy.MTReportExecutionHyperlinkProducerFactory"
+        parent="mtReportExecutionHyperlinkProducer">
+        <property name="defaultOutputChannel" value="swf"/>
+    </bean>
+	
+    <bean id="mtLoggingContextProvider"
+          class="com.jaspersoft.jasperserver.multipleTenancy.MTLoggingContextProvider"
+          parent="basicProLoggingContextProvider">
+        <property name="auditEventTypesToFixUri">
+            <list>
+                <value>runReport</value>
+                <value>adHocEditing</value>
+                <value>dashboardEditing</value>
+                <value>inputControlsQuery</value>
+            </list>
+        </property>
+        <property name="pathTransformer" ref="pathTransformer"/>
+    </bean>
+
+    <bean id="mtAdHocEditingAuditEventListener"
+          class="com.jaspersoft.jasperserver.multipleTenancy.MTAdHocEditingAuditEventListener">
+        <property name="pathTransformer" ref="pathTransformer"/>
+    </bean>
+    
+    <bean id="mtAccessContext" class="com.jaspersoft.jasperserver.multipleTenancy.MTAccessContext"
+            parent="accessContext">
+        <property name="mtUserAuthorityService" ref="${bean.userAuthorityService}"/>
+    </bean>
+
+    <bean id="mtUserManagerService" class="com.jaspersoft.jasperserver.multipleTenancy.MTUserManagerServiceImpl">
+        <property name="sessionFactory" ref="sessionFactory"/>
+        <property name="userService">
+            <ref bean="${bean.userAuthorityService}"/>
+        </property>
+    </bean>
+
+    <bean id="mtRoleManagerService" class="com.jaspersoft.jasperserver.multipleTenancy.MTRoleManagerServiceImpl">
+        <property name="sessionFactory" ref="sessionFactory"/>
+        <property name="transactionManager" ref="transactionManager"/>
+        <property name="userService">
+            <ref bean="${bean.userAuthorityService}"/>
+        </property>
+        <property name="multiTenancyConfiguration" ref="multiTenancyConfiguration" />
+    </bean>
+
+    <bean id="tenantManagerService" class="com.jaspersoft.jasperserver.multipleTenancy.TenantManagerServiceImpl">
+        <property name="userService">
+            <ref bean="${bean.userAuthorityService}"/>
+        </property>
+        <property name="tenantService">
+            <ref bean="${bean.tenantService}"/>
+        </property>
+        <property name="multiTenancyService">
+            <ref bean="multiTenancyService"/>
+        </property>
+        <property name="mtConfiguration">
+            <ref bean="multiTenancyConfiguration"/>
+        </property>
+    </bean>
+
+    <bean id="mtRoleAccessUrisResolver" class="com.jaspersoft.jasperserver.multipleTenancy.MTRoleAccessUrisResolver">
+        <property name="transformer" ref="pathTransformer"/>
+        <property name="roleAccessUrisList" ref="${bean.roleAccessUrisList}"/>
+    </bean>
+</beans>

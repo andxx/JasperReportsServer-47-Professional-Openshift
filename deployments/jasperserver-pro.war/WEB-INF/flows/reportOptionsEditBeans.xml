@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
+    
+	<bean id="reportOptionsEditAction" class="com.jaspersoft.ji.report.options.actions.ReportOptionsEditAction">
+		<property name="formObjectClass" value="com.jaspersoft.ji.report.options.metadata.ReportOptions"/>
+		<property name="formObjectName" value="reportOptionsForm"/>
+		<property name="formObjectScope" value="FLOW"/>
+		<property name="validator" ref="reportOptionsValidator"/>
+		<property name="repository" ref="${bean.repositoryService}"/>
+		<property name="engine" ref="engineService"/>
+		<property name="messages" ref="messageSource"/>
+		<property name="reportUnitAttrName" value="reportUnitURI"/>
+		<property name="hasInputControlsAttrName" value="hasReportParameters"/>
+		<property name="controlsDisplayFormAttrName" value="controlsDisplayForm"/>
+		<property name="reportDisplayFormAttrName" value="reportDisplayForm"/>
+		<property name="reportUnitObjectAttrName" value="reportUnitObject"/>
+		<property name="calendarDatePatternAttrName" value="calendarDatePattern"/>
+		<property name="calendarDatetimePatternAttrName" value="calendarDatetimePattern"/>
+		<property name="calendarFormatProvider" ref="messagesCalendarFormatProvider"/>
+		<property name="attributeInputControlsInformation" value="inputControlsInformation"/>
+		<property name="inputControlsAttrName" value="inputControls"/>
+		<property name="optionsService" ref="reportOptionsService"/>
+		<property name="attributeReportOptionsURI" value="reportOptionsURI"/>
+		<property name="inputNamePrefix" value="input_"/>
+		<property name="messageSourceObjectAttrName" value="messageSource"/>
+	</bean>
+
+	<bean id="reportOptionsValidator" class="com.jaspersoft.ji.report.options.actions.ReportOptionsValidator">
+	</bean>
+
+</beans>

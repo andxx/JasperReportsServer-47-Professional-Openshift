@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow" xmlns:ns0="http://www.w3.org/2001/XMLSchema-instance"
+      ns0:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd"
+      start-state="initDashboard">
+
+    <input name="dashboardResource"/>
+    <input name="dashboardStatus"/>
+
+    <action-state id="initDashboard">
+        <on-entry>
+           <set name="flowScope.clientKey" value="requestParameters.clientKey"/>
+        </on-entry>
+        <evaluate expression="adhocAction"/>
+        <transition on="success" to="dashboardViewChoice"/>
+        <transition on="error" to="displayError"/>
+    </action-state>
+
+    <decision-state id="dashboardViewChoice">
+        <if test="requestParameters.createNew=='true'" then="newDashboardView" else="dashboardView"/>
+    </decision-state>
+
+    <view-state id="dashboardView" view="${requestScope.viewModel.mainViewName}">
+        <on-entry>
+            <set name="flowScope.prevForm" value="'dashboardView'"/>
+        </on-entry>
+        <transition on="cancel" to="done"/>
+    </view-state>
+
+    <view-state id="newDashboardView" view="modules/dashboard/dashboardDesignerRedirect">
+        <on-entry>
+            <set name="flowScope.prevForm" value="'newDashboardView'"/>
+        </on-entry>
+        <transition on="cancel" to="done"/>
+    </view-state>
+
+    <end-state id="done"/>
+
+    <view-state id="displayError" view="modules/system/errorPage">
+        <on-entry>
+            <set name="flowScope.prevForm" value="'displayError'"/>
+        </on-entry>
+        <transition on="displayError" to="init"/>
+    </view-state>
+
+    <!-- exceptions handling -->
+    <decision-state id="backFromError">
+        <if test="not (flowScope.prevForm == null or flowScope.prevForm == '')" then="${flowScope.prevForm}"
+            else="done"/>
+    </decision-state>
+
+    <view-state id="errorPage" view="modules/system/errorPage"/>
+
+    <global-transitions>
+        <transition on="backFromErrorPage" to="backFromError"/>
+        <transition on-exception="java.lang.Throwable" to="errorPage"/>
+    </global-transitions>
+
+    <!-- end exceptions handling -->
+    <bean-import resource="spring-config.xml"/>
+
+    <bean-import resource="adhocActionBeans.xml"/>
+
+</flow>

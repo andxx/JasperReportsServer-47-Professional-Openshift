@@ -1,0 +1,127 @@
+.optionSelected {
+    background-color:#F8CE84;
+    /*color:white;*/
+}
+
+.option {
+    padding-left:12px;
+}
+
+.tabAltLeft, .tabAltMiddle, .tabAltRight, .tabHoverLeft, .tabHoverMiddle, .tabHoverRight, .tabSelectedLeft, .tabSelectedMiddle, .tabSelectedRight {
+    position:left bottom;
+    background-repeat:no-repeat;
+    text-align:center;
+    _cursor:hand;
+    cursor:pointer;
+    height:25px;
+    color:#000033;
+}
+.tabAltLeft, .tabAltLeftDisabled {
+        background-image:url('../images/tab_alt_left.gif');
+        width:8px;font-size:0px;
+}
+.tabAltMiddle, .tabAltMiddleDisabled {
+        background-image:url('../images/tab_alt_middle.gif');
+        background-repeat:repeat-x;
+        padding-bottom:2px;
+        padding-top:2px;
+}
+.tabAltRight, .tabAltRightDisabled {
+        background-image:url('../images/tab_alt_right.gif');
+        width:9px;font-size:0px;
+}
+.tabAltLeftDisabled {
+        background-image:url('../images/tab_alt_left_d.gif');
+        cursor:default;
+}
+.tabAltMiddleDisabled {
+        background-image:url('../images/tab_alt_middle_d.gif');
+        background-repeat:repeat-x;
+        color:#CFCFCF;
+        cursor:default;
+        text-align:center;
+        height:25px;
+}
+.tabAltRightDisabled {
+        background-image:url('../images/tab_alt_right_d.gif');
+        cursor:default;
+}
+
+.tabHoverLeft {
+	background-image:url('../images/tab_hover_left.gif');
+	width:8px;font-size:0px;
+}
+
+.tabHoverMiddle {
+        background-image:url('../images/tab_hover_middle.gif');
+        background-repeat:repeat-x;
+        padding-bottom:2px;
+}
+
+.tabHoverRight {
+        background-image:url('../images/tab_hover_right.gif');
+        width:9px;font-size:0px;
+}
+
+.tabSelectedLeft  {
+        background-image:url('../images/tab_left.gif');
+        height:25px;width:8px;font-size:0px;
+	cursor:default;
+}
+
+.tabSelectedMiddle {
+        background-image:url('../images/tab_middle.gif');
+        background-repeat:repeat-x;
+        padding-bottom:2px;
+        padding-top:2px;
+	cursor:default;
+	font-weight:bold;
+	color:#993200;
+}
+
+.tabSelectedRight {
+    	background-image:url('../images/tab_right.gif');
+	cursor:default;
+	width:9px;font-size:0px;
+}
+.tabPanel {
+    padding:6px;
+    background-color:#FFFFFF;
+    border-left:solid 1px #687f99;
+    border-right:solid 1px #687f99;
+    border-bottom:solid 1px #687f99;
+}
+.tabPanelBorderTop {
+    border-bottom:solid 1px #687f99;
+}
+.tabLeftEdge, .tabRightEdge {
+	background-image:url('../images/tab_left_edge.gif');
+	background-position: left top;
+	background-repeat:no-repeat;
+        font-size:0px;
+        cursor:default;
+}
+
+.tabRightEdge {
+	background-position: right top;
+}
+
+.helpText {
+	color: #384766;
+	font-size:85%;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	text-align:right;
+	padding-bottom:12px;
+	padding-top:0px;
+	padding-right:2px;
+
+}
+
+.statusText {
+	color:#993200;
+	font-style:italic;
+}
+.statusInTable {
+	color: #384766;
+	font-style:italic;
+}

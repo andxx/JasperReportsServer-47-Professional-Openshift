@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
+    
+	<!-- Backing action for queryBuilderFlow -->
+    <bean id="queryBuilderAction" class="com.jaspersoft.ji.semantic.action.QueryBuilderAction">
+        <property name="transactionManager" ref="transactionManager"/>
+        <property name="repository" ref="${bean.repositoryService}"/>
+        <property name="dataSetFactory" ref="jdbcDataSetFactory"/>
+        <property name="semanticLayerFactory" ref="semanticLayerFactory"/>
+        <property name="messages" ref="messageSource"/>
+        <property name="queryLanguageFlowAttribute" value="queryLanguage"/>
+        <property name="slConfig" ref="slConfig"/>
+        <property name="repositoryTreeFoldersProvider" ref="adhocRepositoryTreeFoldersProvider"/>
+        <property name="engineService" ref="engineService"/>
+        <property name="adhocEngineService" ref="adhocEngineService"/>
+        <property name="securityContextProvider" ref="${bean.securityContextProvider}"/>
+        <property name="configuration" ref="configurationBean" />
+        <property name="inputControlBuilder" ref="inputControlBuilder" />
+        <property name="objectTypeMapper" ref="objectTypeMapper"/>
+        <property name="tenantService" ref="${bean.hibernateTenantService}"/>
+    </bean>
+
+	<!-- Backing action for queryBuilderFlow -->
+    <bean id="inputControlBuilder" class="com.jaspersoft.ji.semantic.service.InputControlBuilder">
+        <property name="repository" ref="${bean.repositoryService}"/>
+        <property name="semanticLayerFactory" ref="semanticLayerFactory"/>
+        <property name="messages" ref="messageSource"/>
+        <property name="slConfig" ref="slConfig"/>
+        <property name="engineService" ref="engineService"/>
+        <property name="objectTypeMapper" ref="objectTypeMapper"/>
+    </bean>
+
+    <!--bean id="reportUnitAction" class="com.jaspersoft.jasperserver.war.action.ReportUnitAction">
+	 	<property name="repository">
+            <ref bean="repositoryService"/>
+        </property>
+        <property name="engine">
+        	<ref bean="engineService"/>
+	   	</property>
+		<property name="configuration">
+			<ref bean="configurationBean"/>
+		</property>
+        <property name="queryReferenceReqAttrName" value="queryReference"/>
+        <property name="queryReferenceOutpuAttrName" value="queryReference"/>
+		<property name="validator" ref="reportUnitValidator"/>
+		<property name="reportQueryLanguageFlowAttribute" value="JRXMLQueryLanguage"/>
+	</bean>
+
+	<bean name="reportUnitValidator" class="com.jaspersoft.jasperserver.war.validation.ReportDetailsValidator">
+		<property name="repository">
+		   <ref bean="repositoryService"/>
+	   </property>
+	   <property name="servletContextInformation" ref="servletContextInformation"/>
+	</bean-->
+
+    <import resource="adhocTreeBeans.xml"/>
+</beans>

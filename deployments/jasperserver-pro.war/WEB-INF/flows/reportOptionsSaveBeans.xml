@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
+
+	<bean id="baseReportOptionsSaveAction" class="com.jaspersoft.ji.report.options.actions.ReportOptionsSaveAction" abstract="true">
+		<property name="optionsService" ref="reportOptionsService"/>
+		<property name="messages" ref="messageSource"/>
+		<property name="parameterSaveOptionsName" value="optionsName"/>
+		<property name="parameterSaveOptionsOverwrite" value="overwriteOptions"/>
+		<property name="attributeCurrentOptionsURI" value="reportOptionsURI"/>
+		<property name="attributeReportOptionsList" value="reportOptionsList"/>
+		<property name="parameterApplyReportOptionsURI" value="reportOptionsURI"/>
+		<property name="attributeLastReportOptionsURI" value="lastReportOptionsURI"/>
+		<property name="attributeSaveReportOptionsName" value="saveRerportOptionsName"/>
+		<property name="eventOptionsAlreadyExists" value="alreadyExists"/>
+		<property name="attributeOptionsValidationError" value="optionsValidationError"/>
+		<property name="attributeSavedOptionsState" value="savedOptionsState"/>
+	</bean>
+	
+</beans>

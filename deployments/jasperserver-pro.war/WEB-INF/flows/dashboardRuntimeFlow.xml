@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow" xmlns:ns0="http://www.w3.org/2001/XMLSchema-instance"
+      ns0:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd"
+      start-state="viewDashboard">
+
+    <input name="dashboardResource"/>
+
+    <view-state id="viewDashboard" view="modules/dashboard/dashboardViewer">
+        <on-entry>
+            <set name="flowScope.clientKey" value="requestParameters.clientKey"/>
+            <set name="requestScope.flowid" value="'dashboard_runtime'"/>
+            <evaluate expression="viewDashboardAction.init"/>
+        </on-entry>
+        <transition on="close" to="done"/>
+        <transition on="backFromErrorPage" to="viewDashboard"/>
+    </view-state>
+
+    <view-state id="displayError" view="modules/system/errorPage">
+        <on-entry>
+            <set name="flowScope.prevForm" value="'displayError'"/>
+        </on-entry>
+        <transition on="displayError" to="done"/>
+    </view-state>
+
+    <end-state id="done"/>
+
+    <end-state id="cancel"/>
+
+    <!-- exceptions handling -->
+    <decision-state id="backFromError">
+        <if test="not (flowScope.prevForm == null or flowScope.prevForm == '')" then="${flowScope.prevForm}"
+            else="done"/>
+    </decision-state>
+    <!-- set attr to disable back button if there's nowhere to go -->
+    <view-state id="errorPage" view="modules/system/errorPage">
+        <on-entry>
+            <set name="requestScope.conditionallyDisableBackButton" value="true"/>
+        </on-entry>
+    </view-state>
+
+    <global-transitions>
+        <transition on="backFromErrorPage" to="backFromError"/>
+        <transition on-exception="java.lang.Throwable" to="errorPage"/>
+    </global-transitions>
+
+    <!-- end exceptions handling -->
+    <on-end>
+        <evaluate expression="viewDashboardAction.cleanSession"/>
+    </on-end>
+
+    <bean-import resource="spring-config.xml"/>
+
+    <bean-import resource="dashboardActionBeans.xml"/>
+
+</flow>

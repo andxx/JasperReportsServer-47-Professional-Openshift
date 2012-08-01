@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd">
+	
+    <bean id="proHomePageByRole" class="java.util.ArrayList">
+        <constructor-arg>
+            <list>
+                <value>ROLE_ADMINISTRATOR|redirect:/flow.html?_flowId=homeFlow</value>
+                <value>ROLE_USER|redirect:/flow.html?_flowId=homeFlow</value>
+            </list>
+        </constructor-arg>
+    </bean>
+
+    <bean id="addLogDescriptions" class="com.jaspersoft.jasperserver.api.common.util.spring.GenericBeanUpdaterDefinition">
+		<property name="beanName" value="logSettingsController"/>
+		<property name="propertyName" value="loggerDescriptionFiles"/>
+		<property name="operation" value="append"/>
+	</bean>
+
+    <bean class="com.jaspersoft.jasperserver.api.common.util.spring.GenericBeanUpdater">
+        <property name="definition" ref="addLogDescriptions"/>
+        <property name="value" value="WEB-INF/bundles/logger_descriptions_pro.properties"/>
+        <property name="valueType" value="stringList"/>
+    </bean>
+
+    <util:map id="convertersMap">
+        <entry key="adhocTable">
+            <bean class="com.jaspersoft.ji.adhoc.converter.AdhocTableToJsonConverter" />
+        </entry>
+        <entry key="adhocCrosstab">
+            <bean class="com.jaspersoft.ji.adhoc.converter.AdhocCrosstabToJsonStreamingConverter" />
+        </entry>
+        <entry key="adhocChart">
+            <bean class="com.jaspersoft.ji.adhoc.converter.AdhocChartToJsonConverter" />
+        </entry>
+        <entry key="adHocFilterPanel">
+            <bean class="com.jaspersoft.ji.adhoc.converter.AdhocFilterPanelConverter" />
+        </entry>
+        <entry key="adHocCalcFields">
+            <bean class="com.jaspersoft.ji.adhoc.converter.AdhocCalcFieldsConverter"/>
+        </entry>
+    </util:map>
+
+    <bean id="jsonViewResolver" class="com.jaspersoft.ji.adhoc.JsonViewResolver">
+        <property name="jsonView">
+            <bean class="com.jaspersoft.ji.adhoc.JsonView" />
+        </property>
+        <property name="convertersMap" ref="convertersMap"/>
+        <property name="cache" value="false" />
+        <property name="order" value="20"/>
+    </bean>
+
+</beans>
+

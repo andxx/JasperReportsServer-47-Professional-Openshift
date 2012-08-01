@@ -1,0 +1,65 @@
+.mainTableClass {
+margin:0;padding:0;tableLayout:fixed;font-family:verdana, arial, san-serif;
+}
+.titleCell {
+height:40px; color: #FFFFFF; background-color:#4D7DDE; font-size: 18px; font-weight: bold; vertical-align: middle; text-align:center;
+}
+.columnHeaderCell {
+height:25px; color:#3366CC;background-color:#E5E5E4; border-bottom:solid 1px #003399; border-top:solid 1px #003399;  font-size: 12px;font-weight: bold;vertical-align: middle;
+}
+.group1Cell {
+height:25px; color:#3366CC;background-color:#FCFBDF; font-weight:bold; font-size:12px;vertical-align: middle;
+}
+.group2Cell {
+height:25px; color:#3366CC;background-color:#DEEBFF;   font-weight:bold; font-size:12px;vertical-align: middle;
+}
+.group3Cell {
+height:25px; color:#111133;background-color:#FFFFFF;   font-weight:bold; font-size:12px;vertical-align: middle;
+}
+.detailCell {
+height:20px; color:#111133;background-color:#FFFFFF;  font-size: 11px;vertical-align: middle;
+}
+.detail2Cell {
+height:20px; color:#111133;background-color:#F3F7FD;   font-size: 11px;vertical-align: middle;
+}
+.summaryCell {
+height:25px; color:#3366CC;background-color:#E5E5E4; border-bottom:solid 1px #003399; border-top:solid 1px #003399;  font-size: 11px;font-weight: bold;vertical-align: middle;
+}
+
+/* XTs */
+
+.XTDefaults {border-color: #003399;color: #111133;}
+	
+.XTTitleStyle {
+	text-align: center;border: #003399;font-size: 13px;color: #003399;font-weight: bold;}
+.XTColumn1 {
+	background-color: #4D7DDE;color: #FFFFFF;font-weight: bold;}
+.XTColumn2 {
+	background-color: #E5E5E4;color: #3366CC;font-weight: bold;}
+.XTColumn3 {
+	background-color: #F3F7FD;color: #3366CC;font-weight: bold;}
+.XTRow1 {
+	background-color: #FCFBDF;color: #3366CC;font-weight: bold;}	
+.XTRow2 {
+	background-color: #DEEBFF;color: #3366CC;font-weight: bold;}
+.XTRow3 {
+	background-color: #F3F7FD;color: #3366CC;font-weight: bold;}
+.XTGrandTotal { 
+	background-color: #4D7DDE;color: #FFFFFF;font-weight: bold;}
+.XTColumnWidth {
+	width:100px; }
+.XTRowWidth {
+	width:100px; }		
+.XTMeasureCell {
+	width:100px;height: 30px;background-color: #FFFFFF;color: #111133;font-size: 10.0px;}
+	
+/* Charts */
+
+.ChartReportTitleStyle {
+	height:40px; color: #FFFFFF; background-color:#4D7DDE;  font-size: 18px; font-weight: bold; vertical-align: middle; text-align:center;
+}
+.ChartTitleStyle {
+	color: #003399;  font-size: 12px; font-weight: bold; vertical-align: middle; text-align:center;
+}
+	
+	

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
+
+  <!-- Backing action for edit mondrian properties flow -->
+  <bean id="editMondrianPropertiesAction" class="com.jaspersoft.ji.ja.properties.war.action.EditMondrianPropertiesAction">
+    <property name="repository">
+      <ref bean="${bean.repositoryService}"/>
+    </property>
+    <property name="globalProfilingState" ref="globalProfilingState"/>
+    <property name="auditContext" ref="${bean.auditContext}"/>
+  </bean>
+  
+  <bean id="olapManagementAction" class="com.jaspersoft.ji.ja.properties.war.action.OlapManagementAction">
+  	<property name="olapManagementService">
+  		<bean class="com.jaspersoft.jasperserver.api.metadata.olap.service.impl.OlapManagementServiceImpl"/>
+  	</property>
+  </bean>
+  
+</beans>

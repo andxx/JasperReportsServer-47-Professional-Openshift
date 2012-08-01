@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<flow xmlns="http://www.springframework.org/schema/webflow"
+      xmlns:ns0="http://www.w3.org/2001/XMLSchema-instance"
+      ns0:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd"
+      start-state="checkForParams" parent="viewReportFlow">
+
+	<on-start>
+		<set name="flowScope.reportUnit" value="reportUnit"/> 
+		<set name="flowScope.reportViewPage" 
+			value="isDashboard ? 'modules/dashboard/dashboardDesignerViewFrame' : 'modules/viewReport/ViewReport'"/>
+		<set name="flowScope.showPagination" value="isDashboard"/>
+		<set name="flowScope.ignorePageMargins" value="isDashboard"/>
+	</on-start>
+	
+    <action-state id="checkForParams">
+        <on-entry>
+            <set name="flowScope.clientKey" value="requestParameters.clientKey"/>
+        </on-entry>
+	</action-state>
+
+    <bean-import resource="reportOptionsSaveBeans.xml"/>
+
+    <bean-import resource="reportOptionsViewBeans.xml"/>
+
+    <bean-import resource="adhocViewActionBeans.xml"/>
+
+</flow>

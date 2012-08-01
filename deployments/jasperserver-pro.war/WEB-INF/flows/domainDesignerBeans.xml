@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
+
+	<!-- Backing action for Domain Designer -->
+    <bean id="domainDesignerAction" class="com.jaspersoft.ji.semantic.action.DomainDesignerAction">
+        <property name="repository" ref="${bean.repositoryService}"/>
+        <property name="metaDataFactoryFactory" ref="metaDataFactoryFactory"/>
+        <property name="dataSetFactory" ref="jdbcDataSetFactory"/>
+        <property name="semanticLayerFactory" ref="semanticLayerFactory"/>
+        <property name="domainValidator" ref="domainValidator"/>
+        <property name="slConfig" ref="slConfig"/>
+        <property name="messages" ref="messageSource"/>
+        <property name="domainSchema" ref="domainSchema"/>
+        <property name="adhocEngine" ref="adhocEngineService"/>
+        <property name="objectTypeMapper" ref="objectTypeMapper"/>
+        <property name="domainDesignerService" ref="domainDesignerService"/>
+        <property name="securityContextProvider" ref="${bean.securityContextProvider}"/>
+        <property name="configuration" ref="configurationBean" />        
+        <!--<property name="dataSetFactory" ref="jdbcDataSetFactory"/>-->
+        <!--<property name="queryLanguageFlowAttribute" value="queryLanguage"/>-->
+    </bean>
+
+    <!-- Domain Designer -->
+    <bean name="domainSchema" class="com.jaspersoft.ji.semantic.domaindesigner.DomainSchema">
+        <property name="semanticLayerFactory" ref="semanticLayerFactory"/>
+        <property name="expressionBuilderFactory" ref="expressionBuilderFactory"/>
+        <property name="slConfig" ref="slConfig"/>
+    </bean>
+    
+    <bean name="domainDesignerService" class="com.jaspersoft.ji.semantic.domaindesigner.DomainDesignerServiceImpl">
+        <property name="semanticLayerFactory" ref="semanticLayerFactory"/>
+        <property name="domainDesignerDataSetFactory" ref="domainDesignerDataSetFactory"/>
+        <property name="slConfig" ref="slConfig"/>
+    </bean>
+
+    <bean name="domainDesignerDataSetFactory" class="com.jaspersoft.ji.semantic.domaindesigner.DomainDesignerDataSetFactory">
+        <property name="semanticLayerFactory" ref="semanticLayerFactory"/>
+    </bean>
+    
+    <bean name="expressionBuilderFactory" class="com.jaspersoft.commons.semantic.rule.expression.ExpressionBuilderFactory">
+        <property name="expressionEvaluator" ref="expressionEvaluator"/>
+    </bean>
+
+</beans>

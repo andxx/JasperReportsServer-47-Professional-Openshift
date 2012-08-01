@@ -1,0 +1,120 @@
+
+/* implementation specific initializations & utilities */
+
+body.noScroll {
+    overflow:hidden;
+}
+
+#dataPanel p, #dataPanel ul, .toolbar ul, .tabs ul {
+    margin:0;
+}
+
+#dimmer {
+    display:none;
+    opacity:.5;
+    position:absolute;
+    top:0;
+    left:0;
+    z-index: 5000;
+    height:100%;
+    width:100%;
+    background-color:#000000;
+}
+
+
+/* main modules */
+
+#outerTable /* was 'container' */ {
+    position:relative;
+    height:100%; /* slightly arbitrary, exists to give footer room to appear */
+    background-color: rgb(255,255,255);
+    border:solid #000033;
+    border-width: 0 1px 1px;
+    overflow: hidden;
+}
+
+.toolbar {
+    width:100%;
+    height:30px;
+    padding:4px 0px;
+    background: url(../images/toolbar_bg.png) repeat-x 0px 0px;
+    border-bottom: 1px solid #002C4B;
+    background-color: #0061A2;
+}
+
+#dataPanel {
+    width:233px;
+    height:100%;
+    position:relative;
+
+}
+
+#mainTableContainer /* was 'canvas' */{
+    position:absolute;
+    top:103px;
+    left:233px;
+    right:0;
+    bottom:0px;
+    overflow:auto;
+}
+
+#mainTableContainer.withFilterPanel {
+    right:254px;
+}
+
+
+#filters {
+    position:absolute;
+    bottom:0;
+    right:0;
+    top:103px;
+    overflow:auto;
+    border-left: 4px solid #CED8Df;
+}
+
+#filters.opened {
+    width:250px;
+}
+
+#filters.closed {
+    width:0;
+    display: none;
+}
+
+.viewport {
+    position: relative;
+    margin:10px;
+    top: 0px;
+    left: 0px;
+    display: none;
+}
+
+.viewport.selected {
+    display: block;
+}
+
+/* this gets rid of the outer borders - decoratedBody is used by sitemesh */
+#decoratedBody {
+    padding-left:0px;
+    padding-right:0px;
+}
+
+.toolButtonInfoTip {
+    position: absolute;
+    display: none;
+    background-color: #FCFFC5;
+    max-width: 100px;
+    border: none;
+    padding:0.5em 2em;
+    float:left; /* used for 'shrink-to-fit' behavior, in production 'position:absolute;' might be better way to get this behavior */
+}
+
+.toolButtonInfoTip p {
+    margin-top:.5em;
+}
+
+.toolButtonInfoTip p.label {
+    color: #B3A99B;
+    margin-bottom:0;
+}
+

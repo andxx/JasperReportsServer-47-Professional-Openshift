@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow" xmlns:ns0="http://www.w3.org/2001/XMLSchema-instance"
+      ns0:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd"
+      start-state="setupForm">
+
+    <input name="reportOptionsURI"/>
+
+    <action-state id="setupForm">
+        <evaluate expression="reportOptionsEditAction"/>
+        <transition on="success" to="editForm"/>
+    </action-state>
+
+    <view-state id="editForm" view="modules/inputControls/EditReportOption">
+        <on-entry>
+            <set name="flowScope.prevForm" value="'editForm'"/>
+        </on-entry>
+        <transition on="save" to="save">
+            <evaluate expression="reportOptionsEditAction.bindAndValidate"/>
+        </transition>
+        <transition on="cancel" to="done"/>
+    </view-state>
+
+    <action-state id="save">
+        <evaluate expression="reportOptionsEditAction"/>
+        <transition on="error" to="editForm"/>
+        <transition on="success" to="done"/>
+    </action-state>
+
+    <end-state id="done" view="flowRedirect:searchFlow?lastMode=true"/>
+
+    <!-- exceptions handling -->
+    <decision-state id="backFromError">
+        <if test="not (flowScope.prevForm == null or flowScope.prevForm == '')" then="${flowScope.prevForm}"
+            else="done"/>
+    </decision-state>
+
+    <view-state id="errorPage" view="modules/system/errorPage"/>
+
+    <global-transitions>
+        <transition on="backFromErrorPage" to="backFromError"/>
+        <transition on-exception="java.lang.Throwable" to="errorPage"/>
+    </global-transitions>
+
+    <!-- end exceptions handling -->
+    <bean-import resource="spring-config.xml"/>
+
+    <bean-import resource="reportOptionsEditBeans.xml"/>
+
+</flow>

@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow" xmlns:ns0="http://www.w3.org/2001/XMLSchema-instance"
+      ns0:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd"
+      start-state="initAction">
+
+    <action-state id="initAction">
+        <evaluate expression="createSLDatasourceAction"/>
+        <transition on="success" to="domainSetUp"/>
+    </action-state>                                      
+
+    <view-state id="domainSetUp" view="modules/semanticLayer/createSLDatasource/domainSetUp">
+        <transition on="save" to="ajaxView">
+            <evaluate expression="createSLDatasourceAction.save"/>
+        </transition>
+        <transition on="upload" to="ajaxView">
+            <evaluate expression="createSLDatasourceAction.uploadFile"/>
+        </transition>
+        <transition on="createSchema" to="domainDesigner">
+            <evaluate expression="createSLDatasourceAction.prepareDatasources"/>
+            <evaluate expression="createSLDatasourceAction.prepareBundle"/>
+        </transition>
+        <transition on="editSchema" to="domainDesigner">
+            <evaluate expression="createSLDatasourceAction.prepareDatasources"/>
+            <evaluate expression="createSLDatasourceAction.prepareSchema"/>
+            <evaluate expression="createSLDatasourceAction.prepareBundle"/>
+        </transition>        
+        <transition on="addBundleFromRepo" to="ajaxView">
+            <evaluate expression="createSLDatasourceAction.addBundleFromRepo"/>
+        </transition>
+        <transition on="addSecurityFromRepo" to="ajaxView">
+            <evaluate expression="createSLDatasourceAction.addSecurityFromRepo"/>
+        </transition>
+        <transition on="deleteBundle" to="ajaxView">
+            <evaluate expression="createSLDatasourceAction.deleteBundle"/>
+        </transition>
+        <transition on="deleteSecurity" to="ajaxView">
+            <evaluate expression="createSLDatasourceAction.deleteSecurity"/>
+        </transition>
+        <transition on="downloadFile">
+            <evaluate expression="createSLDatasourceAction.downloadFile"/>
+        </transition>
+        <transition on="setDatasources" to="ajaxView">
+            <evaluate expression="createSLDatasourceAction.setDatasources"/>
+        </transition>
+        <transition on="checkDataSource" to="ajaxView">
+            <evaluate expression="createSLDatasourceAction.checkDataSource"/>
+        </transition>
+        <transition on="validateAndCheckIfExists" to="ajaxView">
+            <evaluate expression="createSLDatasourceAction.validateAndCheckIfExists"/>
+        </transition>
+
+        <transition on="redirectAfterSave" to="redirectAfterSave"/>
+
+        <transition on="cancel" to="cancel"/>
+
+        <on-exit>
+            <evaluate expression="createSLDatasourceAction.processParameters"/>
+        </on-exit>
+    </view-state>
+
+    <view-state id="ajaxView" view="ajax/ajaxresponse"/>
+
+    <view-state id="ajaxError" view="ajax/ajaxerror"/>
+
+    <subflow-state id="domainDesigner" subflow="domainDesignerFlow">
+        <input name="ddSchema" value="flashScope.ddSchema"/>
+        <input name="ddDatasources" value="flashScope.ddDatasources"/>
+        <input name="ddBundle" value="flashScope.ddBundle"/>
+        <output name="ddSchema" value="flashScope.ddSchema"/>
+        <output name="ddDatasources" value="flashScope.ddDatasources"/>
+        <transition on="finish" to="domainSetUp">
+            <evaluate expression="createSLDatasourceAction.processDesignerDatasources"/>
+            <evaluate expression="createSLDatasourceAction.processSchema"/>
+            <evaluate expression="createSLDatasourceAction.processFiles"/>
+        </transition>
+        <transition on="cancel" to="domainSetUp">
+            <evaluate expression="createSLDatasourceAction.processFiles"/>
+        </transition>
+    </subflow-state>
+
+    <end-state id="cancel" view="flowRedirect:searchFlow?lastMode=true"/>
+
+    <end-state id="redirectAfterSave" view="flowRedirect:searchFlow"/>
+
+    <action-state id="cleanSession">
+        <evaluate expression="createSLDatasourceAction"/>
+        <transition on="success" to="domainSetUp"/>
+    </action-state>
+
+    <!-- exceptions handling -->
+    <decision-state id="backFromError">
+        <if test="not (flowScope.prevForm == null or flowScope.prevForm == '')" then="${flowScope.prevForm}"
+            else="domainSetUp"/>
+    </decision-state>
+
+    <view-state id="errorPage" view="modules/system/errorPage"/>
+
+    <global-transitions>
+        <transition on="backFromErrorPage" to="backFromError"/>
+        <transition on-exception="java.lang.Throwable" to="errorPage"/>
+    </global-transitions>
+
+    <!-- end exceptions handling -->
+    <bean-import resource="spring-config.xml"/>
+
+    <bean-import resource="createSLDatasourceBeans.xml"/>
+
+</flow>

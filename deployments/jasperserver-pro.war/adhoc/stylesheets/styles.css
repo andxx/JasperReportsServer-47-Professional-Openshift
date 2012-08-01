@@ -1,0 +1,1050 @@
+/*
+ *************************************************************************
+ * THE STANDARD STYLESHEET FOR AD HOC 
+ *************************************************************************
+*/
+
+.a {
+    text-decoration: none
+}
+
+.haze {
+    -moz-opacity: .7;
+    opacity: .7;
+    filter: alpha( opacity = 60 );
+    background-color: #D2D6DA;
+    z-index: 80
+}
+
+.hidden {
+	display:none;
+}
+
+/*
+ * Table stuff mainly for regular Ad Hoc
+ */
+table.hideMe {
+    display: none;
+    padding: 0px;
+    margin: 0px;
+}
+
+table.singleSelect {
+    border-width: 2px;
+    border-color: #005594;
+    border-style: solid;
+}
+
+table.multiSelect {
+    border-width: 2px;
+    border-color: #687F99;
+    border-style: solid;
+}
+
+table.oversize {
+    border-width: 2px;
+    border-color: #B3090F;
+    border-style: solid;
+}
+
+table.overlay {
+    border-style: none;
+    -moz-user-select: none;
+    -khtml-user-select: none;
+}
+
+table.overlayWidthResizer {
+    border-style: none;
+    cursor: e-resize;
+    -moz-user-select: none;
+    -khtml-user-select: none;
+}
+
+table.overlayHeightResizer {
+    border-style: none;
+    cursor: s-resize;
+    -moz-user-select: none;
+    -khtml-user-select: none;
+}
+
+table.overlayDiagonalResizer {
+    border-style: none;
+    cursor: nw-resize;
+    -moz-user-select: none;
+    -khtml-user-select: none;
+}
+
+table.dragFieldSelect {
+    border-style: none;
+    cursor: default
+}
+
+table.dragSelect {
+    background-image: none;
+    border-width: 2px;
+    border-color: #005594;
+    border-style: solid;
+    -moz-opacity: .7;
+    opacity: .7;
+    filter: alpha( opacity = 60 );
+    cursor:default
+}
+
+table.dragChangedSelect {
+    background-image: none;
+    border-width: 2px;
+    border-color: #B37150;
+    border-style: solid;
+    -moz-opacity: .7;
+    opacity: .7;
+    filter: alpha( opacity = 60 );
+    cursor:default
+}
+
+table.dragRemoveColumnSelect, table.dragRemoveGroupSelect {
+    background-image: url('adhoc/images/recycle.gif');
+    background-repeat: no-repeat;
+    background-position: top center;
+    border-width: 2px;
+    border-color: #808080;
+    border-style: solid;
+    -moz-opacity: .7;
+    opacity: .7;
+    filter: alpha( opacity = 60 );
+    cursor:default
+}
+
+table.dragRemoveColumnSelect {
+    background-position: 100% 25px;
+}
+
+table.dragRemoveGroupSelect {
+    background-position: 100% -4px;
+}
+
+table.ChartDragTarget {
+    background-image: none;
+    border-width: 2px;
+    border-color: #B37150;
+    border-style: solid;
+    cursor: default
+}
+
+/*
+ * TD stuff mainly for regular Ad Hoc
+ */
+
+td {
+	FONT-SIZE: 70%; COLOR: #000000; FONT-FAMILY: Verdana, Arial, Helvetica, sans-serif
+}
+
+td.hideMe {
+    display: none
+}
+
+td.spineInner {
+    background-color: #005594;
+    width: 1px;
+    cursor: col-resize
+}
+
+td.spineOuter {
+    background-color: #C0C0C0;
+    width: 1px;
+    cursor: col-resize
+}
+
+td.overlay {
+    visibility: hidden;
+    height: 1px;
+    width: 1px;
+}
+
+td.dragSelect {
+    background-color: #005594;
+    color: #FFFFFF;
+    -moz-opacity: .7;
+    opacity: .7;    
+    filter: alpha( opacity = 60 );
+    cursor:default
+}
+
+td.dragChangedSelect {
+    background-color: #993200;
+    color: #FFFFFF;
+    -moz-opacity: .7;
+    opacity: .7;
+    filter: alpha( opacity = 60 );
+    cursor:default
+}
+
+td.dashboardDragSelect {
+    color: #FFFFFF;
+    vertical-align: middle;
+    cursor: default
+}
+
+td.dashboardDragChangedSelect {
+    color: #FFFFFF;
+    vertical-align: bottom;
+    cursor: default
+}
+
+td.dragRemoveSelect {
+    background-color: #808080;
+    color: #FFFFFF;
+    -moz-opacity: .7;
+    opacity: .7;    
+    filter: alpha( opacity = 60 );
+    cursor:default
+}
+
+td.shiftTarget {
+    background-color: #005594;
+    width: 100%;
+    height: 100%
+}
+
+td.veryTranslucent {
+    -moz-opacity: .5;
+    opacity: .5;
+    filter: alpha( opacity = 40 )
+}
+
+td.titleplaceholder {  
+    font-weight: bold;
+    font-style:  italic;
+    color:#000033;
+    font-size:70%;
+    letter-spacing:1px;
+    background-color:#C5D1D9; 
+    text-align:center;
+    vertical-align:middle;
+    border-bottom: solid 1px #999999;
+}
+
+td.dashboardTitleStyle {
+	text-align: center;
+	font-size: 14px;
+	color: #000000;
+	font-weight: bold;
+}
+
+
+td.paleBlue {  
+    background-color:#E6EAED;
+    color: #000033;
+}
+td.transparent {  
+    background-color:transparent;
+}
+
+td.highlyTranslucent{
+    -moz-opacity:.3;
+    opacity: .5;
+    filter:alpha(opacity=30)
+}
+
+td.targetBrown {  
+    background-color:#C3957F;
+    color: #4D3237;
+}
+td.leftRightBorder {  
+    border-left: solid 1px #999999;
+    border-right: solid 1px #999999; 
+}
+td.topRightBorder {  
+    border-top: solid 1px #999999;
+    border-right: solid 1px #999999; 
+}
+td.rightBorder {
+    border-right: solid 1px #999999; 
+}
+td.border {
+    border: solid 1px #999999; 
+}
+
+td.noBorder {
+    border:none; 
+}
+
+div.legendMouseover {
+    background-color: #687F99;
+    -moz-opacity: 0.2;
+    opacity: .5;
+    filter: alpha( opacity = 20 );
+}
+
+
+/*
+ * Fonts....
+ */
+
+
+.fnormal {
+    FONT-SIZE: 80%;
+    line-height: 150%;
+}
+
+.fnormaldisabledlight {
+    FONT-SIZE: 80%;
+    line-height: 150%;
+    color: #999999;
+}
+
+.flabel {
+    FONT-SIZE: 70%;
+    font-weight: bold;
+    color: #000033;
+}
+
+.flabeldisabledlight {
+    font-size: 70%;
+    line-height: 150%;
+    color: #999999;
+}
+
+.finstruction {
+    FONT-WEIGHT: bold;
+    FONT-SIZE: 70%;
+    COLOR: #000033;
+    line-height: 150%;
+}
+
+.fsection {
+    FONT-WEIGHT: normal;
+    FONT-SIZE: 110%;
+    COLOR: #993200;
+    LINE-HEIGHT: 100%;
+    FONT-FAMILY: Arial, Helvetica, sans-serif;
+    LETTER-SPACING: 2px;
+}
+
+.ferror {
+    FONT-SIZE: 9pt;
+    FONT-WEIGHT: bold;
+    COLOR: #D91900;
+}
+
+/*
+ * Static page styles 
+ */
+
+.contentcellg {
+	background-color:#FCF9F2;
+	padding-top:5px;
+	padding-right:5px;
+	padding-bottom:5px;
+}
+
+
+.contentcell { 
+	background-image:  url('../images/content_bg.png' ); 
+	background-repeat: repeat-y; 
+	background-position: left top; 
+	background-color: #FCF9F2; 
+}  
+
+.formtable  {
+	border: 1px solid #687F99;
+	background-color:#FFFFFF;
+}
+
+.backingTable {
+    border: solid 1px #999999;
+    background-color: #FFFFFF;
+}
+
+.placeholder {
+    font-weight: bold;
+    font-style: italic;
+    color: #000033;
+    font-size: 70%;
+    background-color: #C5D1D9;
+    vertical-align: middle;
+    border: none;
+    border-bottom: solid 1px #687F99;
+    border-top: solid 1px #687F99;
+}
+
+/*
+ * Buttons
+ */
+
+.topButton {
+    padding-top: 1px;
+    padding-bottom: 1px;
+}
+
+.bottomBorderAfterRollButton {
+    border-bottom: solid 1px #7a7e80;
+}
+
+.middleButton {
+    border-bottom: solid 1px #7a7e80;
+    padding-top: 1px;
+    padding-bottom: 2px;
+}
+
+.bottomButtonFlat {
+}
+
+.bottomBorderBeforeInset {
+    border-bottom: solid 1px #7c90a6;
+}
+
+.flatButtonBorderBeforeInset {
+    border-top: solid 1px #9fa4a6;
+}
+
+.realButtonBorderBeforeInset {
+    border-top: solid 1px #7a7e80;
+}
+
+/*
+ * Menus
+ */
+
+.menurowhighlighted {
+    background-color: #ffffff;
+    font-style: normal;
+    font-weight: bold;
+    color: #000033;
+    padding-top: 1px;
+    padding-bottom: 2px;
+    /* border-top: solid 1px #7c90a6; */
+    border-bottom: solid 1px #b2b9bf;
+}
+
+.menuframe {
+    border-top: 1px solid #687F99;
+    border-left: 1px solid #687F99;
+    border-right: 2px solid #687F99;
+    border-bottom: 2px solid #687F99;
+}
+
+.menutable {
+    border-top: 1px solid #FFFFFF;
+    border-left: 1px solid #FFFFFF;
+    background-color: #E6EAED;
+}
+
+.menutitle {
+    line-height: 125%;
+    font-style: italic;
+    text-align: center;
+    padding-top: 2px;
+    padding-bottom: 2px;
+}
+
+.menutitlehighlighted {
+    line-height: 125%;
+    font-style: normal;
+    text-align: center;
+    padding-top: 2px;
+    padding-bottom: 2px;
+}
+
+.menurowinset {
+    background-color: #c5d1d9;
+}
+
+.menurowinsetheader {
+    background-color: #d4d8d9;
+}
+
+.menuitem {
+    line-height: 150%;
+    text-align: left;
+    white-space: nowrap;
+}
+
+.menuiteminset {
+    line-height: 150%;
+    text-align: left;
+    white-space: nowrap;
+    padding-left: 10px;
+}
+
+.menudisablediteminset {
+    color: #A0A0A0;
+}
+
+.submenuiteminset {
+    line-height: 150%;
+}
+
+.innermostmenu {
+    background-color: #CDD0D1;
+}
+
+.menupadding {
+    padding-top: 1px;
+    padding-bottom: 1px;
+}
+
+.lightbar {
+    border-top: #FFFFFF 1px solid;
+}
+
+.darkbar {
+    border-bottom: #687F99 1px solid;
+}
+
+/*
+ * Dialogs
+ */
+
+.dialogtable {
+    border-top: 1px solid #687F99;
+    border-left: 1px solid #687F99;
+    border-right: 2px solid #687F99;
+    border-bottom: 2px solid #687F99;
+    background-color: #FFFFFF;
+    padding: 2px;
+}
+
+.dialogrow {
+    color: #000000;
+    background-color: #FFFFFF;
+}
+
+.dialogrowselected {
+    color: #FFFFFF;
+    background-color: #687F99;
+}
+
+.dialogcontent {
+    background-color: #C5D1D9;
+}
+
+.dialoginsetframe {
+    border-left: solid 2px #808080;
+    border-top: solid 2px #808080;
+    border-right: solid 1px #FFFFFF;
+    border-bottom: solid 1px #FFFFFF;
+    background-color: #E6EAED;
+}
+
+.dialoglabel {
+    padding-bottom: 4px;
+}
+
+.dialogcell {
+    padding-left: 14px;
+    padding-right: 14px;
+}
+
+.dialogcellright {
+    padding-right: 14px;
+}
+
+/*
+ * Miscellaneous
+ */
+.theme {
+    border: solid 2px #FFFFFF;
+    padding: 1px;
+    cursor: pointer;
+}
+
+.themeselected {
+    border: solid 2px #993200;
+    padding: 1px;
+}
+
+.thumbnail {
+    border: solid 1px #808080;
+}
+
+.dataset {
+    border: solid 2px #FFFFFF;
+    padding: 2px;
+    text-align: center;
+    vertical-align: middle;
+}
+
+.datasetselected {
+    border: solid 2px #993200;
+    padding: 2px;
+    text-align: center;
+    vertical-align: middle;
+}
+
+.datasettitle {
+    height: 25px;
+    padding-top: 3px;
+}
+
+.datasetinfo {
+    background-color: #E6EAED;
+    border: solid 1px #D0D6D9;
+    padding: 6px;
+    vertical-align: top;
+}
+
+
+
+.dataFilteredMsg {
+    text-align:right;
+    font-style:italic;
+    font-weight:bold;
+    font-size: 70%;
+    /*color:#384766;*/
+    /*color:#000033;*/   
+    color:#054173;
+    font-family:Verdana, Arial, Helvetica, sans-serif;    
+}
+
+
+.labelplaceholder {
+	border:none;
+	font-weight: bold;             
+	font-style:  italic;             
+	color:#000033;             
+	font-size:110%;  
+	letter-spacing:1;
+	padding-right:2px;
+	background-color:#C5D1D9;  
+}
+.spaceholder {  
+	background-color:#E6EAED; 
+	border: solid 1px #687F99;
+}
+.target {  font-weight: bold;
+           font-style:  italic;
+           color:#000033;
+           font-size:70%;
+           background-color:#C5D1D9; 
+           text-align:center;
+}
+
+.formdarkcell {
+	background-color:#C5D1D9; 
+	font-size:80%;
+}
+.formmediumcell {
+	background-color:#E6EAED; 
+
+}
+.formlightcell {
+	background-color:#FFFFFF; 
+
+
+}
+.fsublabel { 
+	FONT-SIZE: 60%;  
+	font-weight:normal; 
+	color:#384766; 
+ }
+.listbox {
+       background-color:white;
+       border-left:solid 2px #808080;
+       border-top:solid 2px #808080;
+       border-right:solid 2px #E6EAED;
+       border-bottom:solid 2px #E6EAED;
+}
+.tabletextfieldorlist {
+	background-color:#FFFFFF; 
+	color:#000000;
+	FONT-FAMILY: Verdana, Arial, Helvetica, sans-serif; 
+	font-size:110%;
+    /*
+     * we probably want this but checking impacts first
+    -moz-user-select:text;
+    */
+}
+.tabletextfieldorlistdisabled {
+	background-color:#FFFFFF; 
+	color:#999999;
+	FONT-FAMILY: Verdana, Arial, Helvetica, sans-serif; 
+	font-size:110%;
+}
+
+.formsecondarytableframe {	
+	border-left:solid 1px #687F99;
+	border-right:solid 2px #687F99;
+	border-top:solid 1px #687F99;
+	border-bottom:solid 2px #687F99;
+	background-color:#E6EAED;
+}
+
+.formsecondarytable {
+	background-color:#E6EAED; 
+	border-left:solid 2px #FFFFFF;
+	border-right:solid 1px #E6EAED;
+	border-top:solid 2px #FFFFFF;
+	border-bottom:solid 2px #E6EAED;
+
+}
+
+.imagebutton {
+         background-color:#E6EAED; color: #000000; FONT-FAMILY: Verdana, Arial, Helvetica, sans-serif; FONT-SIZE:8pt; border: solid 1px #687F99;  _cursor:hand; cursor:pointer;
+}
+
+.insidebutton {
+         background-color:#E6EAED; color: #000033; FONT-FAMILY: Verdana, Arial, Helvetica, sans-serif; FONT-SIZE:8pt; border: solid 1px #687F99; padding:2px 0px; _cursor:hand; cursor:pointer;
+}
+
+.insidebuttonhover {
+         background-color:#C5D1D9; color: #000033; FONT-FAMILY: Verdana, Arial, Helvetica, sans-serif; FONT-SIZE:8pt; border: solid 1px #000033; padding:2px 0px; _cursor:hand; cursor:pointer;
+}
+
+.insidebuttondisabled {
+         background-color:#E6EAED; color: #999999; FONT-FAMILY: Verdana, Arial, Helvetica, sans-serif; FONT-SIZE:8pt; border: solid 1px #999999; padding:2px 0px;
+}
+
+.navbuttonhr {
+	color:#687F99;
+	background-color:#687F99;
+	width:100%;
+	height:2px;
+	text-align:center;
+}
+.navbutton {
+         font-weight:bold; background-color:#C5D1D9; color: #000033; FONT-FAMILY: Verdana, Arial, Helvetica, sans-serif; FONT-SIZE:8pt; border: solid 1px #687F99; padding-top:2px; padding-bottom:2px; _cursor:hand; cursor:pointer;
+}
+.navbuttonhover {
+          font-weight:bold; background-color:#E6EAED; color: #000033; FONT-FAMILY: Verdana, Arial, Helvetica, sans-serif; FONT-SIZE:8pt; border: solid 1px #000033; padding-top:2px; padding-bottom:2px; _cursor:hand; cursor:pointer;
+}
+.navbuttondisabled {
+         font-weight:bold; background-color:#C5D1D9; color: #687F99; FONT-FAMILY: Verdana, Arial, Helvetica, sans-serif; FONT-SIZE:8pt; border: solid 1px #687F99; padding-top:2px; padding-bottom:2px; cursor:default;
+}
+.navbuttonimage {
+          background-color:#E6EAED; border: solid 1px #687F99; padding-left:3px;  _cursor:hand; cursor:pointer;
+}
+.navbuttonimagehover {
+          background-color:#C5D1D9; border: solid 1px #000033; padding-left:3px;  _cursor:hand; cursor:pointer;
+}
+.navbuttonimagefont {
+              font-weight:bold; font-style: italic; color: #000033; FONT-FAMILY: Verdana, Arial, Helvetica, sans-serif; FONT-SIZE:8pt; 
+}
+
+.noWrap {
+	white-space: nowrap	 	
+}
+
+
+
+.tabAltLeft, .tabAltMiddle, .tabAltRight, .tabHoverLeft, .tabHoverMiddle, .tabHoverRight, .tabSelectedLeft, .tabSelectedMiddle, .tabSelectedRight {
+    position:left bottom;
+    background-repeat:no-repeat;
+    text-align:center;
+    _cursor:hand;
+    cursor:pointer;
+    height:25px;
+    text-align:center;
+    color:#000033;
+}
+.tabAltLeft {
+        background-image:url('../images/tab_alt_left.gif');
+        width:8px;font-size:0px;
+}
+.tabAltMiddle {
+        background-image:url('../images/tab_alt_middle.gif');
+        background-repeat:repeat-x;
+        padding-bottom:2px;
+}
+.tabAltRight {
+        background-image:url('../images/tab_alt_right.gif');
+        width:9px;font-size:0px;
+}
+
+.tabHoverLeft {
+	background-image:url('../images/tab_hover_left.gif');
+	width:8px;font-size:0px;
+}
+
+.tabHoverMiddle {
+        background-image:url('../images/tab_hover_middle.gif');
+        background-repeat:repeat-x;
+        padding-bottom:2px;
+}
+
+.tabHoverRight {
+        background-image:url('../images/tab_hover_right.gif');
+        width:9px;font-size:0px;
+}
+
+.tabSelectedLeft  {
+        background-image:url('../images/tab_left.gif');
+        height:25px;width:8px;font-size:0px;
+	cursor:default;
+}
+
+.tabSelectedMiddle {
+        background-image:url('../images/tab_middle.gif');
+        background-repeat:repeat-x;
+        padding-bottom:2px;
+	cursor:default;
+}
+
+.tabSelectedRight {
+    background-image:url('../images/tab_right.gif');
+	cursor:default;
+	width:9px;font-size:0px;
+}
+.tabPanel {
+    padding:6px;
+    background-color:#E6EAED;
+    border-left:solid 1px #687f99;
+    border-right:solid 1px #687f99;
+    border-bottom:solid 1px #687f99;
+}
+.tabPanelBorderTop {
+    border-bottom:solid 1px #687f99;
+}
+
+/*
+ * Dashboard....
+ */
+.dashboard8 {
+    background-image: url('../images/grid8.gif');
+    position: left top;
+    background-repeat: repeat;
+    background-color: #FFFFFF;
+    -moz-user-select: none;
+    -khtml-user-select: none;
+}
+
+.dashboard8Overflow {
+    background-image: url('../images/grid8.gif');
+    position: left top;
+    background-repeat: repeat;
+    background-color: #FAF5F2;
+}
+
+.dashboard8Oversized {
+    background-image: url('../images/gridBrown8.gif');
+    position: left top;
+    background-repeat: repeat;
+    background-color: #FFFFFF;
+}
+
+.dashboardScreenSizeRightGuideFixed {
+    border-left: dashed 1px #CCA38F;
+    z-index: 2000;
+    position: absolute;
+    width: 1px;
+    padding: 0px;
+}
+
+/* for dashboard pagination */
+.imageborder {
+    border: 1px solid white;
+}
+
+.dashboardScreenSizeBottomGuideFixed {
+    border-top: dashed 1px #CCA38F;
+    z-index: 2000;
+    position: absolute;
+    height: 1px;
+    padding: 0px;
+}
+
+.dashboardScreenSizeRightGuideProportional {
+    border-left: dashed 1px #CC0000;
+    z-index: 2000;
+    position: absolute;
+    width: 1px;
+    padding: 0px;
+}
+
+.dashboardScreenSizeBottomGuideProportional {
+    border-top: dashed 1px #CC0000;
+    z-index: 2000;
+    position: absolute;
+    height: 1px;
+    padding: 0px;
+}
+
+.dashboardTitleStyle {
+    text-align: center;
+    border: #000000;
+    font-size: 13px;
+    color: #000000;
+    font-weight: bold;
+}
+
+.dashboardFrame {
+    -moz-user-select: none;
+    -khtml-user-select: none;
+}
+
+.dashboardFrameContainer {
+    background-color: #FAFCFC;
+    border-width: 1px;
+    border-color: #E0E0E0;
+    border-style: solid;
+    -moz-user-select: none;
+    -khtml-user-select: none;
+}
+
+.dashboardFrameBody {
+    margin: 0px;
+    padding: 0px;
+}
+
+.dashboardFrameBufferLayer {
+    background-color: #FFFFFF;
+    border-style: none;
+    -moz-user-select: none;
+    -khtml-user-select: none;
+    -moz-opacity: 0;
+    opacity: 0;    
+    filter: alpha( opacity = 0 )
+}
+
+.dashboardSelectionMarquee {
+    border-width: 1px;
+    border-color: #000000;
+    border-style: solid;
+    background-color: #E0E0E0;
+    -moz-opacity: .3;
+    opacity:.5;    
+    filter: alpha( opacity = 30 )
+}
+
+.dashboardControlHaze {
+    border-width: 1px;
+    border-color: #505050;
+    border-style: solid;
+    background-color: #D2D6DA;
+    -moz-opacity: .3;
+    opacity:.5;    
+    filter: alpha( opacity = 30 )
+}
+
+.dashboardContentHaze {
+    border-width: 1px;
+    border-color: #505050;
+    border-style: solid;
+    background-color: #D2D6DA;
+    -moz-opacity: .1;
+    opacity:.3;
+    filter: alpha( opacity = 10 )
+}
+
+.dashboardScrollBarHaze {
+    background-color: #FAF6EE;
+    -moz-opacity: .5;
+    opacity:.7;    
+    filter: alpha( opacity = 50 )
+}
+
+.dashboardPagination {
+    font-family: Verdana, Arial, Helvetica, sans-serif;
+    font-size: 11px;
+}
+
+.dashboardTextFrameOverlay {
+    border-width: 1px;
+    border-color: #E0E0E0;
+    border-style: solid;
+    -moz-user-select: none;
+    -khtml-user-select: none;
+    cursor: pointer
+}
+
+.dashboardControlOverlay {
+}
+/*
+ * Div stuff mainly for dashbaords
+ */
+div.overlay {
+    border-style: none;
+    -moz-user-select: none;
+    -khtml-user-select: none;
+    cursor: pointer
+}
+
+div.singleSelect {
+    border-width: 2px;
+    border-color: #005594;
+    border-style: solid;
+    -moz-user-select: none;
+    -khtml-user-select: none;
+    cursor: hand
+}
+
+div.multiSelect {
+    border-width: 2px;
+    border-color: #9FAEBF;
+    border-style: solid;
+    -moz-user-select: none;
+    -khtml-user-select: none;
+    cursor: hand
+}
+
+div.outOfBounds {
+    border-width: 2px;
+    border-color: #B3090F;
+    border-style: solid;
+    -moz-user-select: none;
+    -khtml-user-select: none;
+    cursor: hand
+}
+
+div.dragTarget {
+    border-width: 2px;
+    border-color: #B37150;
+    border-style: solid;
+    -moz-user-select: none;
+    -khtml-user-select: none;
+    cursor: default
+}
+
+div.overlayWidthResizer {
+    border-style: none;
+    cursor: e-resize;
+    -moz-user-select: none;
+    -khtml-user-select: none;
+    z-index: 55
+}
+
+div.overlayHeightResizer {
+    border-style: none;
+    cursor: s-resize;
+    -moz-user-select: none;
+    -khtml-user-select: none;
+    z-index: 55
+}
+
+div.overlayDiagonalResizer {
+    border-style: none;
+    cursor: nw-resize;
+    -moz-user-select: none;
+    -khtml-user-select: none;
+    z-index: 60
+}
+
+div.dragSelect {
+    background-color: #005594;
+    color: #FFFFFF;
+    -moz-opacity: .7;
+    opacity: .7;    
+    filter: alpha( opacity = 60 );
+    cursor:default
+}
+
+div.dragChangedSelect {
+    background-color: #993200;
+    color: #FFFFFF;
+    -moz-opacity: .7;
+    opacity: .7;    
+    filter: alpha( opacity = 60 );
+
+cursor:default
+}
+
+div.nextFrame {
+    border-width: 1px;
+    border-color: #F3F5F5;
+    border-style: solid;
+    background-color: #F3F5F5;
+    -moz-opacity: 0;
+    opacity: 0;
+    filter: alpha( opacity = 0 );
+}
+
+

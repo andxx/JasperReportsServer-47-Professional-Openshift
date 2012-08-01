@@ -1,0 +1,145 @@
+#toolbar {			
+	height:39px;
+	overflow: hidden;
+}  
+		
+#modeTabs, #source {
+	height:66px;
+}
+
+#dataPanel {
+	height:95%;
+	margin-bottom: 100px;
+}
+
+#fieldsContainer {
+	position:static;
+	width:193px;
+	height:expression(decoratedBody.offsetHeight - (toolbar.offsetHeight) - (source.offsetHeight));
+}
+
+#divider {
+	width:39px;
+}
+
+#modeTabs.tabs li p {
+	height:23px;
+}
+
+#modeTabs.tabs li.selected p {
+	height:26px;
+	margin-bottom:-1px;
+}
+
+.tabs ul {
+	bottom:7px;
+}
+
+#modeTabs.tabs ul li {
+	height:24px;
+	width:11em;
+}
+
+#modeTabs.tabs li.selected, #modeTabs.tabs li.over {
+	white-space: nowrap;
+}
+
+
+#modeTabs.tabs ul li.selected {
+	height:23px;
+}
+
+/* Todo: hard coding tab height due to delay in rendering - fix this */
+#mainTableContainer {
+	height:expression(decoratedBody.offsetHeight - (toolbar.offsetHeight) - (modeTabs?66:0));
+	width:expression(decoratedBody.offsetWidth - (dataPanel.offsetWidth));
+}
+
+.buttonSet .button b {
+	height:30px;
+	margin-bottom:-2px;
+	background-position: 4px 2px;
+}
+
+.buttonSet li.button.disabled b {
+	/*
+border-color: pink;
+	filter: chroma(color=pink);
+*/
+	filter: alpha(opacity=25);
+	border:none;
+	background-position: 4px 3px; 
+}
+
+.buttonSet .button.disabled .menuSignal {
+	filter: alpha(opacity=25);
+}
+
+#divider #groupTarget, .buttonSet .button.up, .buttonSet .button.up b {
+	border-color: pink;
+	filter: chroma(color=pink);
+}
+
+.buttonSet #presentationMode b {
+	background-image: url(../images/button_presentationMode.gif);
+}
+
+.buttonSet #save b {
+	background-image: url(../images/button_save.gif);
+}
+
+.buttonSet #export b {
+	background-image: url(../images/button_export.gif);
+}
+
+.buttonSet #undo b {
+	background-image: url(../images/button_undo.gif);
+}
+
+.buttonSet #redo b {
+	background-image: url(../images/button_redo.gif);
+}
+
+.buttonSet #reset b {
+	background-image: url(../images/button_reset.gif);
+}
+
+.buttonSet #sampleData b {
+	background-image: url(../images/button_sampleData.gif);
+}
+
+.buttonSet #pivot b {
+	background-image: url(../images/button_pivot.gif);
+}
+
+.buttonSet #sort b {
+	background-image: url(../images/button_sort.gif);
+}
+
+.buttonSet #filter b {
+	background-image: url(../images/button_filter.gif);
+}
+
+.buttonSet #styles b {
+	background-image: url(../images/button_styles.gif);
+}
+
+.buttonSet #pageProperties b {
+	background-image: url(../images/button_objects.gif);
+}
+
+.buttonSet .button .menuSignal {
+	background: url(../images/menuSignal.gif) no-repeat 0px 5px;
+}
+
+.buttonSet .button.over, .buttonSet .button.pressed {
+			border-color:#FFF;		 
+}
+
+.buttonSet .button.up.over b, .buttonSet .button.up.pressed b {
+	border-color: #FFF;
+}
+
+
+
+

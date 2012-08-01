@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="
+            http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+            http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd">
+
+    <bean id="proSearchSecurityResolver" class="com.jaspersoft.ji.search.service.impl.ProSearchSecurityResolverImpl">
+    </bean>
+
+    <util:list id="proRoleAccessListDefault">
+        <bean class="com.jaspersoft.ji.search.common.ProRoleAccess">
+            <property name="roleName" value="ROLE_ADMINISTRATOR"/>
+            <property name="tenantId">
+                <null/>
+            </property>
+        </bean>
+        <bean class="com.jaspersoft.ji.search.common.ProRoleAccess">
+            <property name="roleName" value="ROLE_USER"/>
+            <property name="tenantId">
+                <null/>
+            </property>
+        </bean>
+    </util:list>
+
+    <util:map id="proFilterOptionToResourceTypes">
+        <entry key="resourceTypeFilter-all">
+            <null/> <!-- No resources to be limited to for this option. -->
+        </entry>
+        <entry key="resourceTypeFilter-reports">
+            <list>
+                <value>com.jaspersoft.jasperserver.api.metadata.jasperreports.domain.ReportUnit</value>
+                <value>com.jaspersoft.ji.adhoc.AdhocReportUnit</value>
+            </list>
+        </entry>
+        <entry key="resourceTypeFilter-reportOutput">
+            <list>
+                <value>com.jaspersoft.jasperserver.api.metadata.common.domain.ContentResource</value>
+            </list>
+        </entry>
+        <entry key="resourceTypeFilter-view">
+            <list>
+                <value>com.jaspersoft.jasperserver.api.metadata.olap.domain.OlapUnit</value>
+            </list>
+        </entry>
+        <entry key="resourceTypeFilter-adhocView">
+            <list>
+                <value>com.jaspersoft.ji.adhoc.AdhocDataView</value>
+            </list>
+        </entry>
+        <entry key="resourceTypeFilter-dataSources">
+            <list>
+                <value>com.jaspersoft.jasperserver.api.metadata.common.domain.DataSource</value>
+                <value>com.jaspersoft.jasperserver.api.metadata.jasperreports.domain.ReportDataSource</value>
+                <value>com.jaspersoft.jasperserver.api.metadata.jasperreports.domain.BeanReportDataSource</value>
+                <value>com.jaspersoft.jasperserver.api.metadata.jasperreports.domain.CustomReportDataSource</value>
+                <value>com.jaspersoft.jasperserver.api.metadata.jasperreports.domain.JdbcReportDataSource</value>
+                <value>com.jaspersoft.jasperserver.api.metadata.jasperreports.domain.JndiJdbcReportDataSource</value>
+                <value>com.jaspersoft.jasperserver.api.metadata.olap.domain.MondrianConnection</value>
+                <value>com.jaspersoft.jasperserver.api.metadata.olap.domain.JndiJdbcOlapDataSource</value>
+                <value>com.jaspersoft.jasperserver.api.metadata.olap.domain.JdbcOlapDataSource</value>
+                <value>com.jaspersoft.jasperserver.api.metadata.olap.domain.OlapDataSource</value>
+                <value>com.jaspersoft.jasperserver.api.metadata.olap.domain.XMLAConnection</value>
+                <value>com.jaspersoft.jasperserver.api.metadata.olap.domain.MondrianConnection</value>
+                <value>com.jaspersoft.ji.ja.security.domain.SecureMondrianConnection</value>
+            </list>
+        </entry>
+        <entry key="resourceTypeFilter-dashboards">
+            <list>
+                <value>com.jaspersoft.ji.adhoc.DashboardResource</value>
+            </list>
+        </entry>
+        <entry key="resourceTypeFilter-domains">
+            <list>
+                <value>com.jaspersoft.commons.semantic.datasource.SemanticLayerDataSource</value>
+            </list>
+        </entry>
+        <entry key="resourceTypeFilter-reports-views-dashboards">
+            <list>
+                <value>com.jaspersoft.jasperserver.api.metadata.jasperreports.domain.ReportUnit</value>
+                <value>com.jaspersoft.jasperserver.api.metadata.olap.domain.OlapUnit</value>
+                <value>com.jaspersoft.ji.adhoc.AdhocReportUnit</value>
+                <value>com.jaspersoft.ji.adhoc.DashboardResource</value>
+                <value>com.jaspersoft.ji.adhoc.AdhocDataView</value>
+            </list>
+        </entry>
+        <entry key="resourceTypeFilter-adhocReports">
+            <list>
+                <value>com.jaspersoft.ji.adhoc.AdhocReportUnit</value>
+            </list>
+        </entry>
+    </util:map>
+
+    <util:list id="resourceTypeFilterOptionsPro">
+        <ref bean="${bean.resourceTypeFilter.option.all}"/>
+        <ref bean="${bean.resourceTypeFilter.option.reports}"/>
+        <ref bean="${bean.resourceTypeFilter.option.reportOutput}"/>
+        <bean class="com.jaspersoft.jasperserver.search.common.Option">
+            <property name="id" value="resourceTypeFilter-adhocView"/>
+            <property name="labelId" value="SEARCH_TYPE_ADHOC_VIEWS"/>
+            <property name="roleAccessList" ref="${bean.resourceTypeFilter.AdhocView.RoleAccessList}"/>
+        </bean>
+        <bean class="com.jaspersoft.jasperserver.search.common.Option">
+            <property name="id" value="resourceTypeFilter-dashboards"/>
+            <property name="labelId" value="SEARCH_TYPE_DASHBOARD"/>
+            <property name="roleAccessList" ref="${bean.resourceTypeFilter.Dashboards.RoleAccessList}"/>
+        </bean>
+        <ref bean="${bean.resourceTypeFilter.option.view}"/>
+        <bean class="com.jaspersoft.jasperserver.search.common.Option">
+            <property name="id" value="resourceTypeFilter-domains"/>
+            <property name="labelId" value="SEARCH_TYPE_DOMAINS"/>
+            <property name="roleAccessList" ref="${bean.resourceTypeFilter.Domains.RoleAccessList}"/>
+        </bean>
+        <ref bean="${bean.resourceTypeFilter.option.dataSources}"/>
+        <bean class="com.jaspersoft.jasperserver.search.common.Option">
+            <property name="id" value="resourceTypeFilter-adhocReports"/>
+            <property name="labelId" value="SEARCH_TYPE_ADHOC_REPORTS"/>
+            <property name="roleAccessList" ref="${bean.resourceTypeFilter.Domains.RoleAccessList}"/>
+        </bean>
+    </util:list>
+
+    <util:list id="libraryResourceTypeFilterOptionsPro">
+        <bean class="com.jaspersoft.jasperserver.search.common.Option">
+            <property name="id" value="resourceTypeFilter-reports-views-dashboards"/>
+            <property name="labelId" value="SEARCH_TYPE_REPORTS_AND_DASHBOARD"/>
+            <property name="roleAccessList" ref="${bean.resourceTypeFilter.Dashboards.RoleAccessList}"/>
+        </bean>
+    </util:list>
+
+    <util:list id="proSupportedTypes">
+        <value>com.jaspersoft.ji.adhoc.DashboardResource</value>
+        <value>com.jaspersoft.jasperserver.api.metadata.jasperreports.domain.ReportUnit</value>
+        <value>com.jaspersoft.jasperserver.api.metadata.olap.domain.OlapUnit</value>
+        <value>com.jaspersoft.commons.semantic.datasource.SemanticLayerDataSource</value>
+        <value>com.jaspersoft.jasperserver.api.metadata.common.domain.Query</value>
+        <value>com.jaspersoft.jasperserver.api.metadata.jasperreports.domain.JdbcReportDataSource</value>
+        <value>com.jaspersoft.jasperserver.api.metadata.jasperreports.domain.JndiJdbcReportDataSource</value>
+        <value>com.jaspersoft.jasperserver.api.metadata.jasperreports.domain.BeanReportDataSource</value>
+        <value>com.jaspersoft.jasperserver.api.metadata.jasperreports.domain.CustomReportDataSource</value>
+        <value>com.jaspersoft.jasperserver.api.metadata.olap.domain.OlapDataSource</value>
+        <value>com.jaspersoft.jasperserver.api.metadata.olap.domain.OlapClientConnection</value>
+        <value>com.jaspersoft.jasperserver.api.metadata.common.domain.FileResource</value>
+        <value>com.jaspersoft.jasperserver.api.metadata.common.domain.ContentResource</value>
+        <value>com.jaspersoft.jasperserver.api.metadata.common.domain.InputControl</value>
+        <value>com.jaspersoft.jasperserver.api.metadata.common.domain.ListOfValues</value>
+        <value>com.jaspersoft.jasperserver.api.metadata.common.domain.ListOfValuesItem</value>
+        <value>com.jaspersoft.jasperserver.api.metadata.common.domain.DataType</value>
+        <value>com.jaspersoft.jasperserver.api.metadata.olap.domain.MondrianXMLADefinition</value>
+    </util:list>
+
+    <util:map id="proTypeSpecificFilters" key-type="java.lang.String" value-type="com.jaspersoft.jasperserver.api.search.SearchFilter">
+    </util:map>
+
+    <bean id="proScheduleFilter" class="com.jaspersoft.ji.search.filter.ProScheduleFilter">
+        <property name="sessionFactory" ref="sessionFactory"/>
+    </bean>
+
+    <bean id="proFolderFilter" class="com.jaspersoft.ji.search.filter.FolderFilter" parent="baseSearchFilter">
+        <property name="roleAccessUrisResolver" ref="${bean.roleAccessUrisResolver}"/>
+        <!--TODO : Temp fix. Should be reviewed.-->
+        <property name="sessionFactory" ref="sessionFactory"/>
+        <property name="configurationBean" ref="configurationBean"/>
+    </bean>
+
+    <bean id="proTextFilter" class="com.jaspersoft.ji.search.filter.TextFilter" parent="baseSearchFilter">
+        <property name="databaseCharactersEscapeResolver" ref="databaseCharactersEscapeResolver"/>
+        <property name="inReportChildrenSearchMap">
+            <util:map>
+                <entry key="com.jaspersoft.jasperserver.api.metadata.common.domain.Resource">
+                    <util:set>
+                        <value>com.jaspersoft.ji.report.options.metadata.ReportOptions</value>
+                    </util:set>
+                </entry>
+                <entry key="com.jaspersoft.jasperserver.api.metadata.jasperreports.domain.ReportUnit">
+                    <util:set>
+                        <value>com.jaspersoft.ji.report.options.metadata.ReportOptions</value>
+                    </util:set>
+                </entry>
+            </util:map>
+        </property>
+        <property name="maxInElements" value="900"/>
+        <property name="persistentClassMappings" ref="persistentMappings"/>
+    </bean>
+
+    <bean id="reportOptionLoaderService" class="com.jaspersoft.ji.search.service.impl.ReportOptionLoaderService">
+        <property name="reportOptionsService" ref="reportOptionsService"/>
+    </bean>
+
+    <util:map id="proChildrenLoaders">
+        <entry key="com.jaspersoft.jasperserver.api.metadata.jasperreports.domain.ReportUnit">
+            <ref bean="reportOptionLoaderService"/>
+        </entry>
+        <entry key="com.jaspersoft.ji.adhoc.AdhocReportUnit">
+            <ref bean="reportOptionLoaderService"/>
+        </entry>
+    </util:map>
+
+    <bean id="proSchedulingChecker" parent="schedulingChecker">
+        <property name="types">
+            <set merge="true">
+                <value>com.jaspersoft.ji.report.options.metadata.ReportOptions</value>
+            </set>
+        </property>
+    </bean>
+
+    <util:list id="resourceService-checkDependentResourcesFor-pro">
+        <value>com.jaspersoft.ji.adhoc.AdhocDataView</value>
+        <value>com.jaspersoft.jasperserver.api.metadata.jasperreports.domain.ReportUnit</value>
+    </util:list>
+
+</beans>

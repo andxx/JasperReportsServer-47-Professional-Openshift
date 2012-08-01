@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+       		       http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd">
+
+	<bean id="scheduleReportOptionsParametersAction" class="com.jaspersoft.ji.report.options.actions.ScheduleReportOptionsParametersAction" parent="scheduleReportParametersAction">
+        <property name="optionsService" ref="reportOptionsService"/>
+        <property name="attributeReportOptionsURI" value="reportOptionsURI"/>
+        <property name="attributeReportOptions" value="reportOptions"/>
+        <property name="eventReportOptionsInvalid" value="optionsInvalid"/>
+	</bean>
+
+	<bean id="reportJobOptionsSaveAction" class="com.jaspersoft.ji.report.options.actions.ReportOptionsSaveAction" parent="baseReportOptionsSaveAction">
+		<property name="inputControlsAction" ref="scheduleReportOptionsParametersAction"/>
+		<property name="attributeCurrentOptionsURI" value="selectedReportOptionsURI"/>
+		<property name="attributeInitialOptionsURI" value="reportOptionsURI"/>
+	</bean>
+
+	<bean id="reportOptionsJobEditAction" class="com.jaspersoft.ji.report.options.actions.ReportOptionsJobEditAction" parent="reportJobEditAction">
+        <property name="olapReportCheckUtil" ref="${bean.olapReportCheckUtil}"/>
+        <property name="schedulingService" ref="reportOptionsSchedulingService"/>
+        <property name="optionsService" ref="reportOptionsService"/>
+        <property name="attributeReportOptionsURI" value="reportOptionsURI"/>
+        <property name="attributeReportOptions" value="reportOptions"/>
+		<property name="validator" ref="proReportJobValidator"/>
+	</bean>
+
+	<bean id="proReportJobValidator" class="com.jaspersoft.jasperserver.war.validation.ReportJobValidator" parent="reportJobValidator">
+		<property name="schedulingService" ref="reportOptionsSchedulingService"/>
+	</bean>
+	
+	
+</beans>
