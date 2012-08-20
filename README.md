@@ -3,14 +3,14 @@ JasperReports Server 4.7.0 Professional on OpenShift
 
 Prerequisites
 -------------
-OpenShift account
-Command line client tools
+OpenShift account<br/>
+Command line client tools<br/>
 https://openshift.redhat.com/app/getting_started
 
 
 Application and Application Server
 ----------------------------------
-Create a new <b>JBoss Application Server 7.1</b> application.
+Create a new <b>JBoss Application Server 7.1</b> application.<br/>
 For example, "jrs47" is a reasonable name for JasperReports Server 4.7.
 
     rhc app create -a jrs47 -t jbossas-7
@@ -31,7 +31,7 @@ Clone JRS 47 Pro github repository
     git remote add upstream -m master git://github.com/Jaspersoft/JasperReportsServer-47-Professional-Openshift.git
     git pull -s recursive -X theirs upstream master
 
-Optional: Make some changes
+Optional: Make some changes<br/>
 Optional: Commit the changes
 
     git commit -a -m "Added JRS 4.7.0 Pro"
