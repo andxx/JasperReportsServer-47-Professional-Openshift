@@ -1,18 +1,24 @@
-JasperReports Server on Openshift
-==================================
-Instructions to install
+JasperReports Server 4.7.0 Professional on OpenShift
+====================================================
+
+Prerequisites
+-------------
+OpenShift account
+Command line client tools
+https://openshift.redhat.com/app/getting_started
 
 
-Application creation
---------------------
-Create a new <b>JBoss Application Server 7.1</b> application:
+Application and Application Server
+----------------------------------
+Create a new <b>JBoss Application Server 7.1</b> application.
+For example, "jrs47" is a reasonable name for JasperReports Server 4.7.
 
     rhc app create -a jrs47 -t jbossas-7
 
 
 Cartridges configuration
 ------------------------
-Add a <b>Mysql</b> cartridge
+Add a <b>MySQL</b> cartridge
 
     rhc app cartridge add -a jrs47 -c mysql-5.1
 
@@ -25,11 +31,12 @@ Clone JRS 47 Pro github repository
     git remote add upstream -m master git://github.com/Jaspersoft/JasperReportsServer-47-Professional-Openshift.git
     git pull -s recursive -X theirs upstream master
 
-Commit the changes
+Optional: Make some changes
+Optional: Commit the changes
 
-    git commit -a -m "Added JRS 47 pro"
+    git commit -a -m "Added JRS 4.7.0 Pro"
 
-Push the changes
+Push the changes up to OpenShift
 
     git push
 
